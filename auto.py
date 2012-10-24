@@ -4,12 +4,13 @@ class Course:
     def __init__(self, name, credit, grade, teacher, time=None):
         self.name = name
         self.credit = credit
-        self.grade = grade
+        self.grade_name = grade
         self.teacher = teacher
         self.time = time
     def __str__(self):
-        return "name:%s credit:%s grade:%s tcher:%s time:%s" \
-                % (self.name, self.credit, self.grade, self.teacher, self.time)
+        #return "name:%s credit:%s grade:%s tcher:%s time:%s" \
+        #       % (self.name, self.credit, self.grade_name, self.teacher, self.time)
+        return self.name
 
 class CourseTable:
     def __init__(self):
@@ -20,18 +21,30 @@ class CourseTable:
         s = str(self.coursetable)
         return s
 
-    def set_course(self, course, posx, posy):
-        """ set course at posx posy
+    def set_course(self, course, posi, posj):
+        """ set course at posi posj
 
         return True if set sucessfully; otherwise return False"""
-        if self.coursetable[posx][posy] != -1:
+        if self.coursetable[posi][posj] != -1:
             return False
         else:
-            self.coursetable[posx][posy] = course
+            self.coursetable[posi][posj] = course
             return True
 
-    def unset_course(self, course,posx, posy):
-        self.coursetable[posx][posy] = -1
+    def unset_course(self, course,posi, posj):
+        self.coursetable[posi][posj] = -1
+
+    def print_course_table(self, extra_info):
+        for i in range(4):
+            print self.period[i] + " ",
+            for j in range(5):
+                o = self.coursetable[i][j]
+                if o != -1:
+                    print extra_info[o],
+                else:
+                    print "#",
+                print "__",
+            print "\n"
     
 class Grade:
     def __init__(self, name, courses):
@@ -46,11 +59,16 @@ class Grade:
         s += str(self.course_table)
         return s
 
-    def set_course(self, course, posx, posy):
-        return self.course_table.set_course(course, posx, posy)
+    def dump_course_table(self):
+        print "==== Grade: %s ====\n" % self.name
+        self.course_table.print_course_table(self.courses)
+        
 
-    def unset_course(self, course, posx, posy):
-        self.course_table.unset_course(course, posx, posy)
+    def set_course(self, course, posi, posj):
+        return self.course_table.set_course(course, posi, posj)
+
+    def unset_course(self, course, posi, posj):
+        self.course_table.unset_course(course, posi, posj)
 
 class ReadCourse:
     def __init__(self, file_name, delimiter=","):
@@ -89,22 +107,22 @@ class CourseFilter:
     def grade_courses(self, grade):
         result = []
         for c in self.courses:
-            if c.grade == grade:
+            if c.grade_name == grade:
                 result.append(c)
         return result
 
-    def get_total_grades(self):
+    def get_total_grades_name(self):
         result = []
         for c in self.courses:
             try:
-                result.index(c.grade)
+                result.index(c.grade_name)
             except ValueError:
-                result.append(c.grade)
+                result.append(c.grade_name)
         return result
 
     def get_grade_objs(self):
         result = []
-        gs = self.get_total_grades()
+        gs = self.get_total_grades_name()
         for g in gs:
             name = g
             cs = self.grade_courses(name)
@@ -123,12 +141,12 @@ class Generator:
         self.grades = grades
         self.total_grade = len(grades)
 
-    # int * int * int * int * int => boolean
-    def generate(self, which_grade, which_course, which_posx, which_posy): #return boolean
+    # int * int * int * int => boolean
+    def generate(self, which_grade, which_course, which_posi, which_posj): #return boolean
         grade = self.grades[which_grade]
         total_course = len(grade.courses)
 
-        set_p = grade.set_course(which_course, which_posx, which_posy)
+        set_p = grade.set_course(which_course, which_posi, which_posj)
         if not set_p:  #fail to set course in the table
             return False
 
@@ -140,18 +158,19 @@ class Generator:
                 # get all course table
                 return True
             else:
-                grade.unset_course(which_course, which_posx, which_posy)
+                grade.unset_course(which_course, which_posi, which_posj)
                 return False
         else:
 
-            for next_posx in range(which_posx+1, 5):
-                for next_posy in range(which_posy+1, 4):
-                    res = self.generate(which_grade, which_course + 1, next_posx, next_posy)
+            for next_posi in range(which_posi, 5):
+                for next_posj in range(which_posj, 4):
+                    res = self.generate(which_grade, which_course + 1, next_posi, next_posj)
                     if res == True:
                         return res
                     else:
                         continue
-            grade.unset_course(which_course, which_posx, which_posy)
+
+            grade.unset_course(which_course, which_posi, which_posj)
             return False
         
     def start(self):
@@ -166,10 +185,9 @@ if __name__ == '__main__':
     reader = ReadCourse(sys.argv[1])
     courses = reader.get_courses()
     flter = CourseFilter(courses)
-    grade = flter.get_total_grades()
 
     grades = flter.get_grade_objs()
     gen = Generator(grades)
     if gen.start() == True:
         for g in grades:
-            print g
+            g.dump_course_table()
