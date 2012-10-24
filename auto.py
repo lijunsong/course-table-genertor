@@ -40,10 +40,10 @@ class CourseTable:
             for j in range(5):
                 o = self.coursetable[i][j]
                 if o != -1:
-                    print extra_info[o],
+                    print (str(extra_info[o])+"      ")[:6],
                 else:
-                    print "#",
-                print "__",
+                    print "______",
+                print "  ",
             print "\n"
     
 class Grade:
@@ -141,6 +141,10 @@ class Generator:
         self.grades = grades
         self.total_grade = len(grades)
 
+    def pretty_print_all_grades(self):
+        for g in self.grades:
+            g.dump_course_table()
+
     # int * int * int * int => boolean
     def generate(self, which_grade, which_course, which_posi, which_posj): #return boolean
         grade = self.grades[which_grade]
@@ -151,27 +155,34 @@ class Generator:
             return False
 
         if which_course == total_course - 1 and which_grade == self.total_grade - 1: # successfully put all courses in all grades
-            #get all course table
+            #get all course table, return True
+            self.pretty_print_all_grades()
+            grade.unset_course(which_course, which_posi, which_posj) #before going back, unset
             return True
+
         elif which_course == total_course -1: # successfully put all courses in one grade
-            if self.generate( which_grade + 1, 0, 0, 0) == True:
-                # get all course table
-                return True
-            else:
-                grade.unset_course(which_course, which_posi, which_posj)
-                return False
+            for i in range(4):
+                for j in range(5):
+                    if self.generate( which_grade + 1, 0, i, j) == True:
+                        # get all course table, return True
+                        self.pretty_print_all_grades()
+                        grade.unset_course(which_course, which_posi, which_posj)
+                        continue
+                    else:
+                        grade.unset_course(which_course, which_posi, which_posj)
+                        continue
         else:
 
-            for next_posi in range(which_posi, 5):
-                for next_posj in range(which_posj, 4):
+            for next_posi in range(4):
+                for next_posj in range(5):
                     res = self.generate(which_grade, which_course + 1, next_posi, next_posj)
                     if res == True:
-                        return res
+                        continue
                     else:
                         continue
 
-            grade.unset_course(which_course, which_posi, which_posj)
-            return False
+        grade.unset_course(which_course, which_posi, which_posj)
+        return False
         
     def start(self):
         return self.generate(0, 0, 0, 0)
