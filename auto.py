@@ -1,15 +1,15 @@
 #!/usr/bin/python
 
+import re
+
 class Course:
-    def __init__(self, name, credit, grade, teacher, time=None):
+    def __init__(self, name, credit, grade, teacher, pre_alloc):
         self.name = name
         self.credit = credit
         self.grade_name = grade
         self.teacher = teacher
-        self.time = time
+        self.pre_alloc = pre_alloc
     def __str__(self):
-        #return "name:%s credit:%s grade:%s tcher:%s time:%s" \
-        #       % (self.name, self.credit, self.grade_name, self.teacher, self.time)
         return self.name
 
 class CourseTable:
@@ -40,9 +40,9 @@ class CourseTable:
             for j in range(5):
                 o = self.coursetable[i][j]
                 if o != -1:
-                    print (str(extra_info[o])+"      ")[:6],
+                    print (str(extra_info[o])+" "*20)[:20],
                 else:
-                    print "______",
+                    print "_"*20,
                 print "  ",
             print "\n"
     
@@ -71,14 +71,15 @@ class Grade:
         self.course_table.unset_course(course, posi, posj)
 
 class ReadCourse:
-    def __init__(self, file_name, delimiter=","):
+    def __init__(self, file_name, delimiter=",", comment="#"):
         self.file_name = file_name
         self.delimiter = delimiter
+        self.comment   = comment
         self.courses = []
-        self.__check_file_type()
+        self.__check_file()
         self.__process_csv()
 
-    def __check_file_type(self, check_type = "csv"):
+    def __check_file(self, check_type = "csv"):
         try:
             assert self.file_name.endswith(check_type)
         except AssertionError:
@@ -88,14 +89,47 @@ class ReadCourse:
     def get_courses(self):
         return self.courses
 
+    def __check_sanity(self, course_info):
+        """ check the sanity of the line """
+        try:
+            # should have 5 columns
+            assert len(course_info) == 5
+            # the second one should be numbers
+            assert course_info[1].replace(".","",1).isdigit()
+            # the last one should be like 1,1; 2,2; 3,3
+            # pass
+            return True
+        except:
+            return False
+
+    def __pre_alloc(self, time_str):
+        """ time_str would be '1,1;2,2;3,3'"""
+        result = []
+        if time_str.strip(" \""):
+            lst = time_str.strip(" \"").split(";")
+            for ele in lst:
+                posi = int(ele.strip().split(",")[0])
+                posj = int(ele.strip().split(",")[1])
+                result.append([posi, posj])
+        return result
+
     def __course_obj(self, row):
-        course_info = row.strip().split(self.delimiter)
-        return Course(course_info[0], course_info[1], course_info[2], course_info[3])
+        course_info = row.strip().split(self.delimiter, 4)
+
+        if not self.__check_sanity(course_info):
+            print("line: %s is broken" % row.strip())
+            exit(1)
+        # whether to pre-allocate course
+        pre_pos = self.__pre_alloc(course_info[4])
+        return Course(course_info[0], course_info[1], course_info[2], course_info[3], pre_pos)
+
+    def __is_comment(self, line):
+        return line.startswith(self.comment)
 
     def __process_csv(self):
         contents = open(self.file_name).readlines()
         for content in contents:
-            if content.startswith("#"):
+            if self.__is_comment(content):
                 continue
             course = self.__course_obj(content)
             self.courses.append(course)
@@ -185,6 +219,10 @@ class Generator:
         return False
         
     def start(self):
+        # before allocating all courses
+        # todo:
+        # 1. allocate those pre-allocated courses
+        # 2. order the courses in every grade
         return self.generate(0, 0, 0, 0)
 
 if __name__ == '__main__':
