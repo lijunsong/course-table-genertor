@@ -13,9 +13,18 @@ class Course:
         return self.name
 
 class CourseTable:
-    def __init__(self):
+    """ CourseTable class represents a course table
+
+    if constructed with information of courses, those pre-allocated course
+    will be set on coursetable"""
+    def __init__(self, courses=None):
         self.period = ["08:00", "10:10", "13:00", "16:10"]
         self.coursetable = [[-1 for col in range(5)] for row in self.period]
+        if courses != None:
+            # pre_alloc course
+            for which in range(0, len(courses)):
+                if courses[which].pre_alloc != None: #pre_alloc
+                    self.set_course(which, courses[which].pre_alloc[0] -1, courses[which].pre_alloc[1] -1)
 
     def __str__(self):
         s = str(self.coursetable)
@@ -47,21 +56,29 @@ class CourseTable:
             print "\n"
     
 class Grade:
+    """  NOTE:
+    courses: courses that need allocate
+    all_courses: courses include pre-allocated courses
+    """
     def __init__(self, name, courses):
         self.name = name
-        self.courses = courses
-        self.course_table = CourseTable()
+        self.courses = []  # courses that need to allocate
+        self.all_courses = courses
+        self.course_table = CourseTable(courses)
+        for c in courses:
+            if c.pre_alloc == None:
+                self.courses.append(c)
 
     def __str__(self):
         s = "=======Grade: %s=======\n" % self.name
-        for c in self.courses:
+        for c in self.all_courses:
             s += str(c) + "\n"
         s += str(self.course_table)
         return s
 
     def dump_course_table(self):
         print "==== Grade: %s ====\n" % self.name
-        self.course_table.print_course_table(self.courses)
+        self.course_table.print_course_table(self.all_courses)
         
 
     def set_course(self, course, posi, posj):
@@ -103,15 +120,15 @@ class ReadCourse:
             return False
 
     def __pre_alloc(self, time_str):
-        """ time_str would be '1,1;2,2;3,3'"""
-        result = []
+        """ time_str would be '1,1'
+        
+        return: [posi, posj]
+        """
         if time_str.strip(" \""):
-            lst = time_str.strip(" \"").split(";")
-            for ele in lst:
-                posi = int(ele.strip().split(",")[0])
-                posj = int(ele.strip().split(",")[1])
-                result.append([posi, posj])
-        return result
+            lst = time_str.strip(" \"").split(",")
+            return [int(lst[0]), int(lst[1])]
+        else:
+            return None
 
     def __course_obj(self, row):
         course_info = row.strip().split(self.delimiter, 4)
@@ -179,43 +196,59 @@ class Generator:
         for g in self.grades:
             g.dump_course_table()
 
+    def set_next_course(self, which_grade, which_is_next, which_posi=None, which_posj=None):
+        if which_posi == None and which_posj == None:
+            for i in range(4):
+                for j in range(5):
+                    self.generate(which_grade, which_is_next, i, j)
+        else:
+            self.generate(which_grade, which_is_next, which_posi, which_posj)
+        
+    def set_next_grade(self, which_is_next, which_course=None, which_posi=None, which_posj=None):
+        if which_posi == None and which_posj == None and which_course == None:
+            for i in range(4):
+                for j in range(5):
+                    self.generate(which_is_next, 0, i, j)
+        else:
+            self.generate(which_is_next, which_course, which_posi, which_posj)
+
     # int * int * int * int => boolean
     def generate(self, which_grade, which_course, which_posi, which_posj): #return boolean
         grade = self.grades[which_grade]
         total_course = len(grade.courses)
+        set_p = False
 
-        set_p = grade.set_course(which_course, which_posi, which_posj)
-        if not set_p:  #fail to set course in the table
-            return False
+        # try to set couse at (i, j)
+        print "[try] to set course %s to (%s,%s)" % (grade.courses[which_course].name, which_posi, which_posj)
+        if grade.courses[which_course].pre_alloc != None: # pre-allocatd
+            print "pre allocated one!"
+        else:
+            set_p = grade.set_course(which_course, which_posi, which_posj)
+            if not set_p:  #fail to set course in the table
+                print "[failed] to set course %s to (%s,%s)" % (grade.courses[which_course].name, which_posi, which_posj)
+                return False
+            else:
+                print "[successed] to set course %s to (%s,%s)" % (grade.courses[which_course].name, which_posi, which_posj)
 
         if which_course == total_course - 1 and which_grade == self.total_grade - 1: # successfully put all courses in all grades
             #get all course table, return True
+            print "get final result: "
             self.pretty_print_all_grades()
-            grade.unset_course(which_course, which_posi, which_posj) #before going back, unset
+            if set_p:
+                print "[unset] course %s to (%s,%s)" % (grade.courses[which_course].name, which_posi, which_posj)
+                grade.unset_course(which_course, which_posi, which_posj) #before going back, unset
             return True
-
+        # else: not all courses are allocated
         elif which_course == total_course -1: # successfully put all courses in one grade
-            for i in range(4):
-                for j in range(5):
-                    if self.generate( which_grade + 1, 0, i, j) == True:
-                        # get all course table, return True
-                        self.pretty_print_all_grades()
-                        grade.unset_course(which_course, which_posi, which_posj)
-                        continue
-                    else:
-                        grade.unset_course(which_course, which_posi, which_posj)
-                        continue
+            print "[try] to generate next grade: %s" % self.grades[which_grade + 1].name
+            self.set_next_grade(which_grade + 1)
         else:
+            print "[try] to generate next course: %s" % grade.courses[which_course+1].name
+            self.set_next_course(which_grade, which_course + 1)
 
-            for next_posi in range(4):
-                for next_posj in range(5):
-                    res = self.generate(which_grade, which_course + 1, next_posi, next_posj)
-                    if res == True:
-                        continue
-                    else:
-                        continue
-
-        grade.unset_course(which_course, which_posi, which_posj)
+        if set_p:
+            print "[unset] course %s to (%s,%s)" % (grade.courses[which_course].name, which_posi, which_posj)
+            grade.unset_course(which_course, which_posi, which_posj) #before going back, unset
         return False
         
     def start(self):
@@ -223,7 +256,9 @@ class Generator:
         # todo:
         # 1. allocate those pre-allocated courses
         # 2. order the courses in every grade
-        return self.generate(0, 0, 0, 0)
+        for i in range(4):
+            for j in range(5):
+                self.generate(0, 0, i, j)
 
 if __name__ == '__main__':
     import sys
@@ -236,7 +271,13 @@ if __name__ == '__main__':
     flter = CourseFilter(courses)
 
     grades = flter.get_grade_objs()
+    
+#   for g in grades:
+#       g.dump_course_table()
+#       print g
+#   exit(0)
+
     gen = Generator(grades)
-    if gen.start() == True:
-        for g in grades:
-            g.dump_course_table()
+    gen.start()
+    for g in grades:
+        g.dump_course_table()
