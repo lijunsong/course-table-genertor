@@ -1,29 +1,29 @@
-#course name,credit,grade,teacher,defined time
+#course name,credit,grade,teacher,start time
 Mathematics for Business ,3,Y1-1,T1,
 Introduction to Micro-economics,3,Y1-1,T2,
 Introduction to Business ,3,Y1-1,T3,
 Business Communication ,3,Y1-1,T4,
-Chinese1,3,Y1-1,T4-1,"1, 1"
-Chinese2,3,Y1-1,T4-1,"2, 2"
-Chinese3,3,Y1-1,T4-1,"3, 3"
+Chinese1,2,Y1-1,T4-1,8:00 Mon
+Chinese2,2,Y1-1,T4-1,10:10 Tue
+Chinese3,2,Y1-1,T4-1,14:00 Wed
 Statistics for Business ,3,Y1-2,T5,
 Introduction to Macro-economics,3,Y1-2,T6,
 Principles of Marketing ,3,Y1-2,T7,
 Cross-cultural Management ,3,Y1-2,T8,
-Chinese4,3,Y1-2,T4-2,"1, 1"
-Chinese5,3,Y1-2,T4-2,"2, 2"
-Chinese6,3,Y1-2,T4-2,"3, 3"
+Chinese1,2,Y1-2,T4-1,8:00 mon
+Chinese2,2,Y1-2,T4-1,10:10 tue
+Chinese3,2,Y1-2,T4-1,14:00 wed
 Statistics for Business ,3,Y2-1,T9,
 Principles of Accounting,3,Y2-1,T10,
 Business Law,3,Y2-1,T11,
 Principles of Management ,3,Y2-1,T12,
-Chinese7,3,Y2-1,T4-3,"1, 1"
-Chinese8,3,Y2-1,T4-3,"2, 2"
-Chinese9,3,Y2-1,T4-3,"3, 3"
+Chinese7,2,Y2-1,T4-3,8:00 mon
+Chinese8,2,Y2-1,T4-3,10:10 tue
+Chinese9,2,Y2-1,T4-3,14:00 wed
 Business Ethics,3,Y2-2,T13,
 Introduction to Corporate Finance,3,Y2-2,T14,
 Entrepreneurship,3,Y2-2,T15,
 Human Resource Management,3,Y2-2,T16,
-Chinese10,3,Y2-2,T4-4,"1, 1"
-Chinese11,3,Y2-2,T4-4,"2, 2"
-Chinese12,3,Y2-2,T4-4,"3, 3"
+Chinese10,2,Y2-2,T4-4,8:00 mon
+Chinese11,2,Y2-2,T4-4,10:10 tue
+Chinese12,2,Y2-2,T4-4,14:00 wed
