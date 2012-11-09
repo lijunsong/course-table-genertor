@@ -9,7 +9,7 @@ from config import *
 class Main:
     def __init__(self, file_name):
         self.reader = Reader(file_name)
-        self.courses = reader.get_courses()
+        self.courses = self.reader.get_courses()
         self.grades = get_all_grades_info(self.courses)
         self.generator = Generator(self.grades)
     
@@ -24,4 +24,5 @@ if __name__=='__main__':
     
         
     main = Main(sys.argv[1])
+    main.start()
     

@@ -18,16 +18,16 @@ class Grade:
         s = "=======Grade: %s=======\n" % self.name
         for c in self.all_courses:
             s += str(c) + "\n"
-        s += str(self.course_table)
+        s += self.course_table.pretty_course_table()
         return s
 
-    def dump_course_table(self):
-        print "==== Grade: %s ====\n" % self.name
-        self.course_table.print_course_table(self.all_courses)
+    def pretty_grade_course_table(self):
+        s = "==== Grade: %s ====\n" % self.name
+        s += self.course_table.pretty_course_table()
+        return s
         
+    def set_course(self, course, start_time):
+        return self.course_table.set_course(course, start_time)
 
-    def set_course(self, course, posi, posj):
-        return self.course_table.set_course(course, posi, posj)
-
-    def unset_course(self, course, posi, posj):
-        self.course_table.unset_course(course, posi, posj)
+    def unset_course(self, course, start_time):
+        self.course_table.unset_course(course, start_time)

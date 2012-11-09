@@ -1,2 +1,2 @@
- - [ ] move functions in CourseFilter to util.py and delete the class
+ - [X] move functions in CourseFilter to util.py and delete the class
  - [ ] reconstruct generate class
