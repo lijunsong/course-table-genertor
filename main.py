@@ -4,7 +4,7 @@ from course import Course
 from util import *
 from generator import Generator
 from reader import Reader
-from config import *
+
 
 class Main:
     def __init__(self, file_name):
@@ -22,6 +22,8 @@ if __name__=='__main__':
         print "main.py needs additional argument as file name"
         exit(1)
     
+    global DEBUG
+    DEBUG = False;
         
     main = Main(sys.argv[1])
     main.start()

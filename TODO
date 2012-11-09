@@ -1,2 +1,11 @@
  - [X] move functions in CourseFilter to util.py and delete the class
- - [ ] reconstruct generate class
+ - [X] reconstruct generate class
+
+# The Rules to set course in a smart way: 
+
+For the course that needs to be treated specially:
+ - sort the courses and put special course at the front positions
+  
+When setting course A, try to consider to:
+ - [ ] add virtual course if the time before or after A concatenats with A
+ - [ ] not put the course in a period that does not have break in it

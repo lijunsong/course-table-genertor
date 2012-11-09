@@ -40,40 +40,41 @@ class Generator:
 
     # int * int * int * int => boolean
     def generate(self, which_grade, which_course, start_time): #return boolean
+        # todo: add course table as another formal arguments
         grade = self.grades[which_grade]
         total_course = len(grade.courses)
         set_p = False
 
         # try to set couse at (i, j)
-        print "[try] to set course %s to %s" % (grade.courses[which_course].name, start_time)
+        debug_print("[try] to set course %s to %s" % (grade.courses[which_course].name, start_time))
         if not grade.courses[which_course].need_allocate_p(): # pre-allocatd
-            print "pre allocated one!"
+            debug_print("pre allocated one!")
         else:
             set_p = grade.set_course(which_course, start_time) 
             if not set_p:  #fail to set course in the table
-                print "[failed] to set course %s to %s" % (grade.courses[which_course].name, start_time)
+                debug_print("[failed] to set course %s to %s" % (grade.courses[which_course].name, start_time))
                 return False
             else:
-                print "[successed] to set course %s to %s" % (grade.courses[which_course].name, start_time)
+                debug_print("[successed] to set course %s to %s" % (grade.courses[which_course].name, start_time))
 
         if which_course == total_course - 1 and which_grade == self.total_grade - 1: # successfully put all courses in all grades
             #get all course table, return True
-            print "get final result: "
+            debug_print("get final result: ")
             self.pretty_print_all_grades()
             if set_p:
-                print "[unset] course %s to %s" % (grade.courses[which_course].name, start_time)
+                debug_print("[unset] course %s to %s" % (grade.courses[which_course].name, start_time))
                 grade.unset_course(which_course, start_time) #before going back, unset
             return True
         # else: not all courses are allocated
         elif which_course == total_course -1: # successfully put all courses in one grade
-            print "[try] to generate next grade: %s" % self.grades[which_grade + 1].name
+            debug_print("[try] to generate next grade: %s" % self.grades[which_grade + 1].name)
             self.set_next_grade(which_grade + 1)
         else:
-            print "[try] to generate next course: %s" % grade.courses[which_course+1].name
+            debug_print("[try] to generate next course: %s" % grade.courses[which_course+1].name)
             self.set_next_course(which_grade, which_course + 1)
 
         if set_p:
-            print "[unset] course %s to %s" % (grade.courses[which_course].name, start_time)
+            debug_print("[unset] course %s to %s" % (grade.courses[which_course].name, start_time))
             grade.unset_course(which_course, start_time) #before going back, unset
         return False
         

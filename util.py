@@ -1,5 +1,4 @@
 from config import *
-from sets import Set
 from grade import Grade
 
 def convert_str_to_num(str_lst):
@@ -72,6 +71,11 @@ def get_not_pre_alloc_courses(courses):
             result.append(c)
     return result
 
+def debug_print(s):
+    DEBUG = True
+    if DEBUG:
+        print s
+        
 if __name__=='__main__':
     from reader import Reader
     reader = Reader('test.csv')

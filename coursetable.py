@@ -22,10 +22,19 @@ class CourseTable:
             if self.courses[which].start_time != None:
                 self.set_course(which, self.courses[which].start_time)
     
+    def __concatenate_str_p(self, t1, t2):
+        if t1.strip().split("-")[1] == t2.strip().split("-")[0] or \
+           t1.strip().split("-")[0] == t2.strip().split("-")[1]:
+            return True
+        else:
+            return False
+    
     def concatenate_time_p(self, which_course, start_time):
         """ given course and its start time, this function will check
         current course table to see if there is any course that concatenates
-        to current course 
+        to current course
+        
+        concatenate means: 10:00-11:50 with succeeding 11:50-12:40
         """
         credit = self.courses[which_course].credit
         day = start_time[1]
@@ -33,13 +42,29 @@ class CourseTable:
         check_time_before = start_time[0] - 1
         check_time_after  = end_time + 1
         if check_time_before >= 0 and check_time_after < self.period_num:
-            return self.coursetable[check_time_before][day] != -1 or self.coursetable[check_time_after][day]  != -1
+            # before->start_time[0]->start_time[1]->end
+            if self.__concatenate_str_p(TIME[check_time_before], TIME[start_time[0]]) and \
+                self.coursetable[check_time_before][day] != -1:
+                return True
+            elif self.__concatenate_str_p(TIME[start_time[1]], TIME[check_time_after]) and \
+                self.coursetable[check_time_after][day] != -1:
+                return True
+            else:
+                return False
         else:
             if check_time_before < 0: # check check_time_after
-                return self.coursetable[check_time_after][day] != -1
+                if self.__concatenate_str_p(TIME[start_time[1]], TIME[check_time_after]) and \
+                    self.coursetable[check_time_after][day] != -1:
+                    return True
+                else:
+                    return False
             else:
-                return self.coursetable[check_time_before][day] != -1
-        
+                if self.__concatenate_str_p(TIME[check_time_before], TIME[start_time[0]]) and \
+                    self.coursetable[check_time_before][day] != -1:
+                    return True
+                else:
+                    return False 
+                
     def can_set_p(self, which_course, start_time):
         res = True
         credit = self.courses[which_course].credit
@@ -47,10 +72,12 @@ class CourseTable:
         posj = start_time[1]
         
         if self.concatenate_time_p(which_course, start_time):
+            print("concatenate")
             return False
         
         for i in range(0, credit):
             if posi + i >= self.period_num or self.coursetable[posi + i][posj] != -1:
+                print("less than credit %s" % (posi + i))
                 res = False
                 break
         return res
