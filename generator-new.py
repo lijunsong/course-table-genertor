@@ -53,6 +53,16 @@ class Generator:
             res.append(max_num)
         return res
     
+    def generate_new(self, which_grade, which_course, coursetables):
+        grade = self.grades[which_grade]
+        total_course = len(grade.courses)
+        
+        
+        
+        
+        
+        
+        
     # int * int * int=> boolean
     def generate(self, which_grade, which_course, start_time): #return boolean
         # todo: add course table as another formal arguments
