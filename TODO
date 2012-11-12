@@ -4,7 +4,7 @@
 # The Rules to set course in a smart way: 
 
 For the course that needs to be treated specially:
- - sort the courses and put special course at the front positions
+ - sort the courses and put the special course at the front positions
   
 When setting course A, try to consider to:
  - [ ] add virtual course if the time before or after A concatenats with A

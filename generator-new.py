@@ -38,13 +38,29 @@ class Generator:
         else:
             self.generate(which_is_next, which_course, start_time)
 
-    # int * int * int * int => boolean
+    def compute_eachday_classroom(self):
+        res = []
+        for day in range(self.day_num):
+            max_num = 0
+            for time in range(self.time_num):
+                classroom_num = 0
+                for grade in range(self.total_grade):
+                    if self.grades[grade].course_table.coursetable[time][day] != -1:
+                        # compute how many grades have courses in a day at the same time
+                        classroom_num += 1
+                if classroom_num > max_num:
+                    max_num = classroom_num 
+            res.append(max_num)
+        return res
+    
+    # int * int * int=> boolean
     def generate(self, which_grade, which_course, start_time): #return boolean
         # todo: add course table as another formal arguments
         grade = self.grades[which_grade]
-        total_course = len(grade.courses)
+        total_course = len(grade.courses)  # number of course that need be allocated
         set_p = False
 
+        
         # try to set couse at (i, j)
         debug_print("[try] to set course %s to %s" % (grade.courses[which_course].name, start_time))
         if not grade.courses[which_course].need_allocate_p(): # pre-allocatd
@@ -56,11 +72,12 @@ class Generator:
                 return False
             else:
                 debug_print("[successed] to set course %s to %s" % (grade.courses[which_course].name, start_time))
-
+                
         if which_course == total_course - 1 and which_grade == self.total_grade - 1: # successfully put all courses in all grades
             #get all course table, return True
             debug_print("get final result: ")
             self.pretty_print_all_grades()
+            debug_print("classroom: %s" % self.compute_eachday_classroom())
             if set_p:
                 debug_print("[unset] course %s to %s" % (grade.courses[which_course].name, start_time))
                 grade.unset_course(which_course, start_time) #before going back, unset
