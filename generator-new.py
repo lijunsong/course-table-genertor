@@ -39,7 +39,11 @@ class Generator:
             self.generate(which_is_next, which_course, start_time)
 
     def compute_eachday_classroom(self):
-        res = []
+        """ according to the coursetables in all grades, return a dict, which maps
+        
+        each day -> the classrooms usesage information
+        """
+        res = {}
         for day in range(self.day_num):
             max_num = 0
             for time in range(self.time_num):
@@ -50,19 +54,95 @@ class Generator:
                         classroom_num += 1
                 if classroom_num > max_num:
                     max_num = classroom_num 
-            res.append(max_num)
+            res[day] = max_num
         return res
     
-    def generate_new(self, which_grade, which_course, coursetables):
+    def order_day(self):
+        """ according to coursetables in all grades, return a list, which
+         is ordered day_num. Sorting is based on the classroom 
+         usage info in each day"""
+         
+        classrooms = self.compute_eachday_classroom()
+        sorted_day = sorted(classrooms, key = classrooms.get)
+        return sorted_day
+        
+    def order_time(self, which_grade, which_day):
+        """ given a grade and a certain day, return a list, which
+        is ordered time(optimized sorted time) in `which_day`
+        """
+        # TODO: Order the time based on all coursetable's classroom
+        # usage: set time, and compute classroom usage again, find the best
+        # time order.
+        
+        # check the time before noon:
+        no_class_before_noon = True
+        time_order_before_noon = []
+        for time in range(self.time_num):
+            if before_noon_p(get_end_time(TIME[time])) and \
+               self.grades[which_grade].course_table.coursetable[time][which_day] != -1:
+                no_class_before_noon = False
+            else:
+                time_order_before_noon.append(time)
+        # check the time after noon
+        no_class_after_noon = True
+        time_order_after_noon = []
+        for time in range(self.time_num):
+            if not before_noon_p(get_start_time(TIME[time])) and \
+               self.grades[which_grade].course_table.coursetable[time][which_day] != -1:
+                no_class_after_noon = False
+            else:
+                time_order_after_noon.append(time)
+                
+        res = []
+        if no_class_before_noon == False and no_class_after_noon:
+            res.extend(time_order_after_noon)
+            res.extend(time_order_before_noon)
+        else:
+            res.extend(time_order_before_noon)
+            res.extend(time_order_after_noon)
+        return res
+    
+    
+    def set_course(self, which_grade, which_course):
+        ordered_day = self.order_day()
+        
+        for day in ordered_day:
+            ordered_time = self.order_time(which_grade, day)
+            for time in ordered_time:
+                self.generate_new(which_grade, which_course, [time, day])
+    
+    def set_grade(self, which_grade):
+        # TODO: get ordered course list
+        
+        ordered_day = self.order_day()
+        for day in ordered_day:
+            ordered_time = self.order_time(which_grade, day)
+            for time in ordered_time:
+                self.generate_new(which_grade, 0, [time, day]) # TODO: should be from ordered course list
+        
+    def generate_new(self, which_grade, which_course, start_time):
         grade = self.grades[which_grade]
         total_course = len(grade.courses)
         
+        set_p = grade.set_course(which_course, start_time)
+        if not set_p:
+            return False
         
+        if which_course == total_course - 1 and which_grade == self.total_grade - 1:
+            self.pretty_print_all_grades()
+            if set_p:
+                grade.unset_course(which_course, start_time)
+                return True
+        elif which_course == total_course - 1:
+            self.set_grade(which_grade + 1)
+        else:
+            # TODO: get next course from optimized course list
+            self.set_course(which_grade, which_course + 1)
         
-        
-        
-        
-        
+        if set_p:
+            grade.unset_course(which_course, start_time)
+        return False
+    
     # int * int * int=> boolean
     def generate(self, which_grade, which_course, start_time): #return boolean
         # todo: add course table as another formal arguments
@@ -106,11 +186,7 @@ class Generator:
         return False
         
     def start(self):
-
-        for i in range(self.time_num):
-            for j in range(self.day_num):
-                start_time = [i, j]
-                self.generate(0, 0, start_time)
+        self.set_grade(0)
 
 if __name__ == '__main__':
     from reader import Reader

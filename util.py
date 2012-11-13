@@ -6,10 +6,20 @@ def convert_str_to_num(str_lst):
 
 def to_standard_time(time):
     """standard_time is "xx:xx" """
+    # TODO: optimize
     s = time.split(":")
     if len(s[0]) == 1: s[0] = "0" + s[0]
     if len(s[1]) == 1: s[1] = "0" + s[1]
     return ":".join(s)
+
+def before_noon_p(time):
+    return (to_standard_time(time) <= "12:01")
+
+def get_start_time(time_range):
+    return to_standard_time(time_range.split('-')[0])
+
+def get_end_time(time_range):
+    return to_standard_time(time_range.split('-')[1])
 
 def time_to_pos(time):
     """ convert the surface representation of time to [i,j] position"""
@@ -74,6 +84,7 @@ def get_not_pre_alloc_courses(courses):
 def debug_print(s):
     DEBUG = True
     if DEBUG:
+        print "debug: ",
         print s
         
 if __name__=='__main__':

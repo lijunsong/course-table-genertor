@@ -119,6 +119,7 @@ class CourseTable:
             self.coursetable[posi+i][posj] = -1
         
 
+
     def pretty_course_table(self):
         s = ""
         for i in range(self.time_num):
