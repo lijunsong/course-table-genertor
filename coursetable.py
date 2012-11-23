@@ -44,7 +44,7 @@ class CourseTable:
         else:
             return False
     
-    def concatenate_time_p(self, which_course, start_time):
+    def concatenate_time_p(self, which_course, course_range, day):
         """ given course and its start time, this function will check
         current course table to see if there is any course that concatenates
         to current course
@@ -52,15 +52,19 @@ class CourseTable:
         concatenate means: 10:00-11:50 with succeeding 11:50-12:40
         """
         # first check if the time is in the mutual time list
-        when = start_time[0]
-        day = start_time[1]
         conc = False
+
         for mutual_time in self.mutual_time:
             # if which_course is in a mutual time, check if next pos has a course
-            if mutual_time == when and self.coursetable[when + 1][day] != -1:
+            if mutual_time in course_range and \
+               mutual_time == course_range[-1] and \
+               self.coursetable[mutual_time + 1][day] != -1:
                 conc = True
                 break
-            elif mutual_time == when + 1 and self.coursetable[when][day] != -1:
+            # check if previous pos has a course
+            elif mutual_time + 1 in course_range and \
+                 mutual_time + 1 == course_range[0] and \
+                 self.coursetable[mutual_time][day] != -1:
                 conc = True
                 break
             else:
@@ -68,33 +72,33 @@ class CourseTable:
         return conc 
 
     def can_set_p(self, which_course, start_time):
-        res = True
+
         credit = self.courses[which_course].credit
         posi = start_time[0]
         posj = start_time[1]
         
-        # check if there is any possible that there are courses before or after 
-        # `which_course` that students do not have break between courses
-        if self.concatenate_time_p(which_course, start_time):
-            debug("concatenate")
-            return False
+        course_range = range(posi, posi + credit)
         
+        # courses CANNOT be setted to cross the mutual time
+        for mutual_time in self.mutual_time:
+            if mutual_time in course_range and mutual_time + 1 in course_range:
+                return False
+
         # since the number of courses is determined by credits, here check if current
         # start_time can meet the requirement of credits
         for i in range(0, credit):
             if posi + i >= self.time_num or self.coursetable[posi + i][posj] != -1:
                 debug("less than credit %s" % (posi + i))
-                res = False
-                break
+                return False
+
+        # Now, we have time to set the course,
+        # but....check if there is any possible that there are courses before or after 
+        # `which_course` that students do not have break between courses
+        if self.concatenate_time_p(which_course, course_range, posj):
+            debug("concatenate")
+            return False
         
-        # courses CANNOT be setted to cross the mutual time
-        course_range = range(posi, posi + credit)
-        for mutual_time in self.mutual_time:
-            if mutual_time in course_range and mutual_time + 1 in course_range:
-                res = False
-                break
-        
-        return res
+        return True
     
     def set_course(self, which_course, start_time):
         """ set course at start_time
@@ -118,8 +122,6 @@ class CourseTable:
         for i in range(0, self.courses[which_course].credit):
             self.coursetable[posi+i][posj] = -1
         
-
-
     def pretty_course_table(self):
         s = ""
         for i in range(self.time_num):

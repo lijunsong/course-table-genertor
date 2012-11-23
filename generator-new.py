@@ -18,26 +18,6 @@ class Generator:
         for g in self.grades:
             print g.pretty_grade_course_table()
 
-    def set_next_course(self, which_grade, which_is_next, start_time=None):
-        #TODO: cut the tree
-        if start_time == None:
-            for i in range(self.time_num):
-                for j in range(self.day_num):
-                    new_time = [i, j]
-                    self.generate(which_grade, which_is_next, new_time)
-        else:
-            self.generate(which_grade, which_is_next, start_time)
-        
-    def set_next_grade(self, which_is_next, which_course=None, start_time=None):
-        """ start to set next grade's first course """
-        if start_time == None:
-            for i in range(self.time_num):
-                for j in range(self.day_num):
-                    new_time = [i, j]
-                    self.generate(which_is_next, 0, new_time)
-        else:
-            self.generate(which_is_next, which_course, start_time)
-
     def compute_eachday_classroom(self):
         """ according to the coursetables in all grades, return a dict, which maps
         
@@ -49,7 +29,9 @@ class Generator:
             for time in range(self.time_num):
                 classroom_num = 0
                 for grade in range(self.total_grade):
-                    if self.grades[grade].course_table.coursetable[time][day] != -1:
+                    which_course = self.grades[grade].course_table.coursetable[time][day]
+                    if which_course != -1 and \
+                       self.grades[grade].all_courses[which_course].need_allocate_p():
                         # compute how many grades have courses in a day at the same time
                         classroom_num += 1
                 if classroom_num > max_num:
@@ -62,7 +44,9 @@ class Generator:
          is ordered day_num. Sorting is based on the classroom 
          usage info in each day"""
          
+        # TODO: sort by total credits in a day! 
         classrooms = self.compute_eachday_classroom()
+        print "classroom usage: %s" % classrooms
         sorted_day = sorted(classrooms, key = classrooms.get)
         return sorted_day
         
@@ -81,8 +65,12 @@ class Generator:
             if before_noon_p(get_end_time(TIME[time])) and \
                self.grades[which_grade].course_table.coursetable[time][which_day] != -1:
                 no_class_before_noon = False
-            else:
+            elif before_noon_p(get_end_time(TIME[time])):
                 time_order_before_noon.append(time)
+                break # only a position is enough
+
+
+        print "in %s, time_order_before_noon: %s" % (which_day, time_order_before_noon)
         # check the time after noon
         no_class_after_noon = True
         time_order_after_noon = []
@@ -90,8 +78,11 @@ class Generator:
             if not before_noon_p(get_start_time(TIME[time])) and \
                self.grades[which_grade].course_table.coursetable[time][which_day] != -1:
                 no_class_after_noon = False
-            else:
+            elif not before_noon_p(get_start_time(TIME[time])):
                 time_order_after_noon.append(time)
+                break
+
+        print "in %s, time_order_after_noon: %s" % (which_day, time_order_after_noon)
                 
         res = []
         if no_class_before_noon == False and no_class_after_noon:
@@ -113,11 +104,17 @@ class Generator:
     
     def set_grade(self, which_grade):
         # TODO: get ordered course list
+        print "begin to set grade %s, current is:" % which_grade
+        self.pretty_print_all_grades()
         
         ordered_day = self.order_day()
+        print "grade: %s, generate ordered_day: %s" % (which_grade, ordered_day)
         for day in ordered_day:
+            print "grade: %s, ordered_daye: %s" % (which_grade, ordered_day)
             ordered_time = self.order_time(which_grade, day)
             for time in ordered_time:
+                print "grade: %s, ordered_time: %s . Start to set course 0" % (which_grade, ordered_time)
+                
                 self.generate_new(which_grade, 0, [time, day]) # TODO: should be from ordered course list
         
     def generate_new(self, which_grade, which_course, start_time):
@@ -141,48 +138,6 @@ class Generator:
         
         if set_p:
             grade.unset_course(which_course, start_time)
-        return False
-    
-    # int * int * int=> boolean
-    def generate(self, which_grade, which_course, start_time): #return boolean
-        # todo: add course table as another formal arguments
-        grade = self.grades[which_grade]
-        total_course = len(grade.courses)  # number of course that need be allocated
-        set_p = False
-
-        
-        # try to set couse at (i, j)
-        debug_print("[try] to set course %s to %s" % (grade.courses[which_course].name, start_time))
-        if not grade.courses[which_course].need_allocate_p(): # pre-allocatd
-            debug_print("pre allocated one!")
-        else:
-            set_p = grade.set_course(which_course, start_time) 
-            if not set_p:  #fail to set course in the table
-                debug_print("[failed] to set course %s to %s" % (grade.courses[which_course].name, start_time))
-                return False
-            else:
-                debug_print("[successed] to set course %s to %s" % (grade.courses[which_course].name, start_time))
-                
-        if which_course == total_course - 1 and which_grade == self.total_grade - 1: # successfully put all courses in all grades
-            #get all course table, return True
-            debug_print("get final result: ")
-            self.pretty_print_all_grades()
-            debug_print("classroom: %s" % self.compute_eachday_classroom())
-            if set_p:
-                debug_print("[unset] course %s to %s" % (grade.courses[which_course].name, start_time))
-                grade.unset_course(which_course, start_time) #before going back, unset
-            return True
-        # else: not all courses are allocated
-        elif which_course == total_course -1: # successfully put all courses in one grade
-            debug_print("[try] to generate next grade: %s" % self.grades[which_grade + 1].name)
-            self.set_next_grade(which_grade + 1)
-        else:
-            debug_print("[try] to generate next course: %s" % grade.courses[which_course+1].name)
-            self.set_next_course(which_grade, which_course + 1)
-
-        if set_p:
-            debug_print("[unset] course %s to %s" % (grade.courses[which_course].name, start_time))
-            grade.unset_course(which_course, start_time) #before going back, unset
         return False
         
     def start(self):

@@ -17,7 +17,7 @@ COURSE_PREFER = { "course_name" : "time > 09:00",
 
 TEACHER_PREFER = { "teacher_name" : " time > 09:00",
                    "teacher_name2" : "time < 17:00",
-                   "teacher_name3" : "not in mon"
+                   "teacher_name3" : "not on mon"
                    }
 
 VIRTUAL_COURSE = 10000
