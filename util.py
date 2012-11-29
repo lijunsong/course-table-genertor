@@ -13,7 +13,7 @@ def to_standard_time(time):
     return ":".join(s)
 
 def before_noon_p(time):
-    return (to_standard_time(time) <= "13:01")
+    return (to_standard_time(time) <= "12:59")
 
 def get_start_time(time_range):
     return to_standard_time(time_range.split('-')[0])

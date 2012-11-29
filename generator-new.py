@@ -65,12 +65,13 @@ class Generator:
             if before_noon_p(get_end_time(TIME[time])) and \
                self.grades[which_grade].course_table.coursetable[time][which_day] != -1:
                 no_class_before_noon = False
-            elif before_noon_p(get_end_time(TIME[time])):
+            elif before_noon_p(get_end_time(TIME[time])) and \
+                time not in STUDENT_PREFER_TIME_NOT:
                 time_order_before_noon.append(time)
-                break # only a position is enough
+                break # only one position is enough
 
 
-        print "in %s, time_order_before_noon: %s" % (which_day, time_order_before_noon)
+        print "in day %s, time_order_before_noon: %s" % (which_day, time_order_before_noon)
         # check the time after noon
         no_class_after_noon = True
         time_order_after_noon = []
@@ -78,11 +79,12 @@ class Generator:
             if not before_noon_p(get_start_time(TIME[time])) and \
                self.grades[which_grade].course_table.coursetable[time][which_day] != -1:
                 no_class_after_noon = False
-            elif not before_noon_p(get_start_time(TIME[time])):
+            elif not before_noon_p(get_start_time(TIME[time])) and \
+               time not in STUDENT_PREFER_TIME_NOT:
                 time_order_after_noon.append(time)
                 break
 
-        print "in %s, time_order_after_noon: %s" % (which_day, time_order_after_noon)
+        print "in day %s, time_order_after_noon: %s" % (which_day, time_order_after_noon)
                 
         res = []
         if no_class_before_noon == False and no_class_after_noon:
@@ -95,11 +97,14 @@ class Generator:
     
     
     def set_course(self, which_grade, which_course):
+        # TODO: ordered_day should be start with the prefered day in the config.py
+        # then following other not prefered time
         ordered_day = self.order_day()
-        
+        print "set_course of grade %s course %s" % (which_grade, which_course)
         for day in ordered_day:
             ordered_time = self.order_time(which_grade, day)
             for time in ordered_time:
+                print "start to set course on %s,%s" % (time, day)
                 self.generate_new(which_grade, which_course, [time, day])
     
     def set_grade(self, which_grade):
@@ -123,6 +128,7 @@ class Generator:
         
         set_p = grade.set_course(which_course, start_time)
         if not set_p:
+            print "cannot set on %s" % start_time
             return False
         
         if which_course == total_course - 1 and which_grade == self.total_grade - 1:

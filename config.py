@@ -8,17 +8,26 @@ TIME =   ["08:00-08:50", "09:00-09:50", \
 
 DAY = ["Mon", "Tue", "Wed", "Thu", "Fri"]
 
-STUDENT_PREFER = { "all_course" : "time > 09:00" }
+# this should be "time >= 9:00"
+STUDENT_PREFER_TIME_NOT = [0]
 
-COURSE_PREFER = { "course_name" : "time > 09:00",
-                  "course_name2" : "10:00 < time < 18:00"
+COURSE_PREFER_TIME = { 
+"Introduction to Micro-economics" : [4,5,6,7,8,9],
+"Introduction to Business" : [1,2,3,4]
                   
-                }
+}
 
-TEACHER_PREFER = { "teacher_name" : " time > 09:00",
-                   "teacher_name2" : "time < 17:00",
-                   "teacher_name3" : "not on mon"
-                   }
+TEACHER_PREFER_TIME = {
+"T1" : [0,1,2,3],
+"T5" : [0,1,2,3,4,5,6,7],
+}
+
+TEACHER_PREFER_DAY = {
+"T1" : [2,3],
+"T2" : [3]
+}
+
+
 
 VIRTUAL_COURSE = 10000
 

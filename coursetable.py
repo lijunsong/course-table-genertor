@@ -71,6 +71,36 @@ class CourseTable:
                 continue
         return conc 
 
+    def check_config_p(self, which_course, start_time):
+        time = start_time[0]
+        day  = start_time[1]
+        # check student prefered time
+        if time in STUDENT_PREFER_TIME_NOT:
+            print 1
+            return False
+
+        # check course prefered time
+        course_name = self.courses[which_course].name #intro bug: diff teacher with same course name
+        if COURSE_PREFER_TIME.has_key(course_name):
+            if time not in COURSE_PREFER_TIME[course_name]:
+                print 2
+                return False
+
+        # check teacher perfered time
+        teacher = self.courses[which_course].teacher
+        if TEACHER_PREFER_TIME.has_key(teacher):
+            if time not in TEACHER_PREFER_TIME[teacher]:
+                print 3
+                return False
+
+        # check teacher prefered day
+        if TEACHER_PREFER_DAY.has_key(teacher):
+            if day not in TEACHER_PREFER_DAY[teacher]:
+                print 4
+                return False
+
+        return True
+
     def can_set_p(self, which_course, start_time):
 
         credit = self.courses[which_course].credit
@@ -78,10 +108,17 @@ class CourseTable:
         posj = start_time[1]
         
         course_range = range(posi, posi + credit)
+
+        # check configure. If current course with the start_time is
+        # not prefered by teachers and students, return False
+        if not self.check_config_p(which_course, start_time):
+            print "check_config_p return False"
+            return False
         
         # courses CANNOT be setted to cross the mutual time
         for mutual_time in self.mutual_time:
             if mutual_time in course_range and mutual_time + 1 in course_range:
+                print "cross mutual time"
                 return False
 
         # since the number of courses is determined by credits, here check if current
