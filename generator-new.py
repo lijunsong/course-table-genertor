@@ -154,10 +154,10 @@ if __name__ == '__main__':
     courses = Reader('test.csv').get_courses()
     grades = get_all_grades_info(courses)
     
-#   for g in grades:
-#       g.pretty_grade_course_table()
-#       print g
-#   exit(0)
+#    for g in grades:
+#        #g.pretty_grade_course_table()
+#        print g
+#    exit(0)
 
     gen = Generator(grades)
     gen.start()

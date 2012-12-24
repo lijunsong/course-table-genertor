@@ -29,7 +29,7 @@ class Reader:
 
     def __is_comment(self, line):
         # string => boolean
-        return line.startswith(self.comment)
+        return line.startswith(self.comment) or line == ""
 
     def __process_csv(self):
         try:
@@ -47,6 +47,6 @@ class Reader:
             exit(1)
             
 if __name__=='__main__':
-    reader = Reader("info.csv")
+    reader = Reader("test.csv")
     for c in reader.get_courses():
-        print c.name
+        print c.name, c.credit, c.grade_name, c.teacher

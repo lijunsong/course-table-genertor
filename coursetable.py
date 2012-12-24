@@ -34,8 +34,8 @@ class CourseTable:
     def set_initially(self):
         # pre_alloc course
         for which in range(0, len(self.courses)):
-            if self.courses[which].start_time != None:
-                self.set_course(which, self.courses[which].start_time)
+            if not self.courses[which].need_allocate_p():
+                self.set_course(which, self.courses[which].start_time, True)
     
     def __concatenate_str_p(self, t1, t2):
         if t1.strip().split("-")[1] == t2.strip().split("-")[0] or \
@@ -137,14 +137,14 @@ class CourseTable:
         
         return True
     
-    def set_course(self, which_course, start_time):
+    def set_course(self, which_course, start_time, set_force=False):
         """ set course at start_time
 
         return True if set sucessfully; otherwise return False"""
         
         posi = start_time[0]
         posj = start_time[1]
-        if not self.can_set_p(which_course, start_time):
+        if set_force == False and not self.can_set_p(which_course, start_time):
             return False
         else:
             for i in range(0, self.courses[which_course].credit):

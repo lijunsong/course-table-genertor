@@ -30,20 +30,20 @@ def time_to_pos(time):
     
     tm, day = time.strip().split()
     tm = to_standard_time(tm.strip())
-    day = day.strip().capitalize()
+    day = day.strip().capitalize()[:3]
     for x in range(0, len(TIME)):
         if tm <= TIME[x][:5]:
             i = x
             break
     if i == None:
-        print "error occured: %s" % time
+        print "error occured when processing time: %s" % time
         exit(1)
     for x in range(0, len(DAY)):
         if day == DAY[x][:3]:
             j = x
             break
     if j == None:
-        print "error occured: %s" % time
+        print "error occured when processing day: %s" % time
         exit(1)
         
     return [i, j]
@@ -67,6 +67,7 @@ def get_courses_of_grade(grade_name, courses):
     return res
 
 def get_all_grades_info(courses):
+    "listof Course => listof Grade"
     result = []
     gs = get_grades_name(courses)
     for grade_name in gs:
