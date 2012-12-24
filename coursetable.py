@@ -125,14 +125,14 @@ class CourseTable:
         # start_time can meet the requirement of credits
         for i in range(0, credit):
             if posi + i >= self.time_num or self.coursetable[posi + i][posj] != -1:
-                debug("less than credit %s" % (posi + i))
+                print("less than credit %s" % (posi + i))
                 return False
 
         # Now, we have time to set the course,
         # but....check if there is any possible that there are courses before or after 
         # `which_course` that students do not have break between courses
         if self.concatenate_time_p(which_course, course_range, posj):
-            debug("concatenate")
+            print("concatenate")
             return False
         
         return True
@@ -175,7 +175,7 @@ class CourseTable:
     
 if __name__ == '__main__':
     from reader import Reader
-    reader = Reader("info.csv")
+    reader = Reader("test.csv")
     coursetable = CourseTable(reader.get_courses())
     print coursetable.mutual_time
     print coursetable.pretty_course_table()

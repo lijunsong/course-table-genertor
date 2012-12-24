@@ -18,6 +18,10 @@ class Generator:
         for g in self.grades:
             print g.pretty_grade_course_table()
 
+    def pretty_print_grade(self, g):
+        "int => void"
+        print self.grades[g].pretty_grade_course_table()
+
     def compute_eachday_classroom(self):
         """ according to the coursetables in all grades, return a dict, which maps
         
@@ -68,7 +72,7 @@ class Generator:
             elif before_noon_p(get_end_time(TIME[time])) and \
                 time not in STUDENT_PREFER_TIME_NOT:
                 time_order_before_noon.append(time)
-                break # only one position is enough
+                #break # only one position is enough
 
 
         print "in day %s, time_order_before_noon: %s" % (which_day, time_order_before_noon)
@@ -82,7 +86,7 @@ class Generator:
             elif not before_noon_p(get_start_time(TIME[time])) and \
                time not in STUDENT_PREFER_TIME_NOT:
                 time_order_after_noon.append(time)
-                break
+                #break
 
         print "in day %s, time_order_after_noon: %s" % (which_day, time_order_after_noon)
                 
@@ -93,6 +97,7 @@ class Generator:
         else:
             res.extend(time_order_before_noon)
             res.extend(time_order_after_noon)
+        print "return from order_time(): %s" % res
         return res
     
     
@@ -113,9 +118,9 @@ class Generator:
         self.pretty_print_all_grades()
         
         ordered_day = self.order_day()
-        print "grade: %s, generate ordered_day: %s" % (which_grade, ordered_day)
+        print "grade: %s, begin to iterate on ordered_day: %s" % (which_grade, ordered_day)
         for day in ordered_day:
-            print "grade: %s, ordered_daye: %s" % (which_grade, ordered_day)
+            print "grade: %s, ordered_day: %s current day: %s" % (which_grade, ordered_day, day)
             ordered_time = self.order_time(which_grade, day)
             for time in ordered_time:
                 print "grade: %s, ordered_time: %s . Start to set course 0" % (which_grade, ordered_time)
@@ -125,12 +130,14 @@ class Generator:
     def generate_new(self, which_grade, which_course, start_time):
         grade = self.grades[which_grade]
         total_course = len(grade.courses)
-        
+        print "generate_new(grade:%s, course:%s(%s), start_time:%s" % (which_grade, which_course, grade.courses[which_course], start_time)
         set_p = grade.set_course(which_course, start_time)
         if not set_p:
             print "cannot set on %s" % start_time
             return False
-        
+
+        self.pretty_print_grade(which_grade)
+
         if which_course == total_course - 1 and which_grade == self.total_grade - 1:
             self.pretty_print_all_grades()
             if set_p:
@@ -140,6 +147,7 @@ class Generator:
             self.set_grade(which_grade + 1)
         else:
             # TODO: get next course from optimized course list
+            print "[generate_new]: begin to set next course"
             self.set_course(which_grade, which_course + 1)
         
         if set_p:
