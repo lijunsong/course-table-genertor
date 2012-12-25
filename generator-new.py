@@ -33,9 +33,9 @@ class Generator:
             for time in range(self.time_num):
                 classroom_num = 0
                 for grade in range(self.total_grade):
-                    which_course = self.grades[grade].course_table.coursetable[time][day]
-                    if which_course != -1 and \
-                       self.grades[grade].all_courses[which_course].need_allocate_p():
+                    course_id = self.grades[grade].course_table.coursetable[time][day]
+                    if course_id != -1 and \
+                       self.grades[grade]._id_to_course(course_id).need_allocate_p():
                         # compute how many grades have courses in a day at the same time
                         classroom_num += 1
                 if classroom_num > max_num:
@@ -101,57 +101,54 @@ class Generator:
         return res
     
     
-    def set_course(self, which_grade, which_course):
+    def set_course(self, which_grade, nth_unallocated):
         # TODO: ordered_day should be start with the prefered day in the config.py
         # then following other not prefered time
         ordered_day = self.order_day()
-        print "set_course of grade %s course %s" % (which_grade, which_course)
+        print "set_course of grade %s course %s" % (which_grade, nth_unallocated)
         for day in ordered_day:
             ordered_time = self.order_time(which_grade, day)
             for time in ordered_time:
                 print "start to set course on %s,%s" % (time, day)
-                self.generate_new(which_grade, which_course, [time, day])
+                self.generate_new(which_grade, nth_unallocated, [time, day])
     
-    def set_grade(self, which_grade):
-        # TODO: get ordered course list
-        print "begin to set grade %s, current is:" % which_grade
-        self.pretty_print_all_grades()
-        
-        ordered_day = self.order_day()
-        print "grade: %s, begin to iterate on ordered_day: %s" % (which_grade, ordered_day)
-        for day in ordered_day:
-            print "grade: %s, ordered_day: %s current day: %s" % (which_grade, ordered_day, day)
+    def set_grade(self, which_grade):  
+        self.pretty_print_all_grades()  
+        ordered_day = self.order_day()   
+        for day in ordered_day:        
             ordered_time = self.order_time(which_grade, day)
             for time in ordered_time:
-                print "grade: %s, ordered_time: %s . Start to set course 0" % (which_grade, ordered_time)
-                
-                self.generate_new(which_grade, 0, [time, day]) # TODO: should be from ordered course list
+                # start from the first *unallocated* course!
+                self.generate_new(which_grade, 0, [time, day])
         
-    def generate_new(self, which_grade, which_course, start_time):
+    def generate_new(self, which_grade, nth_unallocated, start_time):
         grade = self.grades[which_grade]
-        total_course = len(grade.courses)
-        print "generate_new(grade:%s, course:%s(%s), start_time:%s" % (which_grade, which_course, grade.courses[which_course], start_time)
-        set_p = grade.set_course(which_course, start_time)
+        total_course = len(grade.unallocated_courses)
+        # get the course_id of the nth_unallocated course
+        course_id = grade.unallocated_courses[nth_unallocated].cid 
+
+        print "generate_new(grade:%s, course:%s(%s), start_time:%s" % (which_grade, nth_unallocated, grade.unallocated_courses[nth_unallocated], start_time)
+        set_p = grade.set_course(course_id, start_time)
         if not set_p:
             print "cannot set on %s" % start_time
             return False
 
         self.pretty_print_grade(which_grade)
 
-        if which_course == total_course - 1 and which_grade == self.total_grade - 1:
+        if nth_unallocated == total_course - 1 and which_grade == self.total_grade - 1:
             self.pretty_print_all_grades()
             if set_p:
-                grade.unset_course(which_course, start_time)
+                grade.unset_course(course_id, start_time)
                 return True
-        elif which_course == total_course - 1:
+        elif nth_unallocated == total_course - 1:
             self.set_grade(which_grade + 1)
         else:
-            # TODO: get next course from optimized course list
+            # DONE: get next course from optimized course list
             print "[generate_new]: begin to set next course"
-            self.set_course(which_grade, which_course + 1)
+            self.set_course(which_grade, nth_unallocated + 1)
         
         if set_p:
-            grade.unset_course(which_course, start_time)
+            grade.unset_course(course_id, start_time)
         return False
         
     def start(self):

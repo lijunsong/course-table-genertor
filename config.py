@@ -11,20 +11,21 @@ DAY = ["Mon", "Tue", "Wed", "Thu", "Fri"]
 # this should be "time >= 9:00"
 STUDENT_PREFER_TIME_NOT = [0]
 
+# the data structure has changed
+# refer to util.py
 COURSE_PREFER_TIME = { 
-"Introduction to Micro-economics" : [4,5,6,7,8,9],
-"Introduction to Business" : [1,2,3,4]
+#"Introduction to Micro-economics" : [4,5,6,7,8,9],
+#"Introduction to Business" : [1,2,3,4]
                   
 }
 
 TEACHER_PREFER_TIME = {
 "T1" : [0,1,2,3],
-"T5" : [0,1,2,3,4,5,6,7],
+"T2" : [0, 1, 2, 3],
 }
 
 TEACHER_PREFER_DAY = {
-"T1" : [2,3],
-"T2" : [3]
+
 }
 
 

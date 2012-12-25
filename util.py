@@ -66,12 +66,37 @@ def get_courses_of_grade(grade_name, courses):
             res.append(c)
     return res
 
+def conditional_course_p(course):
+    """Course => boolean:
+    check if the course is conditional course
+    """
+    if course.name in COURSE_PREFER_TIME:
+        return True
+    if course.teacher in TEACHER_PREFER_TIME:
+        return True
+    if course.teacher in TEACHER_PREFER_DAY:
+        return True
+    return False
+
+def sort_courses(courses):
+    "(listof Course) => (listof Course)"
+    res = []
+    for c in courses:
+        if conditional_course_p(c):
+            res.append(c)
+    return res
+
 def get_all_grades_info(courses):
-    "listof Course => listof Grade"
+    """(listof Course) => (listof Grade):
+
+    NOTE: This function has sorted the courses based on configure file.
+    """
     result = []
     gs = get_grades_name(courses)
     for grade_name in gs:
         cs = get_courses_of_grade(grade_name, courses)
+        # sort the course: conditonal courses should be put at the head
+        cs = sort_courses(cs)
         result.append(Grade(grade_name, cs))
     return result
 

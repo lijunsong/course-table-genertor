@@ -32,7 +32,7 @@ class Reader:
         return line.startswith(self.comment) or line == ""
 
     def __process_csv(self):
-        try:
+        #try:
             with open(self.file_name, "rb") as csvfile:
                 course_reader = csv.reader(csvfile)
                 for name, credit, grade, teacher, start_time in course_reader:
@@ -42,11 +42,11 @@ class Reader:
                     pos = time_to_pos(start_time)
                     course = Course(name, int(credit), grade, teacher, pos)
                     self.courses.append(course)
-        except: 
-            print "fail to process course file"
-            exit(1)
+        #except: 
+        #    print "fail to process course file"
+        #    exit(1)
             
 if __name__=='__main__':
     reader = Reader("test.csv")
     for c in reader.get_courses():
-        print c.name, c.credit, c.grade_name, c.teacher
+        print c.name, c.credit, c.grade_name, c.teacher, c.cid

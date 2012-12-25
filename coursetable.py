@@ -9,19 +9,31 @@ class CourseTable:
 
     if constructed with information of courses, those pre-allocated course
     will be set on coursetable"""
-    def __init__(self, courses):
+    def __init__(self, all_courses):
         self.time_num = len(TIME)
         self.day_num = len(DAY)
-        self.courses = courses
+        self.all_courses = all_courses
+                
         self.coursetable = [[-1 for col in DAY] for row in TIME]
         # the time between courses may not have break at all, find which course is in 
         # this situation. 
         self.mutual_time = self.__get_mutual_pos()
         self.set_initially()
+
            
     def __str__(self):
         s = str(self.coursetable)
         return s
+
+    def _id_to_course(self, course_id):
+        """int => Course:
+        this function is used to refer to course with its id
+        """
+        for i in self.all_courses:
+            if i.cid == course_id:
+                return i
+        print "course_id:%d is not found!" % course_id
+        exit(1)
 
     def __get_mutual_pos(self):
         res = []
@@ -33,9 +45,13 @@ class CourseTable:
         
     def set_initially(self):
         # pre_alloc course
-        for which in range(0, len(self.courses)):
-            if not self.courses[which].need_allocate_p():
-                self.set_course(which, self.courses[which].start_time, True)
+
+        for which in range(0, len(self.all_courses)):
+            if not self.all_courses[which].need_allocate_p():
+                start_time = self.all_courses[which].start_time
+                for i in range(0, self.all_courses[which].credit):
+                    self.coursetable[start_time[0]+i][start_time[1]] = self.all_courses[which].cid
+                #self.set_course(which, self.all_courses[which].start_time, True)
     
     def __concatenate_str_p(self, t1, t2):
         if t1.strip().split("-")[1] == t2.strip().split("-")[0] or \
@@ -44,7 +60,7 @@ class CourseTable:
         else:
             return False
     
-    def concatenate_time_p(self, which_course, course_range, day):
+    def concatenate_time_p(self, course_range, day):
         """ given course and its start time, this function will check
         current course table to see if there is any course that concatenates
         to current course
@@ -71,7 +87,7 @@ class CourseTable:
                 continue
         return conc 
 
-    def check_config_p(self, which_course, start_time):
+    def check_config_p(self, course_id, start_time):
         time = start_time[0]
         day  = start_time[1]
         # check student prefered time
@@ -80,14 +96,14 @@ class CourseTable:
             return False
 
         # check course prefered time
-        course_name = self.courses[which_course].name #intro bug: diff teacher with same course name
+        course_name = self._id_to_course(course_id).name #intro bug: diff teacher with same course name
         if COURSE_PREFER_TIME.has_key(course_name):
             if time not in COURSE_PREFER_TIME[course_name]:
                 print 2
                 return False
 
         # check teacher perfered time
-        teacher = self.courses[which_course].teacher
+        teacher = self._id_to_course(course_id).teacher
         if TEACHER_PREFER_TIME.has_key(teacher):
             if time not in TEACHER_PREFER_TIME[teacher]:
                 print 3
@@ -101,9 +117,9 @@ class CourseTable:
 
         return True
 
-    def can_set_p(self, which_course, start_time):
+    def can_set_p(self, course_id, start_time):
 
-        credit = self.courses[which_course].credit
+        credit = self._id_to_course(course_id).credit
         posi = start_time[0]
         posj = start_time[1]
         
@@ -111,7 +127,7 @@ class CourseTable:
 
         # check configure. If current course with the start_time is
         # not prefered by teachers and students, return False
-        if not self.check_config_p(which_course, start_time):
+        if not self.check_config_p(course_id, start_time):
             print "check_config_p return False"
             return False
         
@@ -131,32 +147,32 @@ class CourseTable:
         # Now, we have time to set the course,
         # but....check if there is any possible that there are courses before or after 
         # `which_course` that students do not have break between courses
-        if self.concatenate_time_p(which_course, course_range, posj):
+        if self.concatenate_time_p(course_range, posj):
             print("concatenate")
             return False
         
         return True
     
-    def set_course(self, which_course, start_time, set_force=False):
+    def set_course(self, course_id, start_time):
         """ set course at start_time
 
         return True if set sucessfully; otherwise return False"""
         
         posi = start_time[0]
         posj = start_time[1]
-        if set_force == False and not self.can_set_p(which_course, start_time):
+        if not self.can_set_p(course_id, start_time):
             return False
         else:
-            for i in range(0, self.courses[which_course].credit):
-                self.coursetable[posi+i][posj] = which_course
+            for i in range(0, self._id_to_course(course_id).credit):
+                self.coursetable[posi+i][posj] = course_id
             return True
 
-    def unset_course(self, which_course, start_time):
+    def unset_course(self, course_id, start_time):
         if start_time == None:
             return
         posi = start_time[0]
         posj = start_time[1]
-        for i in range(0, self.courses[which_course].credit):
+        for i in range(0, self._id_to_course(course_id).credit):
             self.coursetable[posi+i][posj] = -1
         
     def pretty_course_table(self):
@@ -166,7 +182,7 @@ class CourseTable:
             for j in range(5):
                 o = self.coursetable[i][j]
                 if o != -1:
-                    s += (self.courses[o].name+" "*20)[:20]
+                    s += (self._id_to_course(o).name+" "*20)[:20]
                 else:
                     s += "_"*20
                 s += "  "
