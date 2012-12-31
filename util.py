@@ -80,11 +80,16 @@ def conditional_course_p(course):
 
 def sort_courses(courses):
     "(listof Course) => (listof Course)"
-    res = []
+    conditional = []
+    els = []
     for c in courses:
         if conditional_course_p(c):
-            res.append(c)
-    return res
+            conditional.append(c)
+        else:
+            els.append(c)
+
+    conditional.extend(els)
+    return conditional
 
 def get_all_grades_info(courses):
     """(listof Course) => (listof Grade):

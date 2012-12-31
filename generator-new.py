@@ -126,7 +126,7 @@ class Generator:
         total_course = len(grade.unallocated_courses)
         # get the course_id of the nth_unallocated course
         course_id = grade.unallocated_courses[nth_unallocated].cid 
-
+        
         print "generate_new(grade:%s, course:%s(%s), start_time:%s" % (which_grade, nth_unallocated, grade.unallocated_courses[nth_unallocated], start_time)
         set_p = grade.set_course(course_id, start_time)
         if not set_p:

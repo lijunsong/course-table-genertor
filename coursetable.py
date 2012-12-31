@@ -44,14 +44,12 @@ class CourseTable:
         return res 
         
     def set_initially(self):
-        # pre_alloc course
-
-        for which in range(0, len(self.all_courses)):
-            if not self.all_courses[which].need_allocate_p():
-                start_time = self.all_courses[which].start_time
-                for i in range(0, self.all_courses[which].credit):
-                    self.coursetable[start_time[0]+i][start_time[1]] = self.all_courses[which].cid
-                #self.set_course(which, self.all_courses[which].start_time, True)
+        # allocate courses in coursetable in advance.
+        for course in self.all_courses:
+            if not course.need_allocate_p():
+                start_time = course.start_time
+                for i in range(course.credit):
+                    self.coursetable[start_time[0]+i][start_time[1]] = course.cid
     
     def __concatenate_str_p(self, t1, t2):
         if t1.strip().split("-")[1] == t2.strip().split("-")[0] or \

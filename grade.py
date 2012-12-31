@@ -13,7 +13,7 @@ class Grade:
         for c in all_courses:
             if c.need_allocate_p():
                 self.unallocated_courses.append(c)
-                
+
     def __str__(self):
         s = "=======Grade: %s=======\n" % self.name
         for c in self.all_courses:
