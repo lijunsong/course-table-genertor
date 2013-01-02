@@ -72,9 +72,9 @@ def conditional_course_p(course):
     """
     if course.name in COURSE_PREFER_TIME:
         return True
-    if course.teacher in TEACHER_PREFER_TIME:
+    if set(course.teachers).issubset(TEACHER_PREFER_TIME):
         return True
-    if course.teacher in TEACHER_PREFER_DAY:
+    if set(course.teachers).issubset(TEACHER_PREFER_DAY):
         return True
     return False
 

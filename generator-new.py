@@ -133,7 +133,8 @@ class Generator:
             print "cannot set on %s" % start_time
             return False
 
-        self.pretty_print_grade(which_grade)
+        # debug
+        # self.pretty_print_grade(which_grade)
 
         if nth_unallocated == total_course - 1 and which_grade == self.total_grade - 1:
             self.pretty_print_all_grades()

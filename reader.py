@@ -31,16 +31,20 @@ class Reader:
         # string => boolean
         return line.startswith(self.comment) or line == ""
 
+    def _get_teachers(self, teachers):
+        return map(str.upper, map(str.strip, teachers.strip().split(";")))
+
     def __process_csv(self):
         #try:
             with open(self.file_name, "rb") as csvfile:
                 course_reader = csv.reader(csvfile)
-                for name, credit, grade, teacher, start_time in course_reader:
-                    if self.__is_comment(name):
+                for cid, name, credit, grade, teachers, start_time in course_reader:
+                    if self.__is_comment(cid):
                         continue
                     # if the course has been allocated
                     pos = time_to_pos(start_time)
-                    course = Course(name, int(credit), grade, teacher, pos)
+                    teachers = self._get_teachers(teachers)
+                    course = Course(cid, name, int(credit), grade, teachers, pos)
                     self.courses.append(course)
         #except: 
         #    print "fail to process course file"
@@ -49,4 +53,4 @@ class Reader:
 if __name__=='__main__':
     reader = Reader("test.csv")
     for c in reader.get_courses():
-        print c.name, c.credit, c.grade_name, c.teacher, c.cid
+        print c.cid, c.name, c.credit, c.grade_name, c.teachers

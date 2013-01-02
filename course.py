@@ -1,13 +1,11 @@
 class Course:
-    id = 1 # course_id is the identification of each course
-    def __init__(self, name, credit, grade, teacher, start_time):
+    def __init__(self, cid, name, credit, grade, teachers, start_time):
         self.name = name
         self.credit = credit
         self.grade_name = grade
-        self.teacher = teacher
+        self.teachers = teachers
         self.start_time = start_time #represented as [1,2] for example
-        self.cid = Course.id
-        Course.id += 1
+        self.cid = cid
 
     def __str__(self):
         return self.name

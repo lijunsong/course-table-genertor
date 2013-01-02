@@ -93,25 +93,26 @@ class CourseTable:
             print 1
             return False
 
-        # check course prefered time
-        course_name = self._id_to_course(course_id).name #intro bug: diff teacher with same course name
-        if COURSE_PREFER_TIME.has_key(course_name):
-            if time not in COURSE_PREFER_TIME[course_name]:
+        # check course prefered time. Each course is identified by cid
+        cid = self._id_to_course(course_id).cid
+        if COURSE_PREFER_TIME.has_key(cid):
+            if time not in COURSE_PREFER_TIME[cid]:
                 print 2
                 return False
 
-        # check teacher perfered time
-        teacher = self._id_to_course(course_id).teacher
-        if TEACHER_PREFER_TIME.has_key(teacher):
-            if time not in TEACHER_PREFER_TIME[teacher]:
-                print 3
-                return False
+        # check teacher prefered time and day
+        teachers = self._id_to_course(course_id).teachers
+        for teacher in teachers:
+            if TEACHER_PREFER_TIME.has_key(teacher):
+                if time not in TEACHER_PREFER_TIME[teacher]:
+                    print 3
+                    return False
 
-        # check teacher prefered day
-        if TEACHER_PREFER_DAY.has_key(teacher):
-            if day not in TEACHER_PREFER_DAY[teacher]:
-                print 4
-                return False
+            # check teacher prefered day
+            if TEACHER_PREFER_DAY.has_key(teacher):
+                if day not in TEACHER_PREFER_DAY[teacher]:
+                    print 4
+                    return False
 
         return True
 
