@@ -50,7 +50,7 @@ class Generator:
          
         # TODO: sort by total credits in a day! 
         classrooms = self.compute_eachday_classroom()
-        print "classroom usage: %s" % classrooms
+        #print "classroom usage: %s" % classrooms
         sorted_day = sorted(classrooms, key = classrooms.get)
         return sorted_day
         
@@ -75,7 +75,7 @@ class Generator:
                 #break # only one position is enough
 
 
-        print "in day %s, time_order_before_noon: %s" % (which_day, time_order_before_noon)
+        #print "in day %s, time_order_before_noon: %s" % (which_day, time_order_before_noon)
         # check the time after noon
         no_class_after_noon = True
         time_order_after_noon = []
@@ -88,7 +88,7 @@ class Generator:
                 time_order_after_noon.append(time)
                 #break
 
-        print "in day %s, time_order_after_noon: %s" % (which_day, time_order_after_noon)
+        #print "in day %s, time_order_after_noon: %s" % (which_day, time_order_after_noon)
                 
         res = []
         if no_class_before_noon == False and no_class_after_noon:
@@ -97,7 +97,7 @@ class Generator:
         else:
             res.extend(time_order_before_noon)
             res.extend(time_order_after_noon)
-        print "return from order_time(): %s" % res
+        #print "return from order_time(): %s" % res
         return res
     
     
@@ -105,11 +105,11 @@ class Generator:
         # TODO: ordered_day should be start with the prefered day in the config.py
         # then following other not prefered time
         ordered_day = self.order_day()
-        print "set_course of grade %s course %s" % (which_grade, nth_unallocated)
+        #print "set_course of grade %s course %s" % (which_grade, nth_unallocated)
         for day in ordered_day:
             ordered_time = self.order_time(which_grade, day)
             for time in ordered_time:
-                print "start to set course on %s,%s" % (time, day)
+                #print "start to set course on %s,%s" % (time, day)
                 self.generate_new(which_grade, nth_unallocated, [time, day])
     
     def set_grade(self, which_grade):  
@@ -127,10 +127,10 @@ class Generator:
         # get the course_id of the nth_unallocated course
         course_id = grade.unallocated_courses[nth_unallocated].cid 
         
-        print "generate_new(grade:%s, course:%s(%s), start_time:%s" % (which_grade, nth_unallocated, grade.unallocated_courses[nth_unallocated], start_time)
+        #print "generate_new(grade:%s, course:%s(%s), start_time:%s" % (which_grade, nth_unallocated, grade.unallocated_courses[nth_unallocated], start_time)
         set_p = grade.set_course(course_id, start_time)
         if not set_p:
-            print "cannot set on %s" % start_time
+            #print "cannot set on %s" % start_time
             return False
 
         # debug
@@ -145,7 +145,7 @@ class Generator:
             self.set_grade(which_grade + 1)
         else:
             # DONE: get next course from optimized course list
-            print "[generate_new]: begin to set next course"
+            #print "[generate_new]: begin to set next course"
             self.set_course(which_grade, nth_unallocated + 1)
         
         if set_p:

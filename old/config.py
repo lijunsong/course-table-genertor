@@ -15,14 +15,14 @@ STUDENT_PREFER_TIME_NOT = [0]
 # refer to util.py
 COURSE_PREFER_TIME = { 
 
-23 : [4,5,6,7,8,9],
-34 : [1,2,3,4]
+#23 : [4,5,6,7,8,9],
+#34 : [1,2,3,4]
                   
 }
 
 TEACHER_PREFER_TIME = {
-"Ben-Piet Venter".upper() : [0,1,2,3,4],
-"LIU Peng".upper() : [0, 1, 2, 3, 4],
+#"Ben-Piet Venter".upper() : [0,1,2,3,4],
+#"LIU Peng".upper() : [0, 1, 2, 3, 4],
 }
 
 TEACHER_PREFER_DAY = {
