@@ -19,7 +19,7 @@ class Course:
         """
         self.cid = cid
         self.name = name
-        self.credit = credit
+        self.credit = int(credit)
         self.grade = grade
         self.teachers = teachers
         #将 week, time 转化为二维数组的坐标[time, week]

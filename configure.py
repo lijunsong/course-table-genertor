@@ -1,4 +1,6 @@
-# configure file for course table generator
+#!/usr/bin/env python
+
+# 课程表基本信息与教师条件
 
 TIME =   ["08:00-08:50", "09:00-09:50", \
           "10:10-11:00", "11:10-12:00", \
@@ -13,11 +15,11 @@ STUDENT_PREFER_TIME_NOT = [0]
 
 # the data structure has changed
 # refer to util.py
-COURSE_PREFER_TIME = { 
+COURSE_PREFER_TIME = {
 
 #23 : [4,5,6,7,8,9],
 #34 : [1,2,3,4]
-                  
+
 }
 
 TEACHER_PREFER_TIME = {
@@ -33,3 +35,6 @@ TEACHER_PREFER_DAY = {
 
 VIRTUAL_COURSE = 10000
 
+######################## 以下内容不能修改！
+day_num = len(DAY)
+time_num = len(TIME)
