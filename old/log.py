@@ -3,5 +3,5 @@ import logging
 
 logging.basicConfig(level = logging.DEBUG)
 
-def debug(msg):
+def d(msg):
     logging.debug(msg)

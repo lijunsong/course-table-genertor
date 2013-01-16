@@ -21,7 +21,7 @@ class Grade:
         s += self.course_table.pretty_course_table()
         return s
 
-    def _id_to_course(self, course_id):
+    def id_to_course(self, course_id):
         """int => Course:
         this function is used to refer to course with its id
         """

@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import configure as cfg
+import sys
 
 class CourseTable:
     """课程表
@@ -22,16 +23,21 @@ class CourseTable:
         self.title = all_courses[0].grade
         self.table = [[-1 for i in cfg.DAY] for j in cfg.TIME]
         self.unallocs = []
+        self.id_course_dict = {} #专门用于从 id 查询 course 的字典
 
         # 先摆放预置的课程
-        self._init_table()
+        self._init_table_and_course()
 
         # TODO: 对需要之后分配的课程进行排序
-        
 
-    def _init_table(self):
-        "对那些预置的课程，将它们依次先放到二维表中"
+
+    def _init_table_and_course(self):
+        """对那些预置的课程
+          - 将它们依次先放到二维表中
+          - 同时得到之后需要分配的课程放到 unallocs 里面
+          - 同时得到 id->course 的字典"""
         for c in self.all_courses:
+            self.id_course_dict[c.cid] = c
             if not c.need_allocate_p():
                 self.set(c, c.start_time)
             else:
@@ -52,6 +58,52 @@ class CourseTable:
         for k in xrange(credit):
             self.table[i+k][j] = course.cid
 
+    def eachday_course(self):
+        """计算每一天上课的总课程数量
+        TODO: 改为总课程数量
+
+        Return: 星期 * 学分的字典
+             => (dictof int int)
+        """
+        lst = zip(*table.table)
+        # 过滤出不是 -1 的课
+        course_filter = lambda x: x!=-1
+        lst2 = map(lambda x: filter(course_filter, x), lst)
+
+        # 构造返回的 星期*学分的字典
+        res = {}
+        for i, v in enumerate(lst2):
+            res[i] = len(v)
+        return res
+
+    def conflict_teacher_p(self, courseid, day):
+        """判断某课如果安排在某天是否会有教师冲突
+        Arguments:
+            self-explaination
+        Return:
+            int * int => boolean
+        """
+        course_list = zip(*self.table)[day]
+        teachers = set(self.id_to_course(courseid).teachers)
+        for c in course_list:
+            if c != -1:
+                ts_set = set(self.id_to_course(c).teachers)
+                if not teachers.isdisjoint(ts_set):
+                    return True
+        return False
+
+    def conflict_course_p(self, course, day):
+        """检查 course 如果安排在 day 这一天是否冲突
+        
+        TODO: 检查是否需要
+
+        Arguments:
+            self-explaination
+        Return:
+            int * int => boolean
+        """
+        pass
+
     def _same_grade_p(self, courses):
         """所有的课程只能是同一个年级的课程
 
@@ -61,7 +113,7 @@ class CourseTable:
         grades = set([c.grade for c in courses])
         return len(grades) == 1
 
-    def _id_to_course(self, id):
+    def id_to_course(self, id):
         """返回ID是 id 的课程
 
         Arguments:
@@ -69,9 +121,7 @@ class CourseTable:
         Return:
             int => Course
         """
-        for c in self.all_courses:
-            if id == c.cid:
-                return c
+        return self.id_course_dict[id]
 
     def pretty_str(self):
         "返回课程表具体内容"
@@ -83,7 +133,7 @@ class CourseTable:
                 if cid == -1:
                     s += '_'*15
                 else:
-                    s += (self._id_to_course(cid).name+"_"*15)[:15]
+                    s += (self.id_to_course(cid).name+"_"*15)[:15]
                 s += '  '
             s += '\n'
         return s

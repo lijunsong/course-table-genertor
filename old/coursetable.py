@@ -25,7 +25,7 @@ class CourseTable:
         s = str(self.coursetable)
         return s
 
-    def _id_to_course(self, course_id):
+    def id_to_course(self, course_id):
         """int => Course:
         this function is used to refer to course with its id
         """
@@ -94,14 +94,14 @@ class CourseTable:
             return False
 
         # check course prefered time. Each course is identified by cid
-        cid = self._id_to_course(course_id).cid
+        cid = self.id_to_course(course_id).cid
         if COURSE_PREFER_TIME.has_key(cid):
             if time not in COURSE_PREFER_TIME[cid]:
                 print 2
                 return False
 
         # check teacher prefered time and day
-        teachers = self._id_to_course(course_id).teachers
+        teachers = self.id_to_course(course_id).teachers
         for teacher in teachers:
             if TEACHER_PREFER_TIME.has_key(teacher):
                 if time not in TEACHER_PREFER_TIME[teacher]:
@@ -118,7 +118,7 @@ class CourseTable:
 
     def can_set_p(self, course_id, start_time):
 
-        credit = self._id_to_course(course_id).credit
+        credit = self.id_to_course(course_id).credit
         posi = start_time[0]
         posj = start_time[1]
         
@@ -162,7 +162,7 @@ class CourseTable:
         if not self.can_set_p(course_id, start_time):
             return False
         else:
-            for i in range(0, self._id_to_course(course_id).credit):
+            for i in range(0, self.id_to_course(course_id).credit):
                 self.coursetable[posi+i][posj] = course_id
             return True
 
@@ -171,7 +171,7 @@ class CourseTable:
             return
         posi = start_time[0]
         posj = start_time[1]
-        for i in range(0, self._id_to_course(course_id).credit):
+        for i in range(0, self.id_to_course(course_id).credit):
             self.coursetable[posi+i][posj] = -1
         
     def pretty_course_table(self):
@@ -181,7 +181,7 @@ class CourseTable:
             for j in range(5):
                 o = self.coursetable[i][j]
                 if o != -1:
-                    s += (self._id_to_course(o).name+" "*20)[:20]
+                    s += (self.id_to_course(o).name+" "*20)[:20]
                 else:
                     s += "_"*20
                 s += "  "

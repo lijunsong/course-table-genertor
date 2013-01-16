@@ -4,8 +4,11 @@
 from reader import Reader
 from course_table import CourseTable
 from generator import Generator
-
+from debug import Debug
 file_name = "test.csv"
+
+# 不要输出调试信息
+Debug.PRINT_MARKER = False
 
 if __name__=='__main__':
     reader = Reader(file_name)
