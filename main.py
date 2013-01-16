@@ -30,6 +30,6 @@ if __name__=='__main__':
     new_tables = generator.generate()
 
     # 得到最终结果
-    for table in tables:
+    for table in new_tables:
         print "GRADE: %s" % table.title
         print table.pretty_str()
