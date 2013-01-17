@@ -85,11 +85,9 @@ class Reader:
                         cid, name, credit, groups, teachers, week, time = course_info
                         teachers = self._get_teachers(teachers)
                         gs = self._get_groups(groups)
-                        d.p(gs)
-                        for group in gs:
-                            course = Course(cid, name, credit, group,
-                                            teachers, week, time)
-                            self.courses.append(course)
+                        course = Course(cid, name, credit, gs,
+                                        teachers, week, time)
+                        self.courses.append(course)
                 except Exception as e:
                     # TODO: 添加各种错误的 Exception
                     sys.exit('line %d: "%s"\nError: %s' %
@@ -101,4 +99,4 @@ if __name__=='__main__':
     reader = Reader("test.csv")
     for c in reader.courses:
         print c.cid, c.name, c.credit,
-        print "group: %s, teachers: %s, start_time: %s" % (c.group, c.teachers, c.start_time)
+        print "group: %s, teachers: %s, start_time: %s" % (c.groups, c.teachers, c.start_time)

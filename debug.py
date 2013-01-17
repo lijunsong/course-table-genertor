@@ -3,7 +3,7 @@
 
 class Debug:
     """用于调试时候的输出"""
-    
+
     PRINT_MARKER = True # True 代表输出调试信息
     def __init__(self, msg):
         self.msg = '[%s]' % msg
@@ -11,10 +11,18 @@ class Debug:
     def p(self, *arg):
         if Debug.PRINT_MARKER == False:
             return
-        print "%s" % self.msg,
+        print self.msg,
         for a in arg:
             print str(a).replace("\n",'\n%s ' % self.msg),
         print ""
+
+    def p_list(self, lst):
+        if Debug.PRINT_MARKER == False:
+            return
+        print "%s [" % self.msg,
+        for a in lst:
+            print a,
+        print "]"
 
 if __name__=='__main__':
     d = Debug('In Debug')

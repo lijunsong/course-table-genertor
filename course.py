@@ -4,7 +4,7 @@
 import utils
 
 class Course:
-    def __init__(self, cid, name, credit, group, teachers, week, time):
+    def __init__(self, cid, name, credit, groups, teachers, week, time):
         """课程
 
         Attributes:
@@ -21,7 +21,7 @@ class Course:
         self.cid = cid
         self.name = name
         self.credit = int(credit)
-        self.group = group
+        self.groups = groups
         self.teachers = teachers
         #将 week, time 转化为二维数组的坐标[time, week]
         self.start_time = utils.to_pos(week, time)

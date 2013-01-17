@@ -13,9 +13,10 @@ class Generator:
     Attributes:
         tables -- 所有的初始化过的课程表
     """
-    def __init__(self, tables):
+    def __init__(self, course_pool):
+        self.course_pool = course_pool
+        self.sorted_course = course_pool.sort_course()
         self.tables = tables
-        self.total = len(tables)
 
     def get_course_pos(self, table, courseid):
         """根据现有情况，得到下一门课安排在什么地方
@@ -45,7 +46,7 @@ class Generator:
             for time in xrange(cfg.time_num):
                 if tab[time][day] != -1:
                     course_num_dict[day] += 1
-                    
+
         d.p('目前各天课程数量：', course_num_dict.values())
         # 得到上下午
         while len(course_num_dict) != 0:
@@ -63,31 +64,31 @@ class Generator:
 
     def _beforenoon_p(self, timeid):
         """看所给的 time id 是不是上午
-        
+
         Argument:
             timeid -- 提供的时间，int
         Return:
             int => boolean
         """
         return timeid < cfg.beforenoon_num
- 
+
     def _afternoon_p(self, timeid):
         """看所给的 time id 是不是下午
-        
+
         Argument:
             timeid -- 提供的时间，int
         Return:
             int => boolean
         """
         return timeid >= cfg.beforenoon_num
-    
+
     def _empty_period(self, start_timeid, length, course_list):
         """检查从 start_timeid 开始的长度为 length 的 course_list 里面是否为空
-        
+
         NOTE： 此函数不会检查溢出
-        
+
         Arguments:
-        
+
         Return:
             int * int * (listof int) => boolean
             如果这个区间为空，返回 True
@@ -98,22 +99,22 @@ class Generator:
             if c != -1: # 有课
                 return False
         return True
-            
+
     def _set_beforenoon(self, table, courseid, day):
         """测试 courseid 的课能不能在 table 的上午放置
         并且测试上午有没有其他课程
-        
+
         Arguments:
-               table -- CourseTable 
+               table -- CourseTable
             courseid -- 课程 id
                  day -- 放置在哪一天
         Return:
             CourseTable * int * int => (tupleof int boolean)
-            
+
             如果能放置，返回 (可以放置的起始位置, 是否有其他课程)
             否则返回 (None, 是否有其他课程)
         """
-        
+
         course_list = zip(*table.table)[day]
         credit = table.id_to_course(courseid).credit
         has_other_p = False
@@ -133,13 +134,13 @@ class Generator:
                     pos += 1
         else:
             d.p('上午剩下的空表不足以排课了，退出上午')
-                    
+
         return (pos, has_other_p)
-    
+
     def _set_afternoon(self, table, courseid, day):
         """测试 courseid 的课能不能在 table 的下午放置
         Arguments:
-               table -- CourseTable 
+               table -- CourseTable
             courseid -- 课程 id
                  day -- 放置在哪一天
         Return:
@@ -167,11 +168,11 @@ class Generator:
             d.p('下午剩下的空表不足以排课了，退出下午')
 
         return (pos, has_other_p)
-    
+
     def _set_night(self, table, courseid, day):
         """测试 courseid 的课能不能在 table 的晚上放置
         Arguments:
-               table -- CourseTable 
+               table -- CourseTable
             courseid -- 课程 id
                  day -- 放置在哪一天
         Return:
@@ -199,7 +200,7 @@ class Generator:
             d.p('晚上剩下的空表不足以排课了，退出晚上')
 
         return (pos, has_other_p)
-    
+
     def _get_pos_on_day(self, table, day, courseid):
         """根据当前课表和给定的星期，得出当天最好的一个位置
 
@@ -210,7 +211,7 @@ class Generator:
         Return:
             CourseTable * int * int => int
         """
-        
+
         # 得到上午、下午、晚上各可以放置该课程的时间
         # TODO: 先计算出 course_list 然后传递到set里面加快速度
         beforenoon_start, before_p = self._set_beforenoon(table, courseid, day)
@@ -219,7 +220,7 @@ class Generator:
         d.p('上午可以开始放的位置：', beforenoon_start, '有其他课？', before_p)
         d.p('下午可以开始放的位置：', afternoon_start, '有其他课？', after_p)
         d.p('晚上可以开始放的位置：', night_start, '有其他课？', after_p)
-        
+
         # 准备返回结果：这里比较复杂
         # 直接写 if 的话，需要写很多很多很多if才能判断完全：
         #    如果上午，下午，晚上都有课，如果上午可以放，就放上午，如果下午可以放，就放下午……
@@ -232,7 +233,7 @@ class Generator:
         result[before_p].append(beforenoon_start)
         result[after_p].append(afternoon_start)
         result[night_p].append(night_start)
-        
+
         if len(result[False]) != 0: # 如果存在有几个时间段没有其他的课
             return result[False][0] # 返回第0个（并且这个肯定不是 -1
         else:
@@ -241,7 +242,7 @@ class Generator:
             # 取第一个不是-1的数字,如果都是-1就返回-1
             for i in pos_list:
                 if i != -1:
-                    res = i 
+                    res = i
                     break
             return res
 
@@ -267,24 +268,20 @@ class Generator:
                     err_msg.append(table.pretty_str())
                     err_msg.append('\n 放置失败！\n' )
                     sys.exit("".join(err_msg))
-                    
-                
+
+
                 d.p(table.pretty_str())
 
         return self.tables
+
+    def gen(self):
+        for course in self.sorted_course:
+            self.set_course(course)
 
 if __name__=='__main__':
     from reader import Reader
     from course_table import CourseTable
     reader = Reader('test.csv')
-
-    #得到年级与相应课程的映射
-    grad_course = reader.get_groups_courses()
-
-    # 初始化课程表
-    tables = []
-    for k in grad_course:
-        tables.append(CourseTable(grad_course[k]))
 
     # d
     #for table in tables:
@@ -293,5 +290,5 @@ if __name__=='__main__':
     generator = Generator([tables[0]])
 
     new_tables = generator.generate()
-    
+
     print new_tables[0].pretty_str()

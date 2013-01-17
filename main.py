@@ -13,19 +13,10 @@ Debug.PRINT_MARKER = False
 if __name__=='__main__':
     reader = Reader(file_name)
 
-    #得到年级与相应课程的映射
-    grad_course = reader.get_groups_courses()
-
-    # 初始化课程表
-    tables = []
-    for k in grad_course:
-        tables.append(CourseTable(grad_course[k]))
-
-    # debug
-    #for table in tables:
-    #    print table.pretty_str()
+    course_pool = CoursePool(reader.courses)
+    
     # 初始化生成器
-    generator = Generator(tables)
+    generator = Generator(course_pool)
 
     new_tables = generator.generate()
 

@@ -9,44 +9,19 @@ class CourseTable:
     二维数组表示。每个年级只有一张课程表
 
     Attributes:
-        all_courses -- 代表本张课程表上的所有的课程
         title       -- 表名（年级名）
         table       -- 表格，int 类型的二维数组
-        unallocs    -- 所有课程中还没有预置的课程
+        course_num  -- 这个表已经填了多少课程了
     """
-    def __init__(self, all_courses):
-        # 所有课程应该是同一个年级的所有课程
-        if not self._same_group_p(all_courses):
-            sys.exit("[2]construct course table error")
-
-        self.all_courses = all_courses
-        self.title = all_courses[0].group
+    def __init__(self, title):
+        self.title = title
         self.table = [[-1 for i in cfg.DAY] for j in cfg.TIME]
-        self.unallocs = []
-        self.id_course_dict = {} #专门用于从 id 查询 course 的字典
-
-        # 先摆放预置的课程
-        self._init_table_and_course()
-
-        # TODO: 对需要之后分配的课程进行排序
-        self._sort_course()
-
-    def _init_table_and_course(self):
-        """对那些预置的课程
-          - 将它们依次先放到二维表中
-          - 同时得到之后需要分配的课程放到 unallocs 里面
-          - 同时得到 id->course 的字典"""
-        for c in self.all_courses:
-            self.id_course_dict[c.cid] = c
-            if not c.need_allocate_p():
-                self.set(c, c.start_time)
-            else:
-                self.unallocs.append(c)
+        self.course_num = 0
 
     def _sort_course(self):
         """对接下来要进行排课的课程（见unallocs变量）进行排序
         总的来说，是先排有要求的课，再排没有要求的课。
-        
+
         对于有要求的课
         1. 上同一门课的班级越多，这门课最靠前（因为涉及到了不同的课表）
         2. 一门课老师要求越多（比如除了每天时间限制之外，还有星期的限制），越靠前
@@ -105,7 +80,7 @@ class CourseTable:
 
     def conflict_course_p(self, course, day):
         """检查 course 如果安排在 day 这一天是否冲突
-        
+
         TODO: 检查是否需要
 
         Arguments:
@@ -151,7 +126,7 @@ class CourseTable:
 
     def __str__(self):
         "返回二维数组"
-        res = []
+        res = ['TITLE: %s\n' % self.title]
         for i in xrange(len(cfg.TIME)):
             for j in xrange(len(cfg.DAY)):
                 res.append(str(self.table[i][j]))
