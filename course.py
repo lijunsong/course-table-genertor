@@ -4,25 +4,26 @@
 import utils
 
 class Course:
-    def __init__(self, cid, name, credit, grade, teachers, week, time):
-        """¿Î³Ì
+    def __init__(self, cid, name, credit, group, teachers, week, time):
+        """è¯¾ç¨‹
 
         Attributes:
-                cid -- Ã¿¸ö¿Î³ÌÓĞÎ¨Ò»µÄÒ»¸ö id
-               name -- ¿Î³ÌÃû×Ö
-             credit -- Ñ§·Ö
-              grade -- Äê¼¶Ãû³Æ
-           teachers -- ÕâÃÅ¿ÎµÄÀÏÊ¦£¬¿ÉÄÜ¶à¸ö
-         start_time -- ÕâÃÅ¿ÎµÄÉÏ¿ÎÊ±¼ä¡£
-                       Èç¹ûÃ»ÓĞÔ¤ÖÃÉÏ¿Î£¬ÕâÀïÊÇ None
-                       Èç¹ûÔ¤ÖÃÉÏ¿ÎÊ±¼ä£¬ÊÇ(Ê±¼ä£¬ĞÇÆÚ)µÄ tuple
+                cid -- æ¯ä¸ªè¯¾ç¨‹æœ‰å”¯ä¸€çš„ä¸€ä¸ª id
+               name -- è¯¾ç¨‹åå­—
+             credit -- å­¦åˆ†
+              group -- ç”¨äºå¹´çº§åç§°æˆ–è€…ç­çš„åç§°
+           teachers -- è¿™é—¨è¯¾çš„è€å¸ˆï¼Œå¯èƒ½å¤šä¸ª
+         start_time -- è¿™é—¨è¯¾çš„ä¸Šè¯¾æ—¶é—´ã€‚
+                       å¦‚æœæ²¡æœ‰é¢„ç½®ä¸Šè¯¾ï¼Œè¿™é‡Œæ˜¯ None
+                       å¦‚æœé¢„ç½®ä¸Šè¯¾æ—¶é—´ï¼Œæ˜¯(æ—¶é—´ï¼Œæ˜ŸæœŸ)çš„ tuple
+              share -- ä¸Šè¿™é—¨è¯¾çš„ç­çº§çš„åˆ—è¡¨
         """
         self.cid = cid
         self.name = name
         self.credit = int(credit)
-        self.grade = grade
+        self.group = group
         self.teachers = teachers
-        #½« week, time ×ª»¯Îª¶şÎ¬Êı×éµÄ×ø±ê[time, week]
+        #å°† week, time è½¬åŒ–ä¸ºäºŒç»´æ•°ç»„çš„åæ ‡[time, week]
         self.start_time = utils.to_pos(week, time)
 
     def __str__(self):

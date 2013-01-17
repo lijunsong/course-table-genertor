@@ -4,15 +4,18 @@
 from course import Course
 import csv
 import sys
+import debug
+
+d = debug.Debug('Reader')
 
 class Reader:
-    """¶ÁÈ¡¿Î³ÌĞÅÏ¢µÄÀà
+    """è¯»å–è¯¾ç¨‹ä¿¡æ¯çš„ç±»
 
     Attributes:
-        file_name -- ¿Î³ÌĞÅÏ¢µÄÎÄ¼şÃû
-        delimiter -- Ã¿Ò»ÁĞµÄ·Ö¸ô·û
-        comment   -- ×¢ÊÍ·ûºÅ£¨·ÅÔÚÃ¿ĞĞµÄ×îÇ°Ãæ£©
-        courses   -- ¿Î³Ì¶ÔÏóÊı×é
+        file_name -- è¯¾ç¨‹ä¿¡æ¯çš„æ–‡ä»¶å
+        delimiter -- æ¯ä¸€åˆ—çš„åˆ†éš”ç¬¦
+        comment   -- æ³¨é‡Šç¬¦å·ï¼ˆæ”¾åœ¨æ¯è¡Œçš„æœ€å‰é¢ï¼‰
+        courses   -- è¯¾ç¨‹å¯¹è±¡æ•°ç»„
     """
     def __init__(self, file_name, delimiter=",", comment="#"):
         self.file_name = file_name
@@ -29,54 +32,66 @@ class Reader:
         return True
 
     def _get_teachers(self, teachers):
-        """½ÌÊ¦Ãû×ÖÈ«²¿´óĞ´£¬ÒÔ·ÖºÅÎª·Ö¸ô·û±ä³ÉÊı×é
+        """æ•™å¸ˆåå­—å…¨éƒ¨å¤§å†™ï¼Œä»¥åˆ†å·ä¸ºåˆ†éš”ç¬¦å˜æˆæ•°ç»„
 
         Argument:
-            teachers: ÒÔ·ÖºÅ·Ö¸îÓòµÄ×Ö·û´®
+            teachers: ä»¥åˆ†å·åˆ†å‰²åŸŸçš„å­—ç¬¦ä¸²
 
         Return
             string => (listof string)
         """
         return map(str.upper, map(str.strip,
                                   teachers.strip().split(";")))
-
-    def filter_courses(self, grade):
-        """°´ÕÕÄê¼¶ÃûÉ¸Ñ¡³ö¿Î³Ì
+    def _get_groups(self, groups):
+        """groups ç”¨åˆ†å·åˆ†å‰²å¼€ï¼Œæœ€åè¿”å›æ•°ç»„
+        Argument:
+            groups: ä»¥åˆ†å·åˆ†å‰²åŸŸçš„å­—ç¬¦ä¸²
+        Return:
+            string => (listof string)
+        """
+        return map(str.upper, map(str.strip,
+                                  groups.strip().split(";")))
+    def filter_courses(self, group):
+        """æŒ‰ç…§å¹´çº§åç­›é€‰å‡ºè¯¾ç¨‹
 
         Return: string => (listof Course)
         """
-        f = lambda course: course.grade == grade
+        f = lambda course: course.group == group
         return filter(f, self.courses)
 
-    def get_grades_courses(self):
-        """µÃµ½Ã¿¸öÄê¼¶¶ÔÓ¦µÄ¿Î³Ì×Öµä
+    def get_groups_courses(self):
+        """å¾—åˆ°æ¯ä¸ªå¹´çº§å¯¹åº”çš„è¯¾ç¨‹å­—å…¸
 
         Return:
             => (dictof string (listof Course))
         """
-        f = lambda c: c.grade
-        grades = set(map(f, self.courses))
+        f = lambda c: c.group
+        groups = set(map(f, self.courses))
         g_c = {}
-        for g in grades:
+        for g in groups:
             g_c[g] = self.filter_courses(g)
         return g_c
 
     def _process_csv(self):
-        "´¦Àí csv µÄ·½·¨"
+        "å¤„ç† csv çš„æ–¹æ³•"
         try:
             with open(self.file_name, "rb") as csvfile:
                 course_reader = csv.reader(csvfile)
                 try:
+                    # å¯¹æ¯è¡Œè¿›è¡Œå¤„ç†
                     for course_info in course_reader:
                         if self._is_comment_p(course_info):
                             continue
-                        cid, name, credit, grade, teachers, week, time = course_info
+                        cid, name, credit, groups, teachers, week, time = course_info
                         teachers = self._get_teachers(teachers)
-                        course = Course(cid, name, credit, grade,
-                                        teachers, week, time)
-                        self.courses.append(course)
+                        gs = self._get_groups(groups)
+                        d.p(gs)
+                        for group in gs:
+                            course = Course(cid, name, credit, group,
+                                            teachers, week, time)
+                            self.courses.append(course)
                 except Exception as e:
-                    # TODO: Ìí¼Ó¸÷ÖÖ´íÎóµÄ Exception
+                    # TODO: æ·»åŠ å„ç§é”™è¯¯çš„ Exception
                     sys.exit('line %d: "%s"\nError: %s' %
                              (course_reader.line_num, ",".join(course_info), e))
         except IOError as e:
@@ -84,5 +99,6 @@ class Reader:
 
 if __name__=='__main__':
     reader = Reader("test.csv")
-    #for c in reader.courses:
-    #    print c.cid, c.name, c.credit, c.grade_name, c.teachers, c.start_time
+    for c in reader.courses:
+        print c.cid, c.name, c.credit,
+        print "group: %s, teachers: %s, start_time: %s" % (c.group, c.teachers, c.start_time)

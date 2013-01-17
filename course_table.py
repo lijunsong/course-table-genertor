@@ -16,11 +16,11 @@ class CourseTable:
     """
     def __init__(self, all_courses):
         # 所有课程应该是同一个年级的所有课程
-        if not self._same_grade_p(all_courses):
+        if not self._same_group_p(all_courses):
             sys.exit("[2]construct course table error")
 
         self.all_courses = all_courses
-        self.title = all_courses[0].grade
+        self.title = all_courses[0].group
         self.table = [[-1 for i in cfg.DAY] for j in cfg.TIME]
         self.unallocs = []
         self.id_course_dict = {} #专门用于从 id 查询 course 的字典
@@ -29,7 +29,7 @@ class CourseTable:
         self._init_table_and_course()
 
         # TODO: 对需要之后分配的课程进行排序
-
+        self._sort_course()
 
     def _init_table_and_course(self):
         """对那些预置的课程
@@ -43,6 +43,17 @@ class CourseTable:
             else:
                 self.unallocs.append(c)
 
+    def _sort_course(self):
+        """对接下来要进行排课的课程（见unallocs变量）进行排序
+        总的来说，是先排有要求的课，再排没有要求的课。
+        
+        对于有要求的课
+        1. 上同一门课的班级越多，这门课最靠前（因为涉及到了不同的课表）
+        2. 一门课老师要求越多（比如除了每天时间限制之外，还有星期的限制），越靠前
+        3. 对于有相同多要求的，要求范围越窄越靠前
+        """
+        # 找到
+        pass
     def set(self, course, pos):
         """摆放课程的ID在课表上
 
@@ -60,7 +71,7 @@ class CourseTable:
 
     def eachday_course(self):
         """计算每一天上课的总课程数量
-        TODO: 改为总课程数量
+        NOTE：这里是每一个学分一节课，所以这里实际也计算了总的学分数量
 
         Return: 星期 * 学分的字典
              => (dictof int int)
@@ -104,14 +115,14 @@ class CourseTable:
         """
         pass
 
-    def _same_grade_p(self, courses):
+    def _same_group_p(self, courses):
         """所有的课程只能是同一个年级的课程
 
         Return
             (listof Courses) => boolean
         """
-        grades = set([c.grade for c in courses])
-        return len(grades) == 1
+        groups = set([c.group for c in courses])
+        return len(groups) == 1
 
     def id_to_course(self, id):
         """返回ID是 id 的课程

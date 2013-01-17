@@ -5,7 +5,7 @@ import configure as cfg
 import sys
 
 def to_standard_time(time):
-    """½«Ò»°ãµÄÊ±¼ä±íÊ¾×ª»¯Îª xx:xx ĞÎÊ½ """
+    """å°†ä¸€èˆ¬çš„æ—¶é—´è¡¨ç¤ºè½¬åŒ–ä¸º xx:xx å½¢å¼ """
     # TODO: optimize
     s = time.split(":")
     if len(s[0]) == 1: s[0] = "0" + s[0]
@@ -13,15 +13,15 @@ def to_standard_time(time):
     return ":".join(s)
 
 def to_pos(week, time):
-    """½« week ºÍ time ×ªÎªÊı×Ö±íÊ¾µÄ [time, week]
+    """å°† week å’Œ time è½¬ä¸ºæ•°å­—è¡¨ç¤ºçš„ [time, week]
 
-    NOTE: time ¿ÉÒÔÊÇ xx:xx£¬Ò²¿ÉÒÔÊÇ xx:xx-xx:xx
+    NOTE: time å¯ä»¥æ˜¯ xx:xxï¼Œä¹Ÿå¯ä»¥æ˜¯ xx:xx-xx:xx
 
     string * string => (listof int)
     """
     if week == '' or time == '':
         return None
-    # Èç¹û¸ñÊ½ÊÇ xx:xx-xx:xx£¬ Ê±¼äÈ¡µÚÒ»¸ö
+    # å¦‚æœæ ¼å¼æ˜¯ xx:xx-xx:xxï¼Œ æ—¶é—´å–ç¬¬ä¸€ä¸ª
     if '-' in time:
         standard_t = to_standard_time(time.split('-')[0])
     else:

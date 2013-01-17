@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import request
+
 # 课程表基本信息与教师条件
 BEFORENOON = ["08:00-08:50",
            "09:00-09:50",
@@ -20,30 +22,19 @@ NIGHT = ["18:30-19:20",
 
 DAY = ["Mon", "Tue", "Wed", "Thu", "Fri"]
 
-# this should be "time >= 9:00"
-STUDENT_PREFER_TIME_NOT = [0]
+# 以下连个都是 courseid -> (listof int) 的字典
+COURSE_PREFER_TIME = request.COURSE_PREFER_TIME
 
-# the data structure has changed
-# refer to util.py
-COURSE_PREFER_TIME = {
+COURSE_PREFER_DAY = request.COURSE_PREFER_DAY
 
-#23 : [4,5,6,7,8,9],
-#34 : [1,2,3,4]
+# 教师名字在这里变为大写
+TEACHER_PREFER_TIME = {}
+for name in request.TEACHER_PREFER_TIME:
+    TEACHER_PREFER_TIME[name.upper()] = request.TEACHER_PREFER_TIME[name]
 
-}
-
-TEACHER_PREFER_TIME = {
-#"Ben-Piet Venter".upper() : [0,1,2,3,4],
-#"LIU Peng".upper() : [0, 1, 2, 3, 4],
-}
-
-TEACHER_PREFER_DAY = {
-
-}
-
-
-
-VIRTUAL_COURSE = 10000
+TEACHER_PREFER_DAY = {}
+for name in request.TEACHER_PREFER_DAY:
+    request.TEACHER_PREFER_DAY[name.upper()] = request.TEACHER_PREFER_DAY[name]
 
 ## 以下内容不能修改！
 ## 用于程序中的辅助变量

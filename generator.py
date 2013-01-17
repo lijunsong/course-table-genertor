@@ -279,7 +279,7 @@ if __name__=='__main__':
     reader = Reader('test.csv')
 
     #得到年级与相应课程的映射
-    grad_course = reader.get_grades_courses()
+    grad_course = reader.get_groups_courses()
 
     # 初始化课程表
     tables = []

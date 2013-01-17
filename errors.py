@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-# Õâ¸öÎÄ¼ş¶¨ÒåÁËÅÅ¿Î³ÌĞòÖĞ¿ÉÄÜ³öÏÖµÄ´íÎó
+# è¿™ä¸ªæ–‡ä»¶å®šä¹‰äº†æ’è¯¾ç¨‹åºä¸­å¯èƒ½å‡ºç°çš„é”™è¯¯
 
 class Error(Exception):
-    "»ù±¾´íÎó"
+    "åŸºæœ¬é”™è¯¯"
     pass
 
-# ¶ÁÈ¡¹ı³ÌÖĞ³öÏÖµÄ´íÎó
+# è¯»å–è¿‡ç¨‹ä¸­å‡ºç°çš„é”™è¯¯
 class TimeFormatError(Error):
-    """Ê±¼ä¸ñÊ½´íÎó
+    """æ—¶é—´æ ¼å¼é”™è¯¯
 
     Attributes:
-        msg -- ´íÎóµÄÊ±¼ä¸ñÊ½
+        msg -- é”™è¯¯çš„æ—¶é—´æ ¼å¼
     """
     def __init__(self, msg):
         self.msg = msg
@@ -20,12 +20,12 @@ class TimeFormatError(Error):
         return self.msg
 
 class MissingColumnError(Error):
-    """CSV ÎÄ¼şÖĞÉÙÁĞµÄ´íÎó
+    """CSV æ–‡ä»¶ä¸­å°‘åˆ—çš„é”™è¯¯
 
     Attributes:
-        line -- ³öÏÖ´íÎóµÄĞĞ
+        line -- å‡ºç°é”™è¯¯çš„è¡Œ
     """
-    def __init__(self, line)
+    def __init__(self, line):
         self.line = line
     def __str__(self):
         return self.line
