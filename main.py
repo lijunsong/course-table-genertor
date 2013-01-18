@@ -3,7 +3,8 @@
 
 from reader import Reader
 from course_table import CourseTable
-from generator import Generator
+from gen import Generator
+from course_pool import CoursePool
 from debug import Debug
 file_name = "test.csv"
 
@@ -18,9 +19,6 @@ if __name__=='__main__':
     # 初始化生成器
     generator = Generator(course_pool)
 
-    new_tables = generator.generate()
+    generator.gen()
 
-    # 得到最终结果
-    for table in new_tables:
-        print "GRADE: %s" % table.title
-        print table.pretty_str()
+    generator.print_coursetables()

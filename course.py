@@ -27,7 +27,10 @@ class Course:
         self.start_time = utils.to_pos(week, time)
 
     def __str__(self):
-        return self.name
+        return "Name: %s, Teachers: %s, Groups: %s" % (self.name,
+                                                       self.teachers,
+                                                       self.groups)
+
 
     def need_allocate_p(self):
         return self.start_time == None
