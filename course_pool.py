@@ -26,8 +26,11 @@ class CoursePool:
     def get_teacher_courseids(self, t):
         return self._teacher_cid_dict[t]
 
-    def get_sorted_courses(self):
-        return self._sorted_course
+    def get_sorted_undetermined(self):
+        return self._sorted_undetermined
+
+    def get_determined(self):
+        return self._determined
 
     def get_detail_tables(self):
         result = []
@@ -50,9 +53,28 @@ class CoursePool:
         self._courseid_table_dict = self._get_courseid_table_dict()
         # 每个老师教的所有课程id
         self._teacher_cid_dict = self._get_teacher_cid_dict()
-        self._sorted_course = self._sort_course()
+        # 预置的课程
+        self._determined = self._get_determined()
+        # 未预置的课程排序
+        self._undetermined = self._get_undetermined()
+        # 排序的课程
+        self._sorted_undetermined = self._sort_undetermined()
 
-    def _sort_course(self):
+    def _get_determined(self):
+        dc = []
+        for c in self._all_courses:
+            if not c.need_allocate_p():
+                dc.append(c)
+        return dc
+
+    def _get_undetermined(self):
+        udc = []
+        for c in self._all_courses:
+            if c.need_allocate_p():
+                udc.append(c)
+        return udc
+
+    def _sort_undetermined(self):
         """对所有的课程进行排序
 
         对于有要求的课
@@ -61,7 +83,7 @@ class CoursePool:
         3. 对于有相同多要求的，要求范围越窄越靠前
         """
         # TODO
-        return self._all_courses
+        return self._undetermined
 
 
 

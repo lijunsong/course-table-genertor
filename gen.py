@@ -12,11 +12,17 @@ class Generator:
 
     Attributes:
         course_pool -- 课程池，提供对课程的各种操作
-        sorted_course -- 按照老师的各种要求排过序的课程
+        determined  -- 已经预置的课程
+        sorted_determined -- 没有预置，但按照老师的各种要求排过序的课程
     """
     ## 主要方法 ##
     def gen(self):
-        for course in self.sorted_course:
+        # 先放预置的课程
+        for course in self.determined:
+            tables = self.course_to_table(course.cid)
+            self._set_on_table(tables, course.start_time, course.cid)
+
+        for course in self.sorted_undetermined:
             self.set_course(course.cid)
 
     def print_coursetables(self):
@@ -25,12 +31,15 @@ class Generator:
     #-----------辅助方法------------
     def __init__(self, course_pool):
         self.course_pool = course_pool
-        self.sorted_course = course_pool.get_sorted_courses()
+        self.determined = course_pool.get_determined()
+        self.sorted_undetermined = course_pool.get_sorted_undetermined()
 
     def set_course(self, courseid):
         "在相应的课表上找最佳位置摆放"
         # 1. 得到与之相关的所有课表
         tables = self.course_to_table(courseid)
+        course = self.id_to_course(courseid)
+
         # 2. 在相关的几个课表上，找到一个 *都空着的* *最佳* 位置
         pos = self.get_course_pos(tables, courseid)
         # 3. 放到这个位置上
@@ -267,4 +276,3 @@ if __name__=='__main__':
     generator.gen()
 
     generator.print_coursetables()
-    
