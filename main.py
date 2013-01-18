@@ -11,7 +11,7 @@ import sys
 file_name = "test.csv"
 
 # 不要输出调试信息
-#Debug.PRINT_MARKER = False
+Debug.PRINT_MARKER = False
 
 if __name__=='__main__':
     # TODO: 添加参数，控制输入文件，控制输出格式

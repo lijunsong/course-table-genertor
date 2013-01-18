@@ -92,7 +92,7 @@ class Generator:
         else:
             d.p('找不到位置:\n%s' %
                 self.course_pool.get_detail_tables())
-            sys.exit('')
+            sys.exit('fail')
 
         return (time, day)
 
@@ -111,12 +111,9 @@ class Generator:
         # 检查这个位置是否符合特殊要求
         d.p('pos: 检查课程 %s 的特殊要求' % courseid)
         if courseid in cfg.COURSE_PREFER_TIME:
-            d.p('[haha]')
             if time not in cfg.COURSE_PREFER_TIME[courseid]:
                 d.p('不符合')
                 return True
-        else:
-            d.p('oh')
 
         credit = self.course_pool.id_to_course(courseid).credit
         # 再看看其他课表这个时间段是不是可以放下这门课

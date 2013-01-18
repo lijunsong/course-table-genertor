@@ -13,6 +13,7 @@ COURSE_PREFER_TIME = {
 # 某门课像要在某一天上
 # id -> 日期 id 列表(从 0 开始）
 COURSE_PREFER_DAY = {
+    '13' : [4]
                      }
 
 # 教师想要在某段时间上课的要求可以转化为课程

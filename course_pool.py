@@ -83,11 +83,20 @@ class CoursePool:
         3. 对于有相同多要求的，要求范围越窄越靠前
         """
         # TODO
-        
-        return self._undetermined
+        res = []
+        for c in self._undetermined:
+            if self._conditional_course_p(c.cid):
+                res.insert(0, c)
+            else:
+                res.append(c)
+        d.p_list(res)
+        return res
 
-
-
+    def _conditional_course_p(self, courseid):
+        if courseid in cfg.COURSE_PREFER_TIME or \
+           courseid in cfg.COURSE_PREFER_DAY:
+           return True
+        return False
     def _get_teacher_cid_dict(self):
         tcd = {}
         for c in self._all_courses:

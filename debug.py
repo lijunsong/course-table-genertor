@@ -19,10 +19,8 @@ class Debug:
     def p_list(self, lst):
         if Debug.PRINT_MARKER == False:
             return
-        print "%s [" % self.msg,
         for a in lst:
-            print a,
-        print "]"
+            print "%s * %s" % (self.msg, a)
 
 if __name__=='__main__':
     d = Debug('In Debug')
