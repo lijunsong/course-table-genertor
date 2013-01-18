@@ -43,8 +43,10 @@ class Generator:
         # 2. 在相关的几个课表上，找到一个 *都空着的* *最佳* 位置
         pos = self.get_course_pos(tables, courseid)
         # 3. 放到这个位置上
-        d.p('课程 %s 放在这里: %s' % (self.id_to_course(courseid), pos))
+        d.p('课程 %s 放在这里\n%s' % (self.id_to_course(courseid),
+                                      pos))
         self._set_on_table(tables, pos, courseid)
+        d.p('当前课程表:\n%s' % self.get_detail_tables_str())
 
     def get_course_pos(self, tables, courseid):
         """
@@ -70,22 +72,32 @@ class Generator:
                 del course_num_dict[day]
                 continue
 
-            # 找到一个合适的时间 TODO: 需要循环
-            time = self._get_pos_on_day(fullest_table, day, courseid)
-            d.p('试试星期 %s 的位置 %s' % (day, time))
-            # 查看找到的这个位置是否能在所有表上放这门课
-            if self._conflict_pos_p(tables, (time, day), courseid):
-                d.p('pos有冲突，不能放在星期 %s 的位置 %s' % (day, time))
+            # 返回那一天最好的几个位置
+            times = self._get_poses_on_day(fullest_table, day,
+                                           courseid)
+            time = -1
+            for t in times: # 在位置里面依次查找符合条件的值
+                if self._conflict_pos_p(tables, (t, day), courseid):
+                    d.p('pos有冲突，不能放在星期 %s 的位置 %s' % (day, t))
+                else: # 能放，找到位置了
+                    d.p('能放在星期 %s 的位置 %s)' % (day, t))
+                    time = t
+                    break
+            if time == -1:
                 del course_num_dict[day]
-            else: # 能放，找到位置了
-                d.p('能放在星期 %s 的位置 %s)' % (day, time))
+                continue
+            else:
+                d.p('试试星期 %s 的位置 %s' % (day, time))
                 break
         else:
-            sys.exit('找不到位置')
+            d.p('找不到位置:\n%s' %
+                self.course_pool.get_detail_tables())
+            sys.exit('')
 
         return (time, day)
 
     def _set_on_table(self, tables, pos, courseid):
+        assert(pos[0] != -1)
         course = self.id_to_course(courseid)
         for table in tables:
             table.set(course, pos)
@@ -94,8 +106,17 @@ class Generator:
         time, day = pos
         # 如果在这一天找不到一个合适的位置，
         if time == -1:
-            d.p('[11]')
             return True
+
+        # 检查这个位置是否符合特殊要求
+        d.p('pos: 检查课程 %s 的特殊要求' % courseid)
+        if courseid in cfg.COURSE_PREFER_TIME:
+            d.p('[haha]')
+            if time not in cfg.COURSE_PREFER_TIME[courseid]:
+                d.p('不符合')
+                return True
+        else:
+            d.p('oh')
 
         credit = self.course_pool.id_to_course(courseid).credit
         # 再看看其他课表这个时间段是不是可以放下这门课
@@ -111,6 +132,13 @@ class Generator:
         这一天设置在指定的 tables 里面
         NOTE: 这里不判断有没有位置放，有没有位置是之后的事情
         """
+        d.p('day: 检查课程 %s 的特殊要求' % courseid)
+        # 查看这一天符不符合特殊要求
+        if courseid in cfg.COURSE_PREFER_DAY:
+            if day not in cfg.COURSE_PREFER_DAY[courseid]:
+                d.p('不符合')
+                return True
+
         for table in tables:
             if self._conflict_day_p_help(table, day, courseid):
                 return False
@@ -137,15 +165,16 @@ class Generator:
         else:
             return True
 
-    def _get_pos_on_day(self, table, day, courseid):
-        """根据当前课表和给定的星期，得出当天最好的一个位置
+    def _get_poses_on_day(self, table, day, courseid):
+        """根据当前课表和给定的星期，得出当天能够摆放的所有位置
+        最好的位置在最前面
 
         Arguments:
             table -- 当前的 CourseTable
             day   -- 要计算哪一天的位置
            course -- 课程 id
         Return:
-            CourseTable * int * int => int
+            CourseTable * int * int => (listof int)
         """
 
         # 得到上午、下午、晚上各可以放置该课程的时间
@@ -164,7 +193,7 @@ class Generator:
 
         d.p('上午可以开始放的位置：', beforenoon_start, '有其他课？', before_p)
         d.p('下午可以开始放的位置：', afternoon_start, '有其他课？', after_p)
-        d.p('晚上可以开始放的位置：', night_start, '有其他课？', after_p)
+        d.p('晚上可以开始放的位置：', night_start, '有其他课？', night_p)
 
         # 准备返回结果：这里比较复杂
         # 直接写 if 的话，需要写很多很多很多if才能判断完全：
@@ -179,18 +208,16 @@ class Generator:
         result[after_p].append(afternoon_start)
         result[night_p].append(night_start)
 
-        if len(result[False]) != 0: # 如果存在有几个时间段没有其他的课
-            return result[False][0] # 返回第0个（并且这个肯定不是 -1
-        else:
-            pos_list = result[True]
-            res = -1
-            # 取第一个不是-1的数字,如果都是-1就返回-1
-            for i in pos_list:
-                if i != -1:
-                    res = i
-                    break
-            return res
-
+        res = []  # 返回值放到这里
+        # 如果存在有几个时间段没有其他的课
+        res.extend(result[False])
+        # 有课的时间段
+        pos_list = result[True]
+        # 取第一个不是-1的数字
+        for i in pos_list:
+            if i != -1:
+                res.append(i)
+        return res
     def _set_period(self, table, courseid, day, start, end):
         """测试 courseid 的课能不能在 table 的晚上放置
         Arguments:
@@ -221,6 +248,7 @@ class Generator:
                 else: # 一旦和另外一门课位置交叉了，直接跳到交叉位置
                     pos += 1
         else:
+            pos = -1
             d.p('剩下的空表不足以排课了，退出')
 
         return (pos, has_other_p)

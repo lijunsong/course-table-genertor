@@ -55,9 +55,9 @@ class CoursePool:
         self._teacher_cid_dict = self._get_teacher_cid_dict()
         # 预置的课程
         self._determined = self._get_determined()
-        # 未预置的课程排序
+        # 未预置的课程
         self._undetermined = self._get_undetermined()
-        # 排序的课程
+        # 排好序的未预置的课程
         self._sorted_undetermined = self._sort_undetermined()
 
     def _get_determined(self):
@@ -83,6 +83,7 @@ class CoursePool:
         3. 对于有相同多要求的，要求范围越窄越靠前
         """
         # TODO
+        
         return self._undetermined
 
 

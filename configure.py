@@ -22,19 +22,19 @@ NIGHT = ["18:30-19:20",
 
 DAY = ["Mon", "Tue", "Wed", "Thu", "Fri"]
 
-# 以下连个都是 courseid -> (listof int) 的字典
+# 以下两个都是 courseid -> (listof int) 的字典
 COURSE_PREFER_TIME = request.COURSE_PREFER_TIME
 
 COURSE_PREFER_DAY = request.COURSE_PREFER_DAY
 
 # 教师名字在这里变为大写
-TEACHER_PREFER_TIME = {}
-for name in request.TEACHER_PREFER_TIME:
-    TEACHER_PREFER_TIME[name.upper()] = request.TEACHER_PREFER_TIME[name]
+## TEACHER_PREFER_TIME = {}
+## for name in request.TEACHER_PREFER_TIME:
+##     TEACHER_PREFER_TIME[name.upper()] = request.TEACHER_PREFER_TIME[name]
 
-TEACHER_PREFER_DAY = {}
-for name in request.TEACHER_PREFER_DAY:
-    request.TEACHER_PREFER_DAY[name.upper()] = request.TEACHER_PREFER_DAY[name]
+## TEACHER_PREFER_DAY = {}
+## for name in request.TEACHER_PREFER_DAY:
+##     request.TEACHER_PREFER_DAY[name.upper()] = request.TEACHER_PREFER_DAY[name]
 
 ## 以下内容不能修改！
 ## 用于程序中的辅助变量

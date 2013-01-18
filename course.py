@@ -16,7 +16,6 @@ class Course:
          start_time -- 这门课的上课时间。
                        如果没有预置上课，这里是 None
                        如果预置上课时间，是(时间，星期)的 tuple
-              share -- 上这门课的班级的列表
         """
         self.cid = cid
         self.name = name
