@@ -31,26 +31,16 @@ class Reader:
             return line[0] == '' or line[0].startswith(self.comment)
         return True
 
-    def _get_teachers(self, teachers):
-        """教师名字全部大写，以分号为分隔符变成数组
-
+    def _split(self, semicolon_str):
+        """接到一个字符串，返回数组
         Argument:
-            teachers: 以分号分割域的字符串
-
-        Return
-            string => (listof string)
-        """
-        return map(str.upper, map(str.strip,
-                                  teachers.strip().split(";")))
-    def _get_groups(self, groups):
-        """groups 用分号分割开，最后返回数组
-        Argument:
-            groups: 以分号分割域的字符串
+            semicolon_str: 以分号分割域的字符串
         Return:
-            string => (listof string)
-        """
-        return map(str.upper, map(str.strip,
-                                  groups.strip().split(";")))
+            string => (listof string)"""
+        return map(str.upper,
+                   map(str.strip,
+                       semicolon_str.strip("; \n").split(";")))
+
     def filter_courses(self, group):
         """按照年级名筛选出课程
 
@@ -83,8 +73,8 @@ class Reader:
                         if self._is_comment_p(course_info):
                             continue
                         cid, name, credit, groups, teachers, week, time = course_info
-                        teachers = self._get_teachers(teachers)
-                        gs = self._get_groups(groups)
+                        teachers = self._split(teachers)
+                        gs = self._split(groups)
                         course = Course(cid, name, credit, gs,
                                         teachers, week, time)
                         self.courses.append(course)
