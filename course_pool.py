@@ -84,6 +84,32 @@ class CoursePool:
         self._undetermined = self._get_undetermined()
         # 排好序的未预置的课程
         self._sorted_undetermined = self._sort_undetermined()
+        # 教师与课程的特殊要求
+        self.special_cid_time_dict = self._get_special_cid_time_dict()
+        self.special_cid_day_dict = self._get_special_cid_day_dict()
+
+
+    def _get_special_cid_time_dict(self):
+        """将老师对每天的时间的要求转化为课程的要求"""
+        result = cfg.COURSE_PREFER_TIME
+        time_teachers = list(cfg.TEACHER_PREFER_TIME)
+        for course in self._all_courses:
+            ts = list(set(course.teachers).intersection(time_teachers))
+            for t in ts: #每个老师的要求都要放入 course 要求中
+                result[course.cid] = cfg.TEACHER_PREFER_TIME[t]
+
+        return result
+
+
+    def _get_special_cid_day_dict(self):
+        """将老师对哪一天上课的要求转化为课程要求"""
+        result = cfg.COURSE_PREFER_DAY
+        day_teachers = list(cfg.TEACHER_PREFER_DAY)
+        for course in self._all_courses:
+            ts = list(set(course.teachers).intersection(day_teachers))
+            for t in ts:
+                result[course.cid] = cfg.TEACHER_PREFER_DAY[t]
+        return result
 
     def _get_determined(self):
         dc = []
@@ -118,10 +144,12 @@ class CoursePool:
         return res
 
     def _conditional_course_p(self, courseid):
+        # TODO: 加入教师的要求，或者提前处理教师要求
         if courseid in cfg.COURSE_PREFER_TIME or \
            courseid in cfg.COURSE_PREFER_DAY:
            return True
         return False
+
     def _get_teacher_cid_dict(self):
         tcd = {}
         for c in self._all_courses:

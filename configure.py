@@ -29,24 +29,27 @@ COURSE_PREFER_TIME = request.COURSE_PREFER_TIME
 COURSE_PREFER_DAY = request.COURSE_PREFER_DAY
 
 # 教师名字在这里变为大写
-## TEACHER_PREFER_TIME = {}
-## for name in request.TEACHER_PREFER_TIME:
-##     TEACHER_PREFER_TIME[name.upper()] = request.TEACHER_PREFER_TIME[name]
+TEACHER_PREFER_TIME = {}
+for name in request.TEACHER_PREFER_TIME:
+    TEACHER_PREFER_TIME[name.upper()] = request.TEACHER_PREFER_TIME[name]
 
-## TEACHER_PREFER_DAY = {}
-## for name in request.TEACHER_PREFER_DAY:
-##     request.TEACHER_PREFER_DAY[name.upper()] = request.TEACHER_PREFER_DAY[name]
+TEACHER_PREFER_DAY = {}
+for name in request.TEACHER_PREFER_DAY:
+    TEACHER_PREFER_DAY[name.upper()] = request.TEACHER_PREFER_DAY[name]
 
 ## 以下内容不能修改！
 ## 用于程序中的辅助变量
 ##
 
 # 时间列表
-TIME =  BEFORENOON[:] #完全拷贝
-TIME.extend(AFTERNOON)
-TIME.extend(NIGHT)
+TIME = BEFORENOON + AFTERNOON + NIGHT
 
 day_num = len(DAY)
 time_num = len(TIME)
 beforenoon_num = len(BEFORENOON)
 afternoon_num = beforenoon_num + len(AFTERNOON)
+
+special_cid = list(set(COURSE_PREFER_TIME.keys() +
+                       COURSE_PREFER_DAY.keys()))
+special_teachers = list(set(TEACHER_PREFER_TIME.keys() +
+                            TEACHER_PREFER_DAY.keys()))

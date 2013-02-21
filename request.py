@@ -7,14 +7,23 @@
 # 某门课想要在某段时间上
 # ID -> 时间 id 列表（从 0 开始)
 COURSE_PREFER_TIME = {
-    '13' : [5, 6, 7, 8, 9]
+    'gjhwysybx' : [0,1,2,3,4],
+
                       }
 
 # 某门课像要在某一天上
 # id -> 日期 id 列表(从 0 开始）
 COURSE_PREFER_DAY = {
-    '13' : [4]
+    'gjhwysybx' : [0,1],
                      }
 
 # 教师想要在某段时间上课的要求可以转化为课程
 # 对时间的要求
+TEACHER_PREFER_DAY = {
+    'crh' : [0, 1],
+
+}
+
+TEACHER_PREFER_TIME = {
+    'crh' : [0,1,2,3,4],
+}

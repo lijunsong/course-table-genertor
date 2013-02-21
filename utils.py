@@ -45,3 +45,8 @@ def to_pos(week, time):
         sys.exit("Error: time %s is not legal" % time)
 
     return (time_pos, week_pos)
+
+def disjoint_p(l1, l2):
+    ls1 = set(l1)
+    ls2 = set(l2)
+    return ls1.isdisjoint(l2)

@@ -4,6 +4,7 @@
 import configure as cfg
 import debug
 import sys
+import utils
 
 d = debug.Debug('gen')
 
@@ -36,15 +37,39 @@ class Generator:
     def __init__(self, course_pool):
         self.course_pool = course_pool
         self.determined = course_pool.get_determined()
-        self.sorted_undetermined = course_pool.get_sorted_undetermined()
+        self.sorted_undetermined = \
+          course_pool.get_sorted_undetermined()
+    #     # 将 cfg 里面老师的特殊要求转化为课程的特殊要求
+    #     self._convert_preference()
+    #     d.p(cfg.COURSE_PREFER_TIME)
+    #     d.p(cfg.COURSE_PREFER_DAY)
+
+    # def _convert_preference(self):
+    #     """将 cfg 里面的 TEACHER_PREFER_* 转化为
+    #     COURSE_PREFER_*
+    #     """
+    #     time_teachers = list(cfg.TEACHER_PREFER_TIME)
+    #     day_teachers = list(cfg.TEACHER_PREFER_DAY)
+
+    #     for course in self.sorted_determined:
+    #         # 检查时间
+    #         #TODO: 查重，可能在 course 和 teacher 的地方都
+    #         # 错误地设置了特定的时间
+    #         ts = list(set(course.teachers).intersection(time_teachers))
+    #         for t in ts: #每个老师的要求都要放入 course 要求中
+    #             cfg.COURSE_PREFER_TIME[course.cid] = \
+    #               cfg.TEACHER_PREFER_TIME[t]
+
+    #         # 检查日期
+    #         ts = list(set(course.teachers).intersection(day_teachers))
+    #         for t in ts:
+    #             cfg.COURSE_PREFER_DAY[course.cid] = \
+    #               cfg.TEACHER_PREFER_DAY[course.cid]
 
     def set_course(self, courseid):
         "在相应的课表上找最佳位置摆放"
         # 1. 得到与之相关的所有课表
         tables = self.course_to_table(courseid)
-        d.p('得到课程 %s 的相关课表： ' % courseid)
-        for t in tables:
-            d.p(t.title)
         course = self.id_to_course(courseid)
 
         # 2. 在相关的几个课表上，找到一个 *都空着的* *最佳* 位置
@@ -162,12 +187,9 @@ class Generator:
     def _conflict_teacher_p(self, cid1, cid2):
         if cid1 == cid2:
             return True
-        t1 = set(self.course_pool.id_to_course(cid1).teachers)
-        t2 = set(self.course_pool.id_to_course(cid2).teachers)
-        if t1.isdisjoint(t2): #没有交集
-            return False
-        else:
-            return True
+        return (not utils.disjoint_p( \
+            self.course_pool.id_to_course(cid1).teachers, \
+            self.course_pool.id_to_course(cid2).teachers))
 
     def _get_poses_on_day(self, table, day, courseid):
         """根据当前课表和给定的星期，得出当天能够摆放的所有位置
