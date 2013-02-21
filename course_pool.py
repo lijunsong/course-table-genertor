@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-# ¿Î³Ì³Ø£¬ÓÃÓÚ´¦Àí¸÷ÖÖÓĞ¹Ø¿Î³ÌµÄ²Ù×÷
+# è¯¾ç¨‹æ± ï¼Œç”¨äºå¤„ç†å„ç§æœ‰å…³è¯¾ç¨‹çš„æ“ä½œ
 
 import configure as cfg
 from course_table import CourseTable
@@ -12,7 +12,7 @@ import pyh as pyh
 d = debug.Debug('course_pool')
 
 class CoursePool:
-    #------ ¶ÔÍâ½Ó¿Ú ------
+    #------ å¯¹å¤–æ¥å£ ------
     def id_to_course(self, courseid):
         return self._courseid_course_dict[courseid]
 
@@ -42,7 +42,7 @@ class CoursePool:
         return '\n'.join(result)
 
     def write_HTML_tables(self, filename):
-        """·µ»Ø¿Î±íµÄHTMLÎÄ±¾"""
+        """è¿”å›è¯¾è¡¨çš„HTMLæ–‡æœ¬"""
         def _HTML_table_detail(num_table):
             t = pyh.table()
             for i in xrange(len(cfg.TIME)):
@@ -64,25 +64,25 @@ class CoursePool:
             page << _HTML_table_detail(table.table)
         page.printOut(filename)
 
-    #----»ù±¾·½·¨
+    #----åŸºæœ¬æ–¹æ³•
     def __init__(self, all_courses):
-        # ËùÓĞµÄ¿Î³Ì
+        # æ‰€æœ‰çš„è¯¾ç¨‹
         self._all_courses = all_courses
-        # Ã¿¸öcourseid¶ÔÓ¦µÄ¿Î³Ì
+        # æ¯ä¸ªcourseidå¯¹åº”çš„è¯¾ç¨‹
         self._courseid_course_dict = self._get_courseid_course_dict()
-        # ËùÓĞgroupµÄ¿Î³Ì±í
+        # æ‰€æœ‰groupçš„è¯¾ç¨‹è¡¨
         self._tables = self._get_all_tables()
-        # group ¶ÔÓ¦µÄ¿Î³Ì±í
+        # group å¯¹åº”çš„è¯¾ç¨‹è¡¨
         self._group_table_dict = self._get_group_table_dict()
-        # Ã¿¸ö¿Î³Ì¶ÔÓ¦µÄ¿Î³Ì±í
+        # æ¯ä¸ªè¯¾ç¨‹å¯¹åº”çš„è¯¾ç¨‹è¡¨
         self._courseid_table_dict = self._get_courseid_table_dict()
-        # Ã¿¸öÀÏÊ¦½ÌµÄËùÓĞ¿Î³Ìid
+        # æ¯ä¸ªè€å¸ˆæ•™çš„æ‰€æœ‰è¯¾ç¨‹id
         self._teacher_cid_dict = self._get_teacher_cid_dict()
-        # Ô¤ÖÃµÄ¿Î³Ì
+        # é¢„ç½®çš„è¯¾ç¨‹
         self._determined = self._get_determined()
-        # Î´Ô¤ÖÃµÄ¿Î³Ì
+        # æœªé¢„ç½®çš„è¯¾ç¨‹
         self._undetermined = self._get_undetermined()
-        # ÅÅºÃĞòµÄÎ´Ô¤ÖÃµÄ¿Î³Ì
+        # æ’å¥½åºçš„æœªé¢„ç½®çš„è¯¾ç¨‹
         self._sorted_undetermined = self._sort_undetermined()
 
     def _get_determined(self):
@@ -100,12 +100,12 @@ class CoursePool:
         return udc
 
     def _sort_undetermined(self):
-        """¶ÔËùÓĞµÄ¿Î³Ì½øĞĞÅÅĞò
+        """å¯¹æ‰€æœ‰çš„è¯¾ç¨‹è¿›è¡Œæ’åº
 
-        ¶ÔÓÚÓĞÒªÇóµÄ¿Î
-        1. ÉÏÍ¬Ò»ÃÅ¿ÎµÄ°à¼¶Ô½¶à£¬ÕâÃÅ¿Î×î¿¿Ç°£¨ÒòÎªÉæ¼°µ½ÁË²»Í¬µÄ¿Î±í£©
-        2. Ò»ÃÅ¿ÎÀÏÊ¦ÒªÇóÔ½¶à£¨±ÈÈç³ıÁËÃ¿ÌìÊ±¼äÏŞÖÆÖ®Íâ£¬»¹ÓĞĞÇÆÚµÄÏŞÖÆ£©£¬Ô½¿¿Ç°
-        3. ¶ÔÓÚÓĞÏàÍ¬¶àÒªÇóµÄ£¬ÒªÇó·¶Î§Ô½Õ­Ô½¿¿Ç°
+        å¯¹äºæœ‰è¦æ±‚çš„è¯¾
+        1. ä¸ŠåŒä¸€é—¨è¯¾çš„ç­çº§è¶Šå¤šï¼Œè¿™é—¨è¯¾æœ€é å‰ï¼ˆå› ä¸ºæ¶‰åŠåˆ°äº†ä¸åŒçš„è¯¾è¡¨ï¼‰
+        2. ä¸€é—¨è¯¾è€å¸ˆè¦æ±‚è¶Šå¤šï¼ˆæ¯”å¦‚é™¤äº†æ¯å¤©æ—¶é—´é™åˆ¶ä¹‹å¤–ï¼Œè¿˜æœ‰æ˜ŸæœŸçš„é™åˆ¶ï¼‰ï¼Œè¶Šé å‰
+        3. å¯¹äºæœ‰ç›¸åŒå¤šè¦æ±‚çš„ï¼Œè¦æ±‚èŒƒå›´è¶Šçª„è¶Šé å‰
         """
         # TODO
         res = []
@@ -140,27 +140,27 @@ class CoursePool:
         return ccd
 
     def _get_group_table_dict(self):
-        "Ã¿¸ö group ¶ÔÓ¦Ò»¸ö table"
+        "æ¯ä¸ª group å¯¹åº”ä¸€ä¸ª table"
         gtd = {}
         for table in self._tables:
             gtd[table.title] = table
         return gtd
 
     def _get_all_groups(self):
-        "µÃµ½ËùÓĞµÄgroupÃû×Ö"
+        "å¾—åˆ°æ‰€æœ‰çš„groupåå­—"
         groups = []
         for c in self._all_courses:
             groups.extend(c.groups)
         return set(groups)
 
     def _get_courseid_table_dict(self):
-        """·µ»Ø¿Î³ÌÓë¿Î³Ì¶ÔÓ¦µÄgroupµÄtable"""
+        """è¿”å›è¯¾ç¨‹ä¸è¯¾ç¨‹å¯¹åº”çš„groupçš„table"""
         ctd = {}
         for c in self._all_courses:
             for g in c.groups:
                 try:
-                    # È¥ÖØ£¬ÒòÎªÔÚ _all_courses ÀïÃæ¿ÉÄÜ»á³öÏÖÁ½¸ö
-                    # Ò»ÑùµÄ¿Î³Ì£¨e.g.Ò»¸öĞÇÆÚÉÏÁ½´Î2´Î2Ñ§·ÖµÄX¿Î£©
+                    # å»é‡ï¼Œå› ä¸ºåœ¨ _all_courses é‡Œé¢å¯èƒ½ä¼šå‡ºç°ä¸¤ä¸ª
+                    # ä¸€æ ·çš„è¯¾ç¨‹ï¼ˆe.g.ä¸€ä¸ªæ˜ŸæœŸä¸Šä¸¤æ¬¡2æ¬¡2å­¦åˆ†çš„Xè¯¾ï¼‰
                     if self._group_table_dict[g] not in ctd[c.cid]:
                         ctd[c.cid].append(self._group_table_dict[g])
                 except KeyError:
@@ -169,23 +169,23 @@ class CoursePool:
         return ctd
 
     def _get_all_tables(self):
-        #µÃµ½Äê¼¶ÓëÏàÓ¦¿Î³ÌµÄÓ³Éä
+        #å¾—åˆ°å¹´çº§ä¸ç›¸åº”è¯¾ç¨‹çš„æ˜ å°„
         groups = self._get_all_groups()
 
-        # ³õÊ¼»¯¿Î³Ì±í
+        # åˆå§‹åŒ–è¯¾ç¨‹è¡¨
         tables = []
         for k in groups:
             tables.append(CourseTable(k))
         return tables
 
     def _table_detail(self, num_table):
-        """·µ»Ø¿Î³Ì±í¾ßÌåÄÚÈİ
+        """è¿”å›è¯¾ç¨‹è¡¨å…·ä½“å†…å®¹
         Argument:
-            num_table: Êı×Ö¾ØÕó
+            num_table: æ•°å­—çŸ©é˜µ
         Return:
             (listof (listof int)) => string
         """
-        max_len = 20 #×î³¤¶àÉÙ¸ö×Ö·û
+        max_len = 20 #æœ€é•¿å¤šå°‘ä¸ªå­—ç¬¦
         s = ""
         for i in xrange(len(cfg.TIME)):
             s += cfg.TIME[i] + ' '
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     import reader
     r = reader.Reader('test.csv')
     cp = CoursePool(r.courses)
-    # ´òÓ¡ËùÓĞµÄ¿Î³Ì
+    # æ‰“å°æ‰€æœ‰çš„è¯¾ç¨‹
     for c in cp._all_courses:
         print c.cid, c.name, c.credit, c.groups, c.teachers
 
@@ -220,13 +220,13 @@ if __name__ == '__main__':
     for i in cp._group_table_dict:
         print 'GROUP: %s' % i
         print cp._group_table_dict[i]
-    print 'Ã¿¸ö¿Î³Ì¶ÔÓ¦µÄ¿Î³Ì±í£º'
+    print 'æ¯ä¸ªè¯¾ç¨‹å¯¹åº”çš„è¯¾ç¨‹è¡¨ï¼š'
     for i in cp._courseid_table_dict:
         c = cp.id_to_course(i)
         print 'COURSE: %s %s %s' % (c.name, c.groups, c.teachers)
         for k in cp._courseid_table_dict[i]:
             print k
-    print 'Ã¿¸öÀÏÊ¦¶ÔÓ¦µÄ¿Î³Ì'
+    print 'æ¯ä¸ªè€å¸ˆå¯¹åº”çš„è¯¾ç¨‹'
     for t in cp._teacher_cid_dict:
         print 'TEACHER: %s' % t
         print cp._teacher_cid_dict[t]

@@ -17,7 +17,7 @@ nl = '\n'
 doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n'
 charset = '<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />\n'
 
-tags = ['html', 'body', 'head', 'link', 'meta', 'div', 'p', 'form', 'legend', 
+tags = ['html', 'body', 'head', 'link', 'meta', 'div', 'p', 'form', 'legend',
         'input', 'select', 'span', 'b', 'i', 'option', 'img', 'script',
         'table', 'tr', 'td', 'th', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
         'fieldset', 'a', 'title', 'body', 'head', 'title', 'script', 'br', 'table',
@@ -27,13 +27,13 @@ selfClose = ['input', 'img', 'link', 'br']
 
 class Tag(list):
     tagname = ''
-    
+
     def __init__(self, *arg, **kw):
         self.attributes = kw
-        if self.tagname : 
+        if self.tagname :
             name = self.tagname
             self.isSeq = False
-        else: 
+        else:
             name = 'sequence'
             self.isSeq = True
         self.id = kw.get('id', name)
@@ -45,7 +45,7 @@ class Tag(list):
             for o in obj: self.addObj(o)
         else: self.addObj(obj)
         return self
-    
+
     def addObj(self, obj):
         if not isinstance(obj, Tag): obj = str(obj)
         id=self.setID(obj)
@@ -81,7 +81,7 @@ class Tag(list):
                 if isinstance(c, Tag):
                     result += c.render()
                 else: result += c
-            if self.tagname: 
+            if self.tagname:
                 result += '</%s>' % self.tagname
         result += '\n'
         return result
@@ -95,8 +95,8 @@ class Tag(list):
         return result
 
     def selfClose(self):
-        return self.tagname in selfClose        
-    
+        return self.tagname in selfClose
+
 def TagFactory(name):
     class f(Tag):
         tagname = name
@@ -105,7 +105,7 @@ def TagFactory(name):
 
 thisModule = modules[__name__]
 
-for t in tags: setattr(thisModule, t, TagFactory(t)) 
+for t in tags: setattr(thisModule, t, TagFactory(t))
 
 def ValidW3C():
     out = a(img(src='http://www.w3.org/Icons/valid-xhtml10', alt='Valid XHTML 1.0 Strict'), href='http://validator.w3.org/check?uri=referer')
@@ -113,11 +113,13 @@ def ValidW3C():
 
 class PyH(Tag):
     tagname = 'html'
-    
+
     def __init__(self, name='MyPyHPage'):
         self += head()
         self += body()
-        self.attributes = dict(xmlns='http://www.w3.org/1999/xhtml', lang='en')
+        self.attributes = dict(xmlns='http://www.w3.org/1999/xhtml',
+                               lang='zh')
+        self.head += charset
         self.head += title(name)
 
     def __iadd__(self, obj):
@@ -134,7 +136,7 @@ class PyH(Tag):
 
     def addCSS(self, *arg):
         for f in arg: self.head += link(rel='stylesheet', type='text/css', href=f)
-    
+
     def printOut(self,file=''):
         if file: f = open(file, 'w')
         else: f = stdout
@@ -142,4 +144,3 @@ class PyH(Tag):
         f.write(self.render())
         f.flush()
         if file: f.close()
-    
