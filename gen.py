@@ -28,6 +28,10 @@ class Generator:
     def print_coursetables(self):
         print self.get_detail_tables_str()
 
+    def generate_HTML(self, filename):
+        """生成一个 HTML 文件"""
+        self.course_pool.write_HTML_tables(filename)
+
     #-----------辅助方法------------
     def __init__(self, course_pool):
         self.course_pool = course_pool
@@ -38,6 +42,9 @@ class Generator:
         "在相应的课表上找最佳位置摆放"
         # 1. 得到与之相关的所有课表
         tables = self.course_to_table(courseid)
+        d.p('得到课程 %s 的相关课表： ' % courseid)
+        for t in tables:
+            d.p(t.title)
         course = self.id_to_course(courseid)
 
         # 2. 在相关的几个课表上，找到一个 *都空着的* *最佳* 位置
@@ -287,6 +294,7 @@ class Generator:
 
     def get_detail_tables_str(self):
         return self.course_pool.get_detail_tables()
+
 
 if __name__=='__main__':
     from reader import Reader

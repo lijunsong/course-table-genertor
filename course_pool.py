@@ -6,6 +6,8 @@
 import configure as cfg
 from course_table import CourseTable
 import debug
+import pyh as pyh
+
 
 d = debug.Debug('course_pool')
 
@@ -38,6 +40,29 @@ class CoursePool:
             result.append('GRUOP: %s' % table.title)
             result.append(self._table_detail(table.table))
         return '\n'.join(result)
+
+    def write_HTML_tables(self, filename):
+        """返回课表的HTML文本"""
+        def _HTML_table_detail(num_table):
+            t = pyh.table()
+            for i in xrange(len(cfg.TIME)):
+                tr = t << pyh.tr(style='border:1px solid;')
+                tr << pyh.td(cfg.TIME[i])
+                for j in range(len(cfg.DAY)):
+                    cid = num_table[i][j]
+                    if cid == -1:
+                        tr << pyh.td(' ', style='border: 1px solid;')
+                    else:
+                        c = self.id_to_course(cid)
+                        info = "%s[%s]" % (c.name,c.teachers[0])
+                        tr << pyh.td(info, style='border: 1px solid;')
+            return t
+
+        page = pyh.PyH("course table")
+        for table in self._tables:
+            page << pyh.h1('GROUP: %s' % table.title)
+            page << _HTML_table_detail(table.table)
+        page.printOut(filename)
 
     #----基本方法
     def __init__(self, all_courses):
@@ -140,6 +165,7 @@ class CoursePool:
                         ctd[c.cid].append(self._group_table_dict[g])
                 except KeyError:
                     ctd[c.cid] = [self._group_table_dict[g]]
+        d.p(ctd)
         return ctd
 
     def _get_all_tables(self):
@@ -153,20 +179,28 @@ class CoursePool:
         return tables
 
     def _table_detail(self, num_table):
-        "返回课程表具体内容"
+        """返回课程表具体内容
+        Argument:
+            num_table: 数字矩阵
+        Return:
+            (listof (listof int)) => string
+        """
+        max_len = 20 #最长多少个字符
         s = ""
         for i in xrange(len(cfg.TIME)):
             s += cfg.TIME[i] + ' '
             for j in range(len(cfg.DAY)):
                 cid = num_table[i][j]
                 if cid == -1:
-                    s += '_'*15
+                    s += '_' * max_len
                 else:
-                    s += (self.id_to_course(cid).name+"_"*15)[:15]
+                    c = self.id_to_course(cid)
+                    info = "%s[%s]" % (c.name,c.teachers[0])
+                    suppliment = max_len - len(info)
+                    s += info + "_" * (max_len - len(info))
                 s += '  '
             s += '\n'
         return s
-
 
 
 if __name__ == '__main__':

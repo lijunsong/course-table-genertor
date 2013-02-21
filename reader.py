@@ -86,7 +86,7 @@ class Reader:
             sys.exit("file '%s' reading error\n%s" % (self.file_name, e))
 
 if __name__=='__main__':
-    reader = Reader("test.csv")
+    reader = Reader("test-case/2012-2013.csv")
     for c in reader.courses:
         print c.cid, c.name, c.credit,
         print "group: %s, teachers: %s, start_time: %s" % (c.groups, c.teachers, c.start_time)
