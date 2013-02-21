@@ -59,7 +59,7 @@ class CoursePool:
             return t
 
         page = pyh.PyH("course table")
-        for table in self._tables:
+        for table in sorted(self._tables, key=lambda x: x.title):
             page << pyh.h1('GROUP: %s' % table.title)
             page << _HTML_table_detail(table.table)
         page.printOut(filename)
