@@ -24,12 +24,26 @@ class Course:
         self.teachers = teachers
         #将 week, time 转化为二维数组的坐标[time, week]
         self.start_time = utils.to_pos(week, time)
+        # 每门课的特殊要求（要求安排在周几，第几节课）
+        self.requests = []
 
     def __str__(self):
         return "Name: %s, Teachers: %s, Groups: %s" % (self.name,
                                                        self.teachers,
                                                        self.groups)
-
-
     def need_allocate_p(self):
         return self.start_time == None
+
+
+class Request:
+    def __init__(self, time, day):
+        """每门课排课时候的要求。TODO:是否可以把start_time归到这里里面？
+
+        Attributes:
+            time: 时间, (listof int), 从 0 开始
+            day : 周数，int， 从 0 开始
+        """
+        self.day = day
+        self.time = time
+        assert(type(day) == int)
+        assert(type(time) == list)

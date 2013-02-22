@@ -87,6 +87,8 @@ class CoursePool:
         # 教师与课程的特殊要求
         self.special_cid_time_dict = self._get_special_cid_time_dict()
         self.special_cid_day_dict = self._get_special_cid_day_dict()
+        d.p(self.special_cid_day_dict)
+        d.p(self.special_cid_time_dict)
 
 
     def _get_special_cid_time_dict(self):
@@ -140,7 +142,6 @@ class CoursePool:
                 res.insert(0, c)
             else:
                 res.append(c)
-        d.p_list(res)
         return res
 
     def _conditional_course_p(self, courseid):
@@ -193,7 +194,6 @@ class CoursePool:
                         ctd[c.cid].append(self._group_table_dict[g])
                 except KeyError:
                     ctd[c.cid] = [self._group_table_dict[g]]
-        d.p(ctd)
         return ctd
 
     def _get_all_tables(self):
