@@ -35,15 +35,3 @@ class Course:
         return self.start_time == None
 
 
-class Request:
-    def __init__(self, time, day):
-        """每门课排课时候的要求。TODO:是否可以把start_time归到这里里面？
-
-        Attributes:
-            time: 时间, (listof int), 从 0 开始
-            day : 周数，int， 从 0 开始
-        """
-        self.day = day
-        self.time = time
-        assert(type(day) == int)
-        assert(type(time) == list)

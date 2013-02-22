@@ -3,7 +3,7 @@
 
 # 这个文件用于记录课程要求的条件
 # 这个文件可以开放给用户编辑，或者是使用代码生成
-
+from preference import *
 
 # 定义时间段，上午，下午，晚上
 p1 = [0,1,2,3,4]
@@ -23,23 +23,24 @@ COURSE_PREFER_DAY = {
 # 教师想要在某段时间上课的要求可以转化为课程
 # 对时间的要求
 TEACHER_PREFERENCE = {
-    # 'hr' : [Request(3, [5,6]),
-    #         Request(2, p1)
-    #         ],
-    # 'crh' : request_list([0,1], [0,1,2,3,4]),
+    'crh' : prefs(days=[0,1], time=[0,1,2,3,4]),
+    'hxy' : prefs(days=[0,1,4], time=p1+p2),
+    'dll' : prefs(days=[2,3,4], time=[2,3,4,5,6]),
+    'dxs' : prefs(days=[0,1,2,3]),
+    'qy'  : prefs(days=[0,1,2]),
+    'yxq' : prefs(days=[0,1,2,3]),
+    'mew' : prefs(days=[0]),
+    'zxj' : prefs(days=[0,1,2,5]),
+    'fds' : prefs(days=[0, 2], time=[0,1]),
     
+    'cxn' : prefs_notin(time=p3),
+    'hr' : [Pref(3, [5,6]),
+            Pref(2, p1)
+            ],
+
 }
 
 TEACHER_PREFER_DAY = {
-    'crh' : [0, 1],
-    'hxy' : [0,1,4],
-    'dll' : [2,3,4],
-    'dxs' : [0,1,2,3],
-    'qy'  : [0,1,2],
-    'yxq' : [0,1,2,3],
-    'mew' : [0],
-    'zxj' : [0,1,2,5],
-    'fds' : [0, 2],
 }
 
 TEACHER_PREFER_TIME = {
