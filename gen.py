@@ -142,8 +142,8 @@ class Generator:
         #找到课程最少的一天
         day = min(course_num_dict, key = course_num_dict.get)
         #尽量让老师不要连续两天上课
-        daybef = -1;
-        dayaft = -1;
+        daybef = 0;
+        dayaft = 0;
         if day-1 in eachday_course_of_teacher:
             daybef = eachday_course_of_teacher[day-1]
         if day+1 in eachday_course_of_teacher:
