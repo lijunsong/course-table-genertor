@@ -78,6 +78,8 @@ class CoursePool:
         self._courseid_table_dict = self._get_courseid_table_dict()
         # 每个老师教的所有课程id
         self._teacher_cid_dict = self._get_teacher_cid_dict()
+        # 每个老师教每天的课程数量
+        self._eachday_course_of_teacher = {}
         # 预置的课程
         self._determined = self._get_determined()
         # 未预置的课程

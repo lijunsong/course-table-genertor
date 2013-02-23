@@ -22,7 +22,7 @@ class CourseTable:
         "得到当前课表已经设置了多少门课了"
         return sum(self.eachday_course)
 
-    def set(self, course, pos):
+    def set(self, course, pos, course_pool):
         """在课表上的 pos 位置放置 course
 
         NOTE: 同时对每天的课程进行统计
@@ -37,6 +37,13 @@ class CourseTable:
         for i in xrange(credit):
             self.table[time + i][day] = cid
             self.eachday_course[day] += 1
+        teachers = course.teachers
+        for t in teachers:
+            ec = [0 for i in cfg.DAY]
+            if t in course_pool._eachday_course_of_teacher:
+                ec = course_pool._eachday_course_of_teacher[t]
+            ec[day] += credit
+            course_pool._eachday_course_of_teacher[t] = ec
             
     def __str__(self):
         "返回二维数组"

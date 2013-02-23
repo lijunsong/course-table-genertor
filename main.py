@@ -8,7 +8,7 @@ from course_pool import CoursePool
 from debug import Debug
 import sys
 
-file_name = "test.csv"
+file_name = "test-case/2012-2013.csv"
 
 # 不要输出调试信息
 Debug.PRINT_MARKER = True

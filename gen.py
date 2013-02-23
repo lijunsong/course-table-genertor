@@ -70,7 +70,6 @@ class Generator:
         "在相应的课表上找最佳位置摆放"
         # 1. 得到与之相关的所有课表
         tables = self.course_to_table(courseid)
-        course = self.id_to_course(courseid)
 
         # 2. 在相关的几个课表上，找到一个 *都空着的* *最佳* 位置
         pos = self.get_course_pos(tables, courseid)
@@ -88,15 +87,25 @@ class Generator:
         2. 找到了最满的课表，开始找一个最佳位置
         """
         d.p('准备设置课程 %s' % self.id_to_course(courseid))
+        course = self.course_pool.id_to_course(courseid)
         # 找课程最多的课表
         fullest_table = self.find_max_course_num(tables)
         # 得到这张表上每天上课数量
         course_num_dict = self.get_eachday_course(fullest_table)
+        ec = {}
+        teachers = course.teachers
+        for t in teachers:
+            if t in self.course_pool._eachday_course_of_teacher: 
+                e = self.course_pool._eachday_course_of_teacher[t]
+                for i, e in enumerate(e):
+                    ec[i] = e
         d.p('每天上课数量 %s' % course_num_dict.values())
         # 在这些天里面找出一天，查看是否有冲突
         while len(course_num_dict) != 0:
-            # 找到课程最少的一天
-            day = min(course_num_dict, key = course_num_dict.get)
+            dict_copy = course_num_dict.copy()
+            day = self._get_best_day(dict_copy, ec)
+            if day == -1:
+                day = min(course_num_dict, key = course_num_dict.get)
             d.p('试试星期 %s' % day)
             # 先查看这一天有没有问题
             if self._conflict_day_p(tables, day, courseid):
@@ -128,12 +137,31 @@ class Generator:
 
         return (time, day)
 
+    #找出更加符合规则的一天
+    def _get_best_day(self, course_num_dict, eachday_course_of_teacher):
+        #找到课程最少的一天
+        day = min(course_num_dict, key = course_num_dict.get)
+        #尽量让老师不要连续两天上课
+        daybef = -1;
+        dayaft = -1;
+        if day-1 in eachday_course_of_teacher:
+            daybef = eachday_course_of_teacher[day-1]
+        if day+1 in eachday_course_of_teacher:
+            dayaft = eachday_course_of_teacher[day+1]
+        if daybef == 0 and dayaft == 0:
+            return day
+        else:
+            del course_num_dict[day]
+            if len(course_num_dict) == 0:
+                return -1
+            return self._get_best_day(course_num_dict, eachday_course_of_teacher)
+
     def _set_on_table(self, tables, pos, courseid):
         assert(pos[0] != -1)
         course = self.id_to_course(courseid)
         for table in tables:
-            table.set(course, pos)
-
+            table.set(course, pos, self.course_pool)
+            
     def _conflict_pos_p(self, tables, pos, courseid):
         time, day = pos
         # 如果在这一天找不到一个合适的位置，
