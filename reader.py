@@ -41,27 +41,6 @@ class Reader:
                    map(str.strip,
                        semicolon_str.strip("; \n").split(";")))
 
-    def filter_courses(self, group):
-        """按照年级名筛选出课程
-
-        Return: string => (listof Course)
-        """
-        f = lambda course: course.group == group
-        return filter(f, self.courses)
-
-    def get_groups_courses(self):
-        """得到每个年级对应的课程字典
-
-        Return:
-            => (dictof string (listof Course))
-        """
-        f = lambda c: c.group
-        groups = set(map(f, self.courses))
-        g_c = {}
-        for g in groups:
-            g_c[g] = self.filter_courses(g)
-        return g_c
-
     def _process_csv(self):
         "处理 csv 的方法"
         try:

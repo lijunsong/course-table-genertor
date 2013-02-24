@@ -26,16 +26,24 @@ def prefs(days=[0,1,2,3,4], time=p1+p2+p3):
        days: 排课要求排在哪几天
        time: 排课要求排在这几天的哪些时间里面
     Return: (listof int) * (listof int) => (listof Pref)
+    示例：
+      - 周一和周三的上午： prefs(days=[0,2], time=p1)
+      - 周一和周三： prefs(days=[0,2])
+      - 周一至周五的上午: prefs(time=p1)
     """
     return [Pref(d, time) for d in days]
 
 def prefs_notin(days=[], time=[]):
-    """用于得到不在哪几天的哪几个时间
+    """如果条件是“不在哪几天的哪几个时间”，则用这个函数
+
     Arguments:
         days: 不排在哪几天
         time: 不排在这几个时间段
     Return:
         (listof int) * (listof int) => (listof Pref)
+
+    示例：
+      - 不在周二和周三的下午： prefs_notin([1,2],p2)
     """
     total_days = [0,1,2,3,4]
     total_time = p1 + p2 + p3
@@ -51,7 +59,7 @@ def prefs_notin(days=[], time=[]):
             result.append(Pref(d,total_time))
     return result
 
-def prefs_notin_specially(day, time, *other):
+def prefs_notin_special(day, time, *other):
     """用于指定不在某一天的某个时刻，参数可以是任意偶数多个
     Argument:
         day: 不排在哪一天
@@ -59,24 +67,45 @@ def prefs_notin_specially(day, time, *other):
         other: day 和 time 的重复
     Return:
         int * (listof int) * ... => (listof Pref)
-    """
-    d = {day: time}
-    for i in range(0,len(other),2):
-        d[other[i]] = other[i+1]
-        #TODO HERE
-    total_days = [0,1,2,3,4]
-    total_time = p1 + p2 + p3
 
-    ts = [t for t in total_time if t not in time]
+    示例：
+      - 不在周三的下午和周四的晚上： prefs_notin_specially(2,p2,3,p3)
+    """
+    assert(len(other) % 2 == 0)
+    total_time = p1+p2+p3
+    total_days = [0,1,2,3,4]
+
+    not_dict = {day: time}
+    for i in range(0,len(other),2):
+        not_dict[other[i]] = other[i+1]
     result = []
     for d in total_days:
-        if d == day:
+        if d in not_dict:
+            ts = filter(lambda x: x not in not_dict[d], total_time)
             result.append(Pref(d, ts))
         else:
             result.append(Pref(d, total_time))
-    if len(other) != 0:
-        print other
-        result.extend(prefs_notin_specially(other[0],
-                                            other[1],
-                                            *other[2:]))
+    return result
+
+def prefs_special(day, time, *other):
+    """用于指定某一天的某个时刻，参数可以是任意偶数多个
+    Arguments:
+        day: 在某一天
+        time: 在那一天的某个时间段
+        other: day 和 time 的重复
+    Return:
+        int * (listof int) * ... => (listof Pref)
+
+    示例：
+      - 在周二上午和周三下午：prefs_special(1,p1,2,p2)
+    """
+    assert(len(other) % 2 == 0)
+    total_time = p1 + p2 + p3
+    total_days = [0,1,2,3,4]
+    in_dict = {day: time}
+    for i in range(0, len(other), 2):
+        in_dict[other[i]] = other[i+1]
+    result = []
+    for d in in_dict:
+        result.append(Pref(d, in_dict[d]))
     return result

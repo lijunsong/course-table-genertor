@@ -32,11 +32,8 @@ TEACHER_PREFERENCE = {
     'mew' : prefs(days=[0]),
     'zxj' : prefs(days=[0,1,2,5]),
     'fds' : prefs(days=[0, 2], time=[0,1]),
-    
     'cxn' : prefs_notin(time=p3),
-    'hr' : [Pref(3, [5,6]),
-            Pref(2, p1)
-            ],
+    'hr'  : prefs_special(3, [5,6], 2, p1),
 
 }
 

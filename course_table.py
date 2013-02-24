@@ -48,10 +48,3 @@ class CourseTable:
             res.append('\n')
         return "".join(res)
 
-
-
-if __name__=='__main__':
-    from reader import Reader
-    r = Reader('test.csv')
-    cs = r.filter_courses('Grads 2012 Fall')
-    table = CourseTable(cs)
