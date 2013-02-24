@@ -85,11 +85,17 @@ class CoursePool:
         # 排好序的未预置的课程
         self._sorted_undetermined = self._sort_undetermined()
         # 教师与课程的特殊要求
-        self.special_cid_time_dict = self._get_special_cid_time_dict()
-        self.special_cid_day_dict = self._get_special_cid_day_dict()
-        d.p(self.special_cid_day_dict)
-        d.p(self.special_cid_time_dict)
+        self._set_preference()
 
+    def _set_preference(self):
+        "读取 TEACHER_PREFERENCE 里面的条件，对每门课进行设置"
+        for t in cfg.TEACHER_PREFERENCE:
+            for c in self._all_courses:
+                if t in c.teachers:
+                    #TODO: 可能引入bug：两个老师教一门课的时候，这个时候
+                    #应该合并两个老师的条件。可将这个赋值改为course中的一个
+                    #方法的调用，判断是否重复设定了这个课程的preference
+                    c.preference = cfg.TEACHER_PREFERENCE[t]
 
     def _get_special_cid_time_dict(self):
         """将老师对每天的时间的要求转化为课程的要求"""

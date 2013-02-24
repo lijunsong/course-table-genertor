@@ -39,32 +39,6 @@ class Generator:
         self.determined = course_pool.get_determined()
         self.sorted_undetermined = \
           course_pool.get_sorted_undetermined()
-    #     # 将 cfg 里面老师的特殊要求转化为课程的特殊要求
-    #     self._convert_preference()
-    #     d.p(cfg.COURSE_PREFER_TIME)
-    #     d.p(cfg.COURSE_PREFER_DAY)
-
-    # def _convert_preference(self):
-    #     """将 cfg 里面的 TEACHER_PREFER_* 转化为
-    #     COURSE_PREFER_*
-    #     """
-    #     time_teachers = list(cfg.TEACHER_PREFER_TIME)
-    #     day_teachers = list(cfg.TEACHER_PREFER_DAY)
-
-    #     for course in self.sorted_determined:
-    #         # 检查时间
-    #         #TODO: 查重，可能在 course 和 teacher 的地方都
-    #         # 错误地设置了特定的时间
-    #         ts = list(set(course.teachers).intersection(time_teachers))
-    #         for t in ts: #每个老师的要求都要放入 course 要求中
-    #             cfg.COURSE_PREFER_TIME[course.cid] = \
-    #               cfg.TEACHER_PREFER_TIME[t]
-
-    #         # 检查日期
-    #         ts = list(set(course.teachers).intersection(day_teachers))
-    #         for t in ts:
-    #             cfg.COURSE_PREFER_DAY[course.cid] = \
-    #               cfg.TEACHER_PREFER_DAY[course.cid]
 
     def set_course(self, courseid):
         "在相应的课表上找最佳位置摆放"
@@ -141,13 +115,13 @@ class Generator:
             return True
 
         # 检查这个位置是否符合特殊要求
-        d.p('pos: 检查课程 %s 的特殊要求' % courseid)
-        if courseid in cfg.COURSE_PREFER_TIME:
-            if time not in cfg.COURSE_PREFER_TIME[courseid]:
-                d.p('不符合')
-                return True
+        d.p('pos: 检查课程 %s 的pos特殊要求' % courseid)
+        course = self.id_to_course(courseid)
+        if course.conflict_pref_time_p(time):
+            d.p('不符合')
+            return True
 
-        credit = self.course_pool.id_to_course(courseid).credit
+        credit = course.credit
         # 再看看其他课表这个时间段是不是可以放下这门课
         for table in tables:
             for t in xrange(time, time+credit):
@@ -161,12 +135,12 @@ class Generator:
         这一天设置在指定的 tables 里面
         NOTE: 这里不判断有没有位置放，有没有位置是之后的事情
         """
-        d.p('day: 检查课程 %s 的特殊要求' % courseid)
+        d.p('day: 检查课程 %s 的day特殊要求' % courseid)
         # 查看这一天符不符合特殊要求
-        if courseid in cfg.COURSE_PREFER_DAY:
-            if day not in cfg.COURSE_PREFER_DAY[courseid]:
-                d.p('不符合')
-                return True
+        course = self.id_to_course(courseid)
+        if course.conflict_pref_day_p(day):
+            d.p('不符合')
+            return True
 
         for table in tables:
             if self._conflict_day_p_help(table, day, courseid):
