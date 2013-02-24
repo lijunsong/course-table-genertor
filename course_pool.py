@@ -97,28 +97,6 @@ class CoursePool:
                     #方法的调用，判断是否重复设定了这个课程的preference
                     c.preference = cfg.TEACHER_PREFERENCE[t]
 
-    def _get_special_cid_time_dict(self):
-        """将老师对每天的时间的要求转化为课程的要求"""
-        result = cfg.COURSE_PREFER_TIME
-        time_teachers = list(cfg.TEACHER_PREFER_TIME)
-        for course in self._all_courses:
-            ts = list(set(course.teachers).intersection(time_teachers))
-            for t in ts: #每个老师的要求都要放入 course 要求中
-                result[course.cid] = cfg.TEACHER_PREFER_TIME[t]
-
-        return result
-
-
-    def _get_special_cid_day_dict(self):
-        """将老师对哪一天上课的要求转化为课程要求"""
-        result = cfg.COURSE_PREFER_DAY
-        day_teachers = list(cfg.TEACHER_PREFER_DAY)
-        for course in self._all_courses:
-            ts = list(set(course.teachers).intersection(day_teachers))
-            for t in ts:
-                result[course.cid] = cfg.TEACHER_PREFER_DAY[t]
-        return result
-
     def _get_determined(self):
         dc = []
         for c in self._all_courses:
@@ -144,18 +122,17 @@ class CoursePool:
         # TODO
         res = []
         for c in self._undetermined:
-            if self._conditional_course_p(c.cid):
+            if self._course_has_pref_p(c.cid):
                 res.insert(0, c)
             else:
                 res.append(c)
         return res
 
-    def _conditional_course_p(self, courseid):
-        # TODO: 加入教师的要求，或者提前处理教师要求
-        if courseid in cfg.COURSE_PREFER_TIME or \
-           courseid in cfg.COURSE_PREFER_DAY:
-           return True
-        return False
+    def _course_has_pref_p(self, courseid):
+        if self.id_to_course(courseid).has_preference_p():
+            return True
+        else:
+            return False
 
     def _get_teacher_cid_dict(self):
         tcd = {}

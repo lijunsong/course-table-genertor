@@ -72,3 +72,6 @@ class Course:
 
         d.p('冲突？%s' % conflict)
         return conflict
+
+    def has_preference_p(self):
+        return self.preference != []
