@@ -48,16 +48,31 @@ def prefs_notin(days=[], time=[]):
     total_days = [0,1,2,3,4]
     total_time = p1 + p2 + p3
 
-    preftime = filter(lambda x: x not in time,
-                      total_time)
-
     result = []
-    for d in total_days:
-        if d in days:
+    if time == []:
+        for d in filter(lambda x: x not in days,
+                        total_days):
+            result.append(Pref(d, total_time))
+        return result
+
+
+    if days == []:
+        preftime = filter(lambda x: x not in time,
+                          total_time)
+
+        for d in total_days:
             result.append(Pref(d,preftime))
-        else:
-            result.append(Pref(d,total_time))
-    return result
+        return result
+
+    if time != [] and days != []:
+        preftime = filter(lambda x: x not in time,
+                          total_time)
+        for d in total_days:
+            if d in days:
+                result.append(Pref(d, preftime))
+            else:
+                result.append(Pref(d, total_time))
+        return result
 
 def prefs_notin_special(day, time, *other):
     """用于指定不在某一天的某个时刻，参数可以是任意偶数多个

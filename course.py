@@ -28,6 +28,7 @@ class Course:
         #将 week, time 转化为二维数组的坐标[time, week]
         self.start_time = utils.to_pos(week, time)
         # 每门课的特殊要求（要求安排在周几，第几节课）
+        # preference 为空意味着没有偏好
         self.preference = []
 
     def __str__(self):
@@ -40,38 +41,80 @@ class Course:
     def conflict_pref_day_p(self, day):
         """判断给定的天数是否会和自己的 preference 冲突"""
         d.p('判断day %d 是否符合 %s 的偏好?' % (day, self.name))
-        d.p([p.day for p in self.preference])
-
-        conflict = True
-        if self.preference != []:
-            for p in self.preference:
-                if p.day == day:
-                    conflict = False
-                    break
-        else:
-            d.p('不冲突')
+        if self.preference == []:
+            d.p('无偏好，不冲突')
             return False
 
-        d.p('冲突？%s' % conflict)
-        return conflict
+        prefs_days = [p.day for p in self.preference]
+        d.p('偏好是：%s' % prefs_days)
+        if day in prefs_days:
+            d.p('不冲突')
+            return False
+        else:
+            d.p('冲突')
+            return True
 
-    def conflict_pref_time_p(self, time):
+    def conflict_pref_time_p(self, day, time):
         """判断给的时间是否会和自己的 preference 冲突"""
         d.p('判断time %d 是否符合 %s 的偏好?' % (time, self.name))
-        d.p([p.time for p in self.preference])
 
-        conflict = True
-        if self.preference != []:
-            for p in self.preference:
-                if time in p.time:
-                    conflict = False
-                    break
-        else:
-            d.p('不冲突')
+        if self.preference == []:
+            d.p('本课程无偏好，不冲突')
             return False
 
-        d.p('冲突？%s' % conflict)
-        return conflict
+        prefs_time = self.get_time_preference(day)
+        if prefs_time == []:
+            d.p('老师的preference中不包含这一天 %d，冲突' % day)
+            return True
+        d.p('偏好是：%s' % prefs_time)
+        if time in prefs_time:
+            d.p('不冲突')
+            return False
+        else:
+            d.p('冲突')
+            return True
+
+    def has_day_preference_p(self):
+        """针对天而言，判断老师周一到周五是否有特殊的偏好"""
+        if self.preference == []:
+            return False
+        days = [p.day for p in self.preference]
+        if set(days) == set([0,1,2,3,4]):
+            return False
+        else:
+            return True
+
+    def has_time_preference_p(self, day):
+        "对于某天而言，判断这一天时间上有没有任何的 preference"
+        if self.preference == []:
+            return False
+
+        pref = filter(lambda x: x.day == day, self.preference)
+        if pref == []:
+            return True #如果preference 里面没有 day 这一天，说明这一
+                        #天不能排，意味着有 time preference
+        else:
+            time = pref[0].time
+            if set(time) != set([0,1,2,3,4,5,6,7,8,9,10,11,12]):
+                return True
+            else:
+                return False
 
     def has_preference_p(self):
-        return self.preference != []
+        "判断这个课程是否有任何的 preference"
+        if self.preference == []:
+            return False
+
+        if self.has_day_preference_p():
+            return True
+        for d in [0,1,2,3,4]:
+            if self.has_time_preference_p(d):
+                return True
+        return False
+
+    def get_time_preference(self, day):
+        pref = filter(lambda x: x.day == day, self.preference)
+        if pref == []:
+            return []
+        else:
+            return pref[0].time
