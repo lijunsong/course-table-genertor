@@ -23,10 +23,8 @@ NIGHT = ["18:30-19:20",
 DAY = ["Mon", "Tue", "Wed", "Thu", "Fri"]
 
 # 以下两个都是 courseid -> (listof int) 的字典
-# TODO: 这里需要保证所有的 courseid 是 str 类型的a
-COURSE_PREFER_TIME = request.COURSE_PREFER_TIME
-
-COURSE_PREFER_DAY = request.COURSE_PREFER_DAY
+# TODO: 这里需要保证所有的 courseid 是 str 类型的
+COURSE_PREFERENCE = request.COURSE_PREFERENCE
 
 # 教师名字在这里变为大写
 TEACHER_PREFERENCE = {}

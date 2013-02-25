@@ -219,7 +219,7 @@ class Generator:
                 res.append(i)
         return res
     def _set_period(self, table, courseid, day, start, end):
-        """测试 courseid 的课能不能在 table 的晚上放置
+        """测试 courseid 的课能不能在 table 的某时间段放置
         Arguments:
                table -- CourseTable
             courseid -- 课程 id
@@ -229,23 +229,26 @@ class Generator:
         Return:
             CourseTable * int * int => (tupleof int boolean)
             如果能放置，返回 (可以放置的起始位置, 是否有其他课程)
-            否则返回 (None, 是否有其他课程)
+            否则返回 (-1, 是否有其他课程)
         """
         course_list = zip(*table.table)[day]
         credit = self.id_to_course(courseid).credit
-        has_other_p = False
+        has_other_p = False #是否有其他课程
+        for i in range(start, end): #判断是否有其他课程
+            if course_list[i] != -1:
+                has_other_p = True
         pos = start
         while pos + credit - 1 < end:
             d.p('检查位置 %s' % pos)
             if course_list[pos] != -1: # 有课
-                has_other_p = True
                 d.p('位置 %s 有课' % pos)
                 pos += 1
             else: # 没课
-                if self._empty_period(pos, credit, course_list):
+                if self._empty_period_p(pos, credit, course_list):
                     d.p('位置 %s 可以使用' % pos)
                     break
-                else: # 一旦和另外一门课位置交叉了，直接跳到交叉位置
+                else: # 可能空着的位置不足以放下这么多学分的课
+                    d.p('位置 %s 可能不够安排 %s 学分的课' % (pos, credit))
                     pos += 1
         else:
             pos = -1
@@ -253,7 +256,7 @@ class Generator:
 
         return (pos, has_other_p)
 
-    def _empty_period(self, start_timeid, length, course_list):
+    def _empty_period_p(self, start_timeid, length, course_list):
         """检查从 start_timeid 开始的长度为 length 的 course_list 里面是否为空
 
         NOTE： 此函数不会检查溢出

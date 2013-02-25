@@ -10,15 +10,11 @@ p1 = [0,1,2,3,4]
 p2 = [5,6,7,8,9]
 p3 = [10, 11, 12]
 
-# 某门课想要在某段时间上
-# ID -> 时间 id 列表（从 0 开始)
-COURSE_PREFER_TIME = {
-                      }
-
-# 某门课像要在某一天上
-# id -> 日期 id 列表(从 0 开始）
-COURSE_PREFER_DAY = {
-                     }
+# 某门课想要在某时间上
+# ID -> (listof preference)
+COURSE_PREFERENCE = {
+    
+}
 
 # 教师想要在某段时间上课的要求可以转化为课程
 # 对时间的要求
@@ -35,19 +31,4 @@ TEACHER_PREFERENCE = {
     'cxn' : prefs_notin(time=p3),
     'hr'  : prefs_special(3, [5,6], 2, p1),
 
-}
-
-TEACHER_PREFER_DAY = {
-}
-
-TEACHER_PREFER_TIME = {
-    'crh' : [0,1,2,3,4],
-    'zt' : p1 + p2,
-    'hxy' : p1 + p2,
-    'xl' : [1,2,3,4] + p2 + p3,
-    'dll' : [2,3,4,5,6],
-    'cxn' : p1 + p2,
-    'hr' : [5,6],
-    'ygl' : [2,3,4] + p2 + p3,
-    'fds' : [0,1],
 }
