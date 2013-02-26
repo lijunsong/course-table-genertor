@@ -88,7 +88,8 @@ class CoursePool:
         self._set_preference()
 
     def _set_preference(self):
-        "读取 TEACHER_PREFERENCE 里面的条件，对每门课进行设置"
+        """读取 TEACHER_PREFERENCE 和 COURSE_PREFERENCE 里面的条件，对每
+        门课进行设置"""
         for t in cfg.TEACHER_PREFERENCE:
             for c in self._all_courses:
                 if t in c.teachers:
@@ -96,6 +97,12 @@ class CoursePool:
                     #应该合并两个老师的条件。可将这个赋值改为course中的一个
                     #方法的调用，判断是否重复设定了这个课程的preference
                     c.preference = cfg.TEACHER_PREFERENCE[t]
+        # 如果对某门课有特殊的 preference，
+        # 应该覆盖掉老师的 preference
+        for c in self._all_courses:
+            if c.cid in cfg.COURSE_PREFERENCE:
+                c.preference = cfg.COURSE_PREFERENCE[c.cid]
+
 
     def _get_determined(self):
         dc = []

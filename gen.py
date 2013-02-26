@@ -14,7 +14,9 @@ class Generator:
     Attributes:
         course_pool -- 课程池，提供对课程的各种操作
         determined  -- 已经预置的课程
-        sorted_determined -- 没有预置，但按照老师的各种要求排过序的课程
+        sorted_determined -- 没有预置，但按照老师的各种要求排过序的课
+                             程
+        failure_cid -- 那些无法满足条件的课程
     """
     ## 主要方法 ##
     def gen(self):
@@ -25,6 +27,11 @@ class Generator:
 
         for course in self.sorted_undetermined:
             self.set_course(course.cid)
+
+        # debug failure attempt:
+        d.p("无法满足要求的课程有:")
+        for c in self.failure_cid:
+            d.p(self.id_to_course(c))
 
     def print_coursetables(self):
         print self.get_detail_tables_str()
@@ -39,6 +46,7 @@ class Generator:
         self.determined = course_pool.get_determined()
         self.sorted_undetermined = \
           course_pool.get_sorted_undetermined()
+        self.failure_cid = []
 
     def set_course(self, courseid):
         "在相应的课表上找最佳位置摆放"
@@ -79,28 +87,64 @@ class Generator:
                 continue
 
             # 返回那一天最好的几个位置
-            times = self._get_poses_on_day(fullest_table, day,
+            poses = self._get_poses_on_day(fullest_table, day,
                                            courseid)
-            time = -1
-            for t in times: # 在位置里面依次查找符合条件的值
+            # 在判断这几个最好的位置之前，判断是否可以按照
+            # 老师的 preference time 放置
+            course = self.id_to_course(courseid)
+            prefs_poses = course.get_time_preference(day)
+            # 然后在现在的 poses 里面过滤出这些在 prefs_poses 里的
+            new_poses = filter(lambda x: x in prefs_poses, poses)
+            if new_poses != []: #有交集
+                #首先检查交集，然后检查不在老师 prefer 范围内的位置
+                poses_1 = new_poses
+                poses_2 = filter(lambda x: x not in prefs_poses,
+                                 poses)
+            else:
+                # 如果老师想放的位置没有交集，看运气了，先放老师的位置
+                poses_1 = prefs_poses
+                poses_2 = poses
+
+            d.p('考虑到老师的time_preference: %s' % prefs_poses)
+            d.p('得到最新要尝试查看的时刻列表: 1:%s, 2:%s' % (poses_1, poses_2))
+            # 判断 preference 结束
+
+            # 先尝试摆放老师 prefer 的位置
+            pos = -1
+            if poses_1 != []:
+                for t in poses_1: # 在位置里面依次查找符合条件的值
+                    if self._conflict_pos_p(tables, (t, day), courseid):
+                        d.p('pos有冲突，不能放在星期 %s 的位置 %s' % (day, t))
+                    else: # 能放，找到位置了
+                        d.p('能放在星期 %s 的位置 %s)' % (day, t))
+                        pos = t
+                        break
+                if pos == -1: #第一次尝试失败
+                    self.failure_cid.append(courseid)
+                    d.p('老师 %s 想放的位置不能放，尝试新的' % course.teachers)
+                else:
+                    d.p('试试星期 %s 的位置 %s' % (day, pos))
+                    break
+
+            for t in poses_2:
                 if self._conflict_pos_p(tables, (t, day), courseid):
                     d.p('pos有冲突，不能放在星期 %s 的位置 %s' % (day, t))
                 else: # 能放，找到位置了
                     d.p('能放在星期 %s 的位置 %s)' % (day, t))
-                    time = t
+                    pos = t
                     break
-            if time == -1:
+            if pos == -1: # 重新换一天
                 del course_num_dict[day]
                 continue
             else:
-                d.p('试试星期 %s 的位置 %s' % (day, time))
+                d.p('试试星期 %s 的位置 %s' % (day, pos))
                 break
         else:
             d.p('找不到位置:\n%s' %
                 self.course_pool.get_detail_tables())
             sys.exit('fail')
 
-        return (time, day)
+        return (pos, day)
 
     def _set_on_table(self, tables, pos, courseid):
         assert(pos[0] != -1)
@@ -115,19 +159,21 @@ class Generator:
             return True
 
         # 检查这个位置是否符合特殊要求
-        d.p('pos: 检查课程 %s 的pos特殊要求' % courseid)
+        d.p('pos: 不检查课程 %s 的pos特殊要求：只尝试，不作硬安排' % courseid)
         course = self.id_to_course(courseid)
-        if course.conflict_pref_time_p(time):
-            d.p('不符合')
-            return True
+        #if course.conflict_pref_time_p(day, time):
+        #    d.p('不符合')
+        #    return True
 
         credit = course.credit
         # 再看看其他课表这个时间段是不是可以放下这门课
+        d.p('看看位置'+ str(pos) + '的地方是不是和其他课重叠')
         for table in tables:
             for t in xrange(time, time+credit):
                 if table.table[t][day] != -1: # 有课
+                    d.p('是，冲突')
                     return True
-
+        d.p('不冲突')
         return False
 
     def _conflict_day_p(self, tables, day, courseid):
@@ -167,7 +213,9 @@ class Generator:
 
     def _get_poses_on_day(self, table, day, courseid):
         """根据当前课表和给定的星期，得出当天能够摆放的所有位置
-        最好的位置在最前面
+        最好的位置在最前面。
+
+        最好：每天上午下午晚上的课程数量比较均衡
 
         Arguments:
             table -- 当前的 CourseTable
@@ -217,7 +265,9 @@ class Generator:
         for i in pos_list:
             if i != -1:
                 res.append(i)
+
         return res
+
     def _set_period(self, table, courseid, day, start, end):
         """测试 courseid 的课能不能在 table 的某时间段放置
         Arguments:

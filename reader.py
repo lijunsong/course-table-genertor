@@ -54,7 +54,7 @@ class Reader:
                         cid, name, credit, groups, teachers, week, time = course_info
                         teachers = self._split(teachers)
                         gs = self._split(groups)
-                        course = Course(cid, name, credit, gs,
+                        course = Course(cid.upper(), name, credit, gs,
                                         teachers, week, time)
                         self.courses.append(course)
                 except Exception as e:
