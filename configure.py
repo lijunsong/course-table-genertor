@@ -24,13 +24,15 @@ DAY = ["Mon", "Tue", "Wed", "Thu", "Fri"]
 
 # 以下两个都是 courseid -> (listof int) 的字典
 # TODO: 这里需要保证所有的 courseid 是 str 类型的
-COURSE_PREFERENCE = request.COURSE_PREFERENCE
+COURSE_PREFERENCE = {}
+for cid in request.COURSE_PREFERENCE:
+    COURSE_PREFERENCE[cid.upper()] = request.COURSE_PREFERENCE[cid]
 
 # 教师名字在这里变为大写
 TEACHER_PREFERENCE = {}
 for name in request.TEACHER_PREFERENCE:
     TEACHER_PREFERENCE[name.upper()] = request.TEACHER_PREFERENCE[name]
-    
+
 ## 以下内容不能修改！
 ## 用于程序中的辅助变量
 ##

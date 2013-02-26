@@ -12,8 +12,9 @@ p3 = [10, 11, 12]
 
 # 某门课想要在某时间上
 # ID -> (listof preference)
+# ID 是 string 类型的
 COURSE_PREFERENCE = {
-    
+
 }
 
 # 教师想要在某段时间上课的要求可以转化为课程

@@ -113,6 +113,8 @@ class Course:
         return False
 
     def get_time_preference(self, day):
+        """提取某一天的 time preference，如果没有的话，
+        time preference 是 []"""
         pref = filter(lambda x: x.day == day, self.preference)
         if pref == []:
             return []
