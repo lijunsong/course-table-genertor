@@ -99,15 +99,22 @@ class CoursePool:
         self._teacher_cid_dict = self._get_teacher_cid_dict()
         # 每个老师教每天的课程数量
         self._eachday_course_of_teacher = {}
-        # 教师与课程的特殊要求
-        # NOTE: 注意顺序，这里的 preference 在后面的 sort 中会用到。
-        self._set_preference()
         # 预置的课程
         self._determined = self._get_determined()
         # 未预置的课程
         self._undetermined = self._get_undetermined()
         # 排好序的未预置的课程
+        # 1. 首先设置教师与课程的特殊要求
+        self._set_preference()
+        # 2. 排序
         self._sorted_undetermined = self._sort_undetermined()
+
+        d.p("排序之后：")
+        for i in self._sorted_undetermined:
+            d.p('===\n课程:%s\npreference' % i)
+            for p in i.preference:
+                d.p('%s' % p)
+            d.p('factor:=%s' % i.factor)
 
     def _set_preference(self):
         """读取 TEACHER_PREFERENCE 和 COURSE_PREFERENCE 里面的条件，对每
@@ -127,6 +134,10 @@ class CoursePool:
             if c.cid in cfg.COURSE_PREFERENCE:
                 c.set_prefs(cfg.COURSE_PREFERENCE[c.cid])
 
+        # 计算影响因子
+        for c in self._all_courses:
+            c.calc_factor()
+
 
     def _get_determined(self):
         dc = []
@@ -144,15 +155,10 @@ class CoursePool:
 
     def _sort_undetermined(self):
         """对所有的课程进行排序
-
-        对于有要求的课
-        1. 上同一门课的班级越多，这门课最靠前（因为涉及到了不同的课表）
-        2. 一门课老师要求越多（比如除了每天时间限制之外，还有星期的限制），越靠前
-        3. 对于有相同多要求的，要求范围越窄越靠前
         """
+
         return sorted(self._undetermined,
-                      key=lambda x: x.factor,
-                      reverse=True)
+                      key=lambda x: x.factor)
 
     def _course_has_pref_p(self, courseid):
         if self.id_to_course(courseid).has_preference_p():
