@@ -1,0 +1,7 @@
+#Course ID,Course Name,Credit,grade,Teachers,Week, Time
+# 看课程是否能balance上
+2, C1, 3, G1, T1, ,
+3, C2, 3, G1, T1, ,
+4, C3, 3, G1, T1, ,
+5, C4, 3, G1, T1, ,
+6, C5, 3, G1, T2, ,
