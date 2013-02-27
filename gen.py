@@ -35,6 +35,11 @@ class Generator:
 
     def print_coursetables(self):
         print self.get_detail_tables_str()
+        # debug failure attempt:
+        d.p("无法满足要求的课程有:")
+        for c in self.failure_cid:
+            d.p(self.id_to_course(c))
+
 
     def generate_HTML(self, filename):
         """生成一个 HTML 文件"""

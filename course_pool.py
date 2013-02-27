@@ -99,14 +99,15 @@ class CoursePool:
         self._teacher_cid_dict = self._get_teacher_cid_dict()
         # 每个老师教每天的课程数量
         self._eachday_course_of_teacher = {}
+        # 教师与课程的特殊要求
+        # NOTE: 注意顺序，这里的 preference 在后面的 sort 中会用到。
+        self._set_preference()
         # 预置的课程
         self._determined = self._get_determined()
         # 未预置的课程
         self._undetermined = self._get_undetermined()
         # 排好序的未预置的课程
         self._sorted_undetermined = self._sort_undetermined()
-        # 教师与课程的特殊要求
-        self._set_preference()
 
     def _set_preference(self):
         """读取 TEACHER_PREFERENCE 和 COURSE_PREFERENCE 里面的条件，对每
@@ -116,13 +117,15 @@ class CoursePool:
                 if t in c.teachers:
                     #TODO: 可能引入bug：两个老师教一门课的时候，这个时候
                     #应该合并两个老师的条件。可将这个赋值改为course中的一个
-                    #方法的调用，判断是否重复设定了这个课程的preference
-                    c.preference = cfg.TEACHER_PREFERENCE[t]
+                    #方法的调用，判断是否重复设定了这个课程的
+                    #preference
+                    c.set_prefs(cfg.TEACHER_PREFERENCE[t])
+                    #c.preference = cfg.TEACHER_PREFERENCE[t]
         # 如果对某门课有特殊的 preference，
         # 应该覆盖掉老师的 preference
         for c in self._all_courses:
             if c.cid in cfg.COURSE_PREFERENCE:
-                c.preference = cfg.COURSE_PREFERENCE[c.cid]
+                c.set_prefs(cfg.COURSE_PREFERENCE[c.cid])
 
 
     def _get_determined(self):
@@ -147,14 +150,9 @@ class CoursePool:
         2. 一门课老师要求越多（比如除了每天时间限制之外，还有星期的限制），越靠前
         3. 对于有相同多要求的，要求范围越窄越靠前
         """
-        # TODO
-        res = []
-        for c in self._undetermined:
-            if self._course_has_pref_p(c.cid):
-                res.insert(0, c)
-            else:
-                res.append(c)
-        return res
+        return sorted(self._undetermined,
+                      key=lambda x: x.factor,
+                      reverse=True)
 
     def _course_has_pref_p(self, courseid):
         if self.id_to_course(courseid).has_preference_p():

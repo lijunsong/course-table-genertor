@@ -30,6 +30,30 @@ class Course:
         # 每门课的特殊要求（要求安排在周几，第几节课）
         # preference 为空意味着没有偏好
         self.preference = []
+        # 每门课的影响因子，用于之后课程之间的排序用
+        self.factor = 100
+
+    def set_prefs(self, prefs):
+        #TODO判断是否是第二次进行设置，要进行prefs的合并
+        self.preference = prefs
+        if self.preference == []:
+            self._calc_factor()
+
+    def _calc_factor(self):
+        """计算课程的影响因子。影响因子会影响课程排序的先后。
+        如果一门课影响因子越小，这门课应该越先排
+
+        对于有要求的课
+        1. 上同一门课的班级越多，这门课最靠前（因为涉及到了不同的课表）
+        2. 这门课有多少可放的位置作为其次的影响因素
+        """
+        # 计算上同一门课程的班级数量
+        self.factor -= len(self.groups) * 10
+        # 计算可以放置的位置
+        for p in self.preference:
+            self.factor -= len(p.time)
+
+
 
     def __str__(self):
         return "Name: %s, Teachers: %s, Groups: %s" % (self.name,
@@ -75,7 +99,10 @@ class Course:
             return True
 
     def has_day_preference_p(self):
-        """针对天而言，判断老师周一到周五是否有特殊的偏好"""
+        """针对天而言，判断老师周一到周五是否有特殊的偏好，
+        例如周一不上课，或者周N不上课
+
+        至于每天时间的偏好不算在内"""
         if self.preference == []:
             return False
         days = [p.day for p in self.preference]
