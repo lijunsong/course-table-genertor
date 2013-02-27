@@ -72,14 +72,16 @@ class Generator:
         d.p('准备设置课程 %s' % self.id_to_course(courseid))
         # 找课程最多的课表
         fullest_table = self.find_max_course_num(tables)
+        course = self.id_to_course(courseid)
         # 得到这张表上每天上课数量
         course_num_dict = self.get_eachday_course(fullest_table)
         d.p('每天上课数量 %s' % course_num_dict.values())
         # 在这些天里面找出一天，查看是否有冲突
         while len(course_num_dict) != 0:
-            # 找到课程最少的一天
-            day = min(course_num_dict, key = course_num_dict.get)
+            # 尝试先返回最好的一天
+            day = self._get_best_day(course_num_dict, course)
             d.p('试试星期 %s' % day)
+
             # 先查看这一天有没有问题
             if self._conflict_day_p(tables, day, courseid):
                 d.p('day有冲突，不能排星期 %s' % day)
@@ -125,7 +127,7 @@ class Generator:
                 else:
                     d.p('试试星期 %s 的位置 %s' % (day, pos))
                     break
-
+            # 然后只能尝试那些不在 preference里面的位置
             for t in poses_2:
                 if self._conflict_pos_p(tables, (t, day), courseid):
                     d.p('pos有冲突，不能放在星期 %s 的位置 %s' % (day, t))
@@ -146,11 +148,44 @@ class Generator:
 
         return (pos, day)
 
+    def _get_best_day(self, course_num_dict, course):
+        """得到最适合放置一门新课的一天
+        1. 如果老师没有要求，则把课程安排在分隔开的一天
+        2. 如果不能分隔课程，那么就找课程数最少的一天
+
+        Arguments:
+            course_num_dict: 每一天的课程数
+            course: Course 类型的课程实体
+        """
+        def teachers_has_course_on_p(teachers, day):
+            for t in teachers:
+                if self.course_pool.teacher_has_course_on_p(t,
+                                                            day):
+                    return True
+            return False
+
+        course_num_d = course_num_dict.copy() # 避免 side-effect
+        while len(course_num_d) != 0:
+            # 依然按照课程最少的天数开始查看
+            day = min(course_num_d, key = course_num_d.get)
+            # 查看这一天是否能balance老师的要求
+            if teachers_has_course_on_p(course.teachers, day) or \
+               teachers_has_course_on_p(course.teachers, day-1) or \
+               teachers_has_course_on_p(course.teachers, day+1):
+                del course_num_d[day]
+            else:
+                return day
+        else:
+            #如果找不到一天可以让老师隔开来上，就返回课程最少的一天
+            day =  min(course_num_dict, key = course_num_dict.get)
+            return day
+
+
     def _set_on_table(self, tables, pos, courseid):
         assert(pos[0] != -1)
         course = self.id_to_course(courseid)
         for table in tables:
-            table.set(course, pos)
+            table.set(course, pos, self.course_pool)
 
     def _conflict_pos_p(self, tables, pos, courseid):
         time, day = pos

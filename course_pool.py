@@ -64,6 +64,25 @@ class CoursePool:
             page << _HTML_table_detail(table.table)
         page.printOut(filename)
 
+    def teacher_has_course_on_p(self, teacher, day):
+        """查看老师 teacher 在某一天 day 是否有课
+
+        Arguement:
+            teacher: str 的老师
+            day: 查看 day 这一天是否有课
+        Return:
+            有课返回True；无课返回False
+        """
+        if teacher not in self._eachday_course_of_teacher:
+            return False
+        cd = self._eachday_course_of_teacher[teacher]
+        if day >=0 and day <= 4 and cd[day] != 0: # 注意 day 可能超出范围
+            return True
+        else:
+            return False
+
+
+
     #----基本方法
     def __init__(self, all_courses):
         # 所有的课程
@@ -78,6 +97,8 @@ class CoursePool:
         self._courseid_table_dict = self._get_courseid_table_dict()
         # 每个老师教的所有课程id
         self._teacher_cid_dict = self._get_teacher_cid_dict()
+        # 每个老师教每天的课程数量
+        self._eachday_course_of_teacher = {}
         # 预置的课程
         self._determined = self._get_determined()
         # 未预置的课程
