@@ -81,7 +81,19 @@ class CoursePool:
         else:
             return False
 
-
+    def teacher_has_course_on_day_time_p(self, teacher, day, time):
+        """查看老师 teacher 在某个时间段是否有课
+        NOTE：这个方法将会针对所有的课表进行检查
+        """
+        for t in self._tables:
+            cid = t.table[time][day]
+            if cid == -1:
+                continue
+            else:
+                course = self.id_to_course(cid)
+                if teacher in course.teachers:
+                    return True
+        return False
 
     #----基本方法
     def __init__(self, all_courses):

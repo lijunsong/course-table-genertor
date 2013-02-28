@@ -173,9 +173,9 @@ class Generator:
         while len(course_num_d) != 0:
             # 依然按照课程最少的天数开始查看
             day = min(course_num_d, key = course_num_d.get)
-            # 查看这一天是否能balance老师的要求
-            if teachers_has_course_on_p(course.teachers, day) or \
-               teachers_has_course_on_p(course.teachers, day-1) or \
+            # 查看这一天是否能balance老师的要求，判断当天是否有课留到
+            # 后面 _conflict_day_p 的时候再判断
+            if teachers_has_course_on_p(course.teachers, day-1) or \
                teachers_has_course_on_p(course.teachers, day+1):
                 del course_num_d[day]
             else:
@@ -213,6 +213,10 @@ class Generator:
                 if table.table[t][day] != -1: # 有课
                     d.p('是，冲突')
                     return True
+        # 还需要检查这个老师在这一天这个时间段有没有其他课程
+        if self.same_teacher_on_day_time_p(courseid, day, time):
+            d.p('老师在这个时间段已经有其他课了')
+            return True
         d.p('不冲突')
         return False
 
@@ -228,12 +232,16 @@ class Generator:
             d.p('不符合')
             return True
 
+        # 判断老师在这一天是否有课了
         for table in tables:
             if self._conflict_day_p_help(table, day, courseid):
-                return False
+                return True
+        return False
 
     def _conflict_day_p_help(self, table, day, courseid):
-        "辅助方法，针对一个 table 判断 day 能不能放置 courseid"
+        """辅助方法，针对一个 table 判断 day 能不能放置 courseid
+        如果在 day 这一天这个老师已经有课了，那么就不排这一天
+        """
         course_list = zip(*table.table)[day]
         for c in course_list:
             if c == -1:
@@ -384,6 +392,14 @@ class Generator:
     def get_detail_tables_str(self):
         return self.course_pool.get_detail_tables()
 
+    def same_teacher_on_day_time_p(self, cid, day, time):
+        teachers = self.id_to_course(cid).teachers
+        for t in teachers:
+            if self.course_pool.teacher_has_course_on_day_time_p(t,
+                                                                 day,
+                                                                 time):
+                return True
+        return False
 
 if __name__=='__main__':
     from reader import Reader
