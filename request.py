@@ -14,7 +14,7 @@ p3 = [10, 11, 12]
 # ID -> (listof preference)
 # ID 是 string 类型的
 COURSE_PREFERENCE = {
-
+    'xfjjxzt' : prefs(days=[2], time=p3)
 }
 
 # 教师想要在某段时间上课的要求可以转化为课程
@@ -27,9 +27,13 @@ TEACHER_PREFERENCE = {
     'qy'  : prefs(days=[0,1,2]),
     'yxq' : prefs(days=[0,1,2,3]),
     'mew' : prefs(days=[0]),
-    'zxj' : prefs(days=[0,1,2,4]),
-    'fds' : prefs(days=[0, 2], time=[0,1]),
+    'zxj' : prefs_notin_special(4, [5,6]),
+    'ygl' : prefs_notin(time=[0,1]),
+    'fds' : prefs(days=[0, 2]),
     'cxn' : prefs_notin(time=p3),
     'hr'  : prefs_special(3, [5,6], 2, p1),
-
+    'ysg' : prefs(time=[2,3,4,5,6,7]),
+    'xl'  : prefs_notin(time=[0,1]),
+    'yjc' : prefs(days=[0,1,3,4],time=[3,4]+p2+p3),
+    'fj'  : prefs_notin(days=[2], time=p2+p3)
 }

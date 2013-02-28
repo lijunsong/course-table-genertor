@@ -80,7 +80,7 @@ class Generator:
         course = self.id_to_course(courseid)
         # 得到这张表上每天上课数量
         course_num_dict = self.get_eachday_course(fullest_table)
-        d.p('每天上课数量 %s' % course_num_dict.values())
+        d.p('fullest_table 的每天上课数量 %s' % course_num_dict.values())
         # 在这些天里面找出一天，查看是否有冲突
         while len(course_num_dict) != 0:
             # 尝试先返回最好的一天
