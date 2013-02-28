@@ -39,7 +39,7 @@ TEACHER_PREFERENCE = {
 
     #'cxx' : 因为家远，想在一天上完所有的课
     #'zxb' : 尽量安排在三天内
-    'cbc' : prefs(days=[1,3,4], time=[5,6]),
+    #'cbc' : prefs(days=[1,3,4], time=[5,6]),
     'syw' : prefs_special(1, p1+[5,6,7],
                           2, p1+[5,6,7],
                           3, p1+[5,6,7],
