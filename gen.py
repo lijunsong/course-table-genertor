@@ -65,7 +65,7 @@ class Generator:
         d.p('课程 %s 放在这里\n%s' % (self.id_to_course(courseid),
                                       pos))
         self._set_on_table(tables, pos, courseid)
-        d.p('当前课程表:\n%s' % self.get_detail_tables_str())
+        d.p('当前课程表:\n%s' % self.get_detail_tables_str(tables))
 
     def get_course_pos(self, tables, courseid):
         """
@@ -148,7 +148,7 @@ class Generator:
                 break
         else:
             d.p('找不到位置:\n%s' %
-                self.course_pool.get_detail_tables())
+                self.course_pool.get_detail_tables(tables))
             sys.exit('fail')
 
         return (pos, day)
@@ -389,8 +389,8 @@ class Generator:
             d[i] = e
         return d
 
-    def get_detail_tables_str(self):
-        return self.course_pool.get_detail_tables()
+    def get_detail_tables_str(self, tables):
+        return self.course_pool.get_detail_tables(tables)
 
     def same_teacher_on_day_time_p(self, cid, day, time):
         teachers = self.id_to_course(cid).teachers

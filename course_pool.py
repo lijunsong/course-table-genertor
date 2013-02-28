@@ -34,9 +34,9 @@ class CoursePool:
     def get_determined(self):
         return self._determined
 
-    def get_detail_tables(self):
+    def get_detail_tables(self, tables):
         result = []
-        for table in self._tables:
+        for table in tables:
             result.append('GRUOP: %s' % table.title)
             result.append(self._table_detail(table.table))
         return '\n'.join(result)
@@ -240,7 +240,7 @@ class CoursePool:
         Return:
             (listof (listof int)) => string
         """
-        max_len = 20 #最长多少个字符
+        max_len = 21 #最长多少个字符
         s = ""
         for i in xrange(len(cfg.TIME)):
             s += cfg.TIME[i] + ' '
@@ -251,8 +251,7 @@ class CoursePool:
                 else:
                     c = self.id_to_course(cid)
                     info = "%s[%s]" % (c.name,c.teachers[0])
-                    suppliment = max_len - len(info)
-                    s += info + "_" * (max_len - len(info))
+                    s += (info + "_" * max_len)[:max_len]
                 s += '  '
             s += '\n'
         return s
