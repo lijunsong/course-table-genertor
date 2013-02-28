@@ -81,6 +81,8 @@ class Generator:
         # 得到这张表上每天上课数量
         course_num_dict = self.get_eachday_course(fullest_table)
         d.p('fullest_table 的每天上课数量 %s' % course_num_dict.values())
+
+        # 先判断是否能满足老师的需求
         # 在这些天里面找出一天，查看是否有冲突
         while len(course_num_dict) != 0:
             # 尝试先返回最好的一天
@@ -92,7 +94,7 @@ class Generator:
                 d.p('day有冲突，不能排星期 %s' % day)
                 del course_num_dict[day]
                 continue
-
+            
             # 返回那一天最好的几个位置
             poses = self._get_poses_on_day(fullest_table, day,
                                            courseid)
@@ -126,9 +128,9 @@ class Generator:
                         d.p('能放在星期 %s 的位置 %s)' % (day, t))
                         pos = t
                         break
-                if pos == -1: #第一次尝试失败
-                    self.failure_cid.append(courseid)
-                    d.p('老师 %s 想放的位置不能放，尝试新的' % course.teachers)
+                if pos == -1: # 这一天没有办法满足老师的需求
+                    d.p('老师 %s 想放的位置这一天不能满足，尝试新的' % \
+                        course.teachers)
                 else:
                     d.p('试试星期 %s 的位置 %s' % (day, pos))
                     break
@@ -149,6 +151,7 @@ class Generator:
         else:
             d.p('找不到位置:\n%s' %
                 self.course_pool.get_detail_tables(tables))
+            self.generate_HTML('error.html')
             sys.exit('fail')
 
         return (pos, day)
@@ -275,21 +278,21 @@ class Generator:
 
         # 得到上午、下午、晚上各可以放置该课程的时间
         # TODO: 先计算出 course_list 然后传递到set里面加快速度
-        beforenoon_start, before_p = \
+        beforenoon, before_p = \
           self._set_period(table, courseid,
                            day, 0, cfg.beforenoon_num)
 
-        afternoon_start, after_p = \
+        afternoon, after_p = \
           self._set_period(table, courseid,
                            day, cfg.beforenoon_num, cfg.afternoon_num)
 
-        night_start, night_p = \
+        night, night_p = \
           self._set_period(table, courseid,
                            day, cfg.afternoon_num, cfg.time_num)
 
-        d.p('上午可以开始放的位置：', beforenoon_start, '有其他课？', before_p)
-        d.p('下午可以开始放的位置：', afternoon_start, '有其他课？', after_p)
-        d.p('晚上可以开始放的位置：', night_start, '有其他课？', night_p)
+        d.p('上午可以放的位置：', beforenoon, '有其他课？', before_p)
+        d.p('下午可以放的位置：', afternoon, '有其他课？', after_p)
+        d.p('晚上可以放的位置：', night, '有其他课？', night_p)
 
         # 准备返回结果：这里比较复杂
         # 直接写 if 的话，需要写很多很多很多if才能判断完全：
@@ -300,16 +303,15 @@ class Generator:
         # 更简单的办法如下
         result = {True : [], False : []}
         # 按顺序放入
-        result[before_p].append(beforenoon_start)
-        result[after_p].append(afternoon_start)
-        result[night_p].append(night_start)
+        result[before_p].extend(beforenoon)
+        result[after_p].extend(afternoon)
+        result[night_p].extend(night)
 
         res = []  # 返回值放到这里
         # 如果存在有几个时间段没有其他的课
         res.extend(result[False])
         # 有课的时间段
         pos_list = result[True]
-        # 取第一个不是-1的数字
         for i in pos_list:
             if i != -1:
                 res.append(i)
@@ -325,9 +327,9 @@ class Generator:
                start -- 从哪个位置开始放
                  end -- 到哪个位置结束(exclusive)
         Return:
-            CourseTable * int * int => (tupleof int boolean)
-            如果能放置，返回 (可以放置的起始位置, 是否有其他课程)
-            否则返回 (-1, 是否有其他课程)
+            CourseTable * int * int => (tupleof (listof int) boolean)
+            如果能放置，返回 (可以放置的位置, 是否有其他课程)
+            否则返回 ([], 是否有其他课程)
         """
         course_list = zip(*table.table)[day]
         credit = self.id_to_course(courseid).credit
@@ -336,23 +338,14 @@ class Generator:
             if course_list[i] != -1:
                 has_other_p = True
         pos = start
+        res = []
         while pos + credit - 1 < end:
-            d.p('检查位置 %s' % pos)
-            if course_list[pos] != -1: # 有课
-                d.p('位置 %s 有课' % pos)
-                pos += 1
-            else: # 没课
+            if course_list[pos] == -1: # 有课
                 if self._empty_period_p(pos, credit, course_list):
-                    d.p('位置 %s 可以使用' % pos)
-                    break
-                else: # 可能空着的位置不足以放下这么多学分的课
-                    d.p('位置 %s 可能不够安排 %s 学分的课' % (pos, credit))
-                    pos += 1
-        else:
-            pos = -1
-            d.p('剩下的空表不足以排课了，退出')
+                    res.append(pos)
+            pos += 1
 
-        return (pos, has_other_p)
+        return (res, has_other_p)
 
     def _empty_period_p(self, start_timeid, length, course_list):
         """检查从 start_timeid 开始的长度为 length 的 course_list 里面是否为空
@@ -389,7 +382,7 @@ class Generator:
             d[i] = e
         return d
 
-    def get_detail_tables_str(self, tables):
+    def get_detail_tables_str(self, tables=None):
         return self.course_pool.get_detail_tables(tables)
 
     def same_teacher_on_day_time_p(self, cid, day, time):

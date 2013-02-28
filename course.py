@@ -52,9 +52,10 @@ class Course:
                 self.factor += len(p.time)
 
     def __str__(self):
-        return "Name: %s, Teachers: %s, Groups: %s" % (self.name,
-                                                       self.teachers,
-                                                       self.groups)
+        return "Name: %s, T: %s, Groups: %s, credit:%s" % (self.name,
+                                                           self.teachers,
+                                                           self.groups,
+                                                           self.credit)
     def need_allocate_p(self):
         return self.start_time == None
 

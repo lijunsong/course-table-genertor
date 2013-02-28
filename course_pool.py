@@ -34,8 +34,10 @@ class CoursePool:
     def get_determined(self):
         return self._determined
 
-    def get_detail_tables(self, tables):
+    def get_detail_tables(self, tables=None):
         result = []
+        if tables == None:
+            tables = self._tables
         for table in tables:
             result.append('GRUOP: %s' % table.title)
             result.append(self._table_detail(table.table))
