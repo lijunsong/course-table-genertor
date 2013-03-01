@@ -34,6 +34,12 @@ class CoursePool:
     def get_determined(self):
         return self._determined
 
+    def get_teacher_coursenum(self, teacher):
+        try:
+            return self._eachday_course_of_teacher[teacher]
+        except KeyError:
+            return [0 for i in cfg.DAY]
+
     def get_detail_tables(self, tables=None):
         result = []
         if tables == None:

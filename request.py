@@ -24,6 +24,7 @@ TEACHER_PREFERENCE = {
     'hxy' : prefs(days=[0,1,4], time=p1+p2),
     'dll' : prefs(days=[2,3,4], time=[2,3,4,5,6]),
     'dxs' : prefs(days=[0,1,2,3]),
+    'dxs' : compact(1),
     'qy'  : prefs(days=[0,1,2]),
     'yxq' : prefs(days=[0,1,2,3]),
     'mew' : prefs(days=[0]),
@@ -38,7 +39,9 @@ TEACHER_PREFERENCE = {
     'fj'  : prefs_notin(days=[2], time=p2+p3),
 
     #'cxx' : 因为家远，想在一天上完所有的课
+    'cxx' : prefs(time=p1),
     #'zxb' : 尽量安排在三天内
+    'zxb' : compact(3),
     #'cbc' : prefs(days=[1,3,4], time=[5,6]),
     'syw' : prefs_special(1, p1+[5,6,7],
                           2, p1+[5,6,7],

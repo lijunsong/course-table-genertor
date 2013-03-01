@@ -33,6 +33,10 @@ def prefs(days=[0,1,2,3,4], time=p1+p2+p3):
     """
     return [Pref(d, time) for d in days]
 
+def compact(day):
+    "老师想在day天内上完所有课程"
+    return day
+
 def prefs_notin(days=[], time=[]):
     """如果条件是“不在哪几天的哪几个时间”，则用这个函数
 

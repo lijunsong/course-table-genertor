@@ -19,6 +19,10 @@ class Course:
          start_time -- 这门课的上课时间。
                        如果没有预置上课，这里是 None
                        如果预置上课时间，是(时间，星期)的 tuple
+         preference -- 课程所放置的位置的偏好，为空则表示没有偏好
+             factor -- 决定本门课程何时开始放置的因子，factor 越小就越
+                       要最先摆放
+
         """
         self.cid = cid
         self.name = name
@@ -27,15 +31,26 @@ class Course:
         self.teachers = teachers
         #将 week, time 转化为二维数组的坐标[time, week]
         self.start_time = utils.to_pos(week, time)
+        # 每门课的影响因子，用于之后课程之间的排序用
+        self.factor = 0
         # 每门课的特殊要求（要求安排在周几，第几节课）
         # preference 为空意味着没有偏好
         self.preference = []
-        # 每门课的影响因子，用于之后课程之间的排序用
-        self.factor = 0
+        # compact 也是课程的特殊需求，compact=1则表示该课的老师希望他
+        # 的课能够在一天上完
+        self.compact = 0
 
     def set_prefs(self, prefs):
         #TODO判断是否是第二次进行设置，要进行prefs的合并
-        self.preference = prefs
+        if type(prefs) == list:
+            self.preference = prefs
+        if type(prefs) == int:
+            # 合并几个老师的 compact
+            if self.compact == 0 or \
+               (self.compact != 0 and \
+                self.compact > prefs):
+                self.compact = prefs
+
 
     def calc_factor(self):
         """计算课程的影响因子。影响因子会影响课程排序的先后。
@@ -52,10 +67,11 @@ class Course:
                 self.factor += len(p.time)
 
     def __str__(self):
-        return "Name: %s, T: %s, Groups: %s, credit:%s" % (self.name,
-                                                           self.teachers,
-                                                           self.groups,
-                                                           self.credit)
+        return "Name:%s,T:%s,Groups:%s,credit:%s,COMPACT:%s" % (self.name,
+                                                                self.teachers,
+                                                                self.groups,
+                                                                self.credit,
+                                                                self.compact)
     def need_allocate_p(self):
         return self.start_time == None
 

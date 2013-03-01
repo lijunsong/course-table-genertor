@@ -122,7 +122,7 @@ class Generator:
                 self.failure_cid.append(courseid)
 
         if pos == -1: #如果老师preference没办法满足
-            d.p('不按老师要求排课开始')
+            d.p('不按老师preference排课开始')
             course_num_dict = self.get_eachday_course(fullest_table)
             # 在这些天里面找出一天，查看是否有冲突
             while len(course_num_dict) != 0:
@@ -176,16 +176,54 @@ class Generator:
         while len(course_num_d) != 0:
             # 依然按照课程最少的天数开始查看
             day = min(course_num_d, key = course_num_d.get)
-            # 查看这一天是否能balance老师的要求，判断当天是否有课
-            if teachers_has_course_on_p(course.teachers, day) or \
-               teachers_has_course_on_p(course.teachers, day-1) or \
-               teachers_has_course_on_p(course.teachers, day+1):
-                del course_num_d[day]
+            if course.compact != 0: #集中排课，不balance老师需求
+                # 得到这门课所有老师每一天的课程数量，
+                # 然后每个老师的每一天数量加和
+                d.p('集中在 %s 天排课。' % course.compact)
+                teacher_coursenum = [0 for i in cfg.DAY]
+                for t in course.teachers:
+                    tmp = \
+                      self.course_pool.get_teacher_coursenum(t)
+                    teacher_coursenum = map(lambda x,y: x+y,
+                                            teacher_coursenum,
+                                            tmp)
+                # 取第一个不是 0 的数和最后一个不是0的数
+                range_start = -1
+                range_end = -1
+                for i,v in enumerate(teacher_coursenum):
+                    if v != 0:
+                        range_start = i
+                        break
+                for i, v in enumerate(teacher_coursenum):
+                    if v != 0:
+                        range_end = i
+                # 问题转化为给定三个数，判断这三个数两两范围是否小于
+                # compact
+                num_list = filter(lambda x: x!=-1, (range_start,
+                                                    range_end,
+                                                    day))
+                min_num = min(num_list)
+                max_num = max(num_list)
+                if max_num-min_num < course.compact:
+                    return day
+                else:
+                    del course_num_d[day]
+                    continue
             else:
-                return day
+                d.p('balance老师的要求，查看 %s' % day)
+                # 查看这一天是否能balance老师的要求，判断当天是否有课
+                if teachers_has_course_on_p(course.teachers, day) or \
+                   teachers_has_course_on_p(course.teachers, day-1) or \
+                   teachers_has_course_on_p(course.teachers, day+1):
+                    del course_num_d[day]
+                    d.p('放在这一天不能隔天上课，查看下一天')
+                else:
+                    d.p('放在这一天能隔天上课')
+                    return day
         else:
             #如果找不到一天可以让老师隔开来上，就返回课程最少的一天
             day =  min(course_num_dict, key = course_num_dict.get)
+            d.p('get_best_day 将返回课程最少的一天 %s' % day)
             return day
 
 
@@ -244,9 +282,10 @@ class Generator:
                 return True
 
         # 判断老师在这一天是否有课了
-        for table in tables:
-            if self._conflict_day_p_help(table, day, courseid):
-                return True
+        if self.id_to_course(courseid).compact == 0:
+            for table in tables:
+                if self._conflict_day_p_help(table, day, courseid):
+                    return True
         return False
 
     def _conflict_day_p_help(self, table, day, courseid):
