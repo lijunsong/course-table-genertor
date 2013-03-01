@@ -207,7 +207,6 @@ class Generator:
         #    return True
 
         credit = course.credit
-        # 看看课表这个pos能不能放下这个courseid
 
         # 再看看其他课表这个时间段是不是可以放下这门课
         d.p('看看位置'+ str(pos) + '的地方是不是和其他课重叠')
@@ -216,6 +215,14 @@ class Generator:
                 if table.table[t][day] != -1: # 有课
                     d.p('是，冲突')
                     return True
+                #检查上午和下午是否有连上
+                if t == cfg.beforenoon_num - 1: #可能放在上午最后一节
+                    if table.table[t+1][day]!=-1:
+                        return True
+                if t == cfg.beforenoon_num: #下午第一节
+                    if table.table[t-1][day] != -1:
+                        return True
+
         # 还需要检查这个老师在这一天这个时间段有没有其他课程
         if self.same_teacher_on_day_time_p(courseid, day, time):
             d.p('老师在这个时间段已经有其他课了')
