@@ -42,14 +42,12 @@ class Course:
 
     def set_prefs(self, prefs):
         #TODO判断是否是第二次进行设置，要进行prefs的合并
-        if type(prefs) == list:
-            self.preference = prefs
-        if type(prefs) == int:
-            # 合并几个老师的 compact
-            if self.compact == 0 or \
-               (self.compact != 0 and \
-                self.compact > prefs):
-                self.compact = prefs
+        self.preference = prefs[0]
+        # 合并几个老师的 compact
+        if self.compact == 0 or \
+          (self.compact != 0 and \
+           self.compact > prefs[1]):
+                self.compact = prefs[1]
 
 
     def calc_factor(self):

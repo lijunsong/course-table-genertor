@@ -54,16 +54,19 @@ class CoursePool:
         def _HTML_table_detail(num_table):
             t = pyh.table()
             for i in xrange(len(cfg.TIME)):
-                tr = t << pyh.tr(style='border:1px solid;')
+                tr = t << pyh.tr(style='border:1px solid;'
+                                       'min-width:30px;')
                 tr << pyh.td(cfg.TIME[i])
                 for j in range(len(cfg.DAY)):
                     cid = num_table[i][j]
                     if cid == -1:
-                        tr << pyh.td(' ', style='border: 1px solid;')
+                        tr << pyh.td(' ', style='border: 1px solid;'
+                                                'min-width: 30px;')
                     else:
                         c = self.id_to_course(cid)
                         info = "%s[%s]" % (c.name,c.teachers[0])
-                        tr << pyh.td(info, style='border: 1px solid;')
+                        tr << pyh.td(info, style='border: 1px solid;'
+                                                 'min-width: 30px;')
             return t
 
         page = pyh.PyH("course table")
