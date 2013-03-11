@@ -1,0 +1,19 @@
+html{
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+}
+#signin{
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+h1{font-size: 20px;}
+h2{font-size: 18px;}
+h3{font-size: 16px;}
+
+.title{ 
+    margin: 0 auto; 
+    font-size: 20px;
+    text-align: center;
+}
