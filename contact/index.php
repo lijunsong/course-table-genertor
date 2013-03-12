@@ -1,6 +1,13 @@
-<?php
+<html>
+<head>
+  <title>个人信息</title>
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+  <meta http-equiv="Content-Language" content="zh-cn" />
+</head>
+     <body>
 
-$sql = "select * from contact";
+<?php
 require('conn.php');
 ?>
 
@@ -33,3 +40,6 @@ while($row = MySQL_fetch_row($result)){
 }
 ?>
 </table>
+
+</body>
+</html>

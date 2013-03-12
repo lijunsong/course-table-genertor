@@ -12,4 +12,6 @@ if (! $conn){
 }
 
 mysql_select_db($db_name, $conn) or die('select db failed');
+mysql_query('set names gbk');
+
 ?>
