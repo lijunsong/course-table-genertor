@@ -1,4 +1,8 @@
 <?php
+
+require_once('conn.php');
+require_once('util.php');
+
 // maybe also http://code.google.com/p/php-excel/wiki/QuickUsageGuide
 error_reporting(E_ALL ^ E_NOTICE);
 /* A sheet sample
@@ -71,6 +75,7 @@ function excel_title_thead_format($excel_data) //return string
     return $res;
 }
 
+/* 返回 Array 类型 每行是一个 array 里的元素*/
 function get_excel_body($excel_data)
 {
     $sheets = $excel_data->sheets[0];
@@ -78,14 +83,57 @@ function get_excel_body($excel_data)
     return $cells;
 }
 
-
-function excel_body_tbody_format($excel_data) //return string
+function insertupdate_excel_into_db($excel_data)
 {
-    //TODO
+    $lines = get_excel_body($excel_data);
+    $success_p = true;
+    foreach($lines as $line_num => $line){
+        $maybe_contact = get_contact_by_id($line[1]);
+        if ($maybe_contact != NULL){
+            //数据库里有内容，需要update
+            $result_array = update_contacts($line);
+            if (!$result_array[0]){
+                $success_p = false;
+                break;
+            }
+
+        } else {
+            //直接添加
+            $result_array = insert_list_into_contacts($line);
+            if (!$result_array[0]){
+                $success_p = false;
+                break;
+            }
+        }
+    }
+    return $success_p;
+}
+
+function insertupdate_with_excel($file_name)
+{
+    $data = get_data_from_excel($file_name);
+    $result = insertupdate_excel_into_db($data);
+    return $result;
+}
+
+function excel_body_tbody_format($excel_data, $check_db=false) //return string
+{
     $lines = get_excel_body($excel_data);
     $res = "<tbody>";
     foreach($lines as $line_num => $line){
-        $res = $res . "<tr>";
+        if ($check_db == true){ 
+            //检查数据库里面的内容
+            $maybe_contact = get_contact_by_id($line[1]);
+            if ($maybe_contact != NULL){
+                //数据库里面有记录
+                $res = $res . '<tr class="warning">';
+                foreach($maybe_contact as $c){
+                    $res = $res . "<td>$c</td>";
+                }
+                $res = $res . '</tr>';
+            }
+        }
+        $res = $res . '<tr class="success">';
         foreach($line as $n => $c){
             $res = $res . "<td>$c</td>";
         }
@@ -100,7 +148,7 @@ function excel_html5_format($file_name)
     $excel_data = get_data_from_excel($file_name);
     $res = '<table class="table table-hover">';
     $res = $res . excel_title_thead_format($excel_data);
-    $res = $res . excel_body_tbody_format($excel_data);
+    $res = $res . excel_body_tbody_format($excel_data, $check_db=true);
     $res = $res . '</table>';
     return $res;
 }

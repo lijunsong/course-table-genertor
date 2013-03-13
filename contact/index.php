@@ -1,7 +1,7 @@
 <?php
 $title="北外国商通讯录首页";
-include('header.php');
-require('conn.php');
+include_once('header.php');
+require_once('conn.php');
 
 ?>
 <table class="table table-hover">

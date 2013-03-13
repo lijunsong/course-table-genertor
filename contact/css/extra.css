@@ -1,0 +1,7 @@
+.nav-fixed{
+    position: fixed;
+}
+
+td{
+    max-width: 50px;
+}

@@ -20,6 +20,10 @@ function endsWith($haystack, $needle)
     return substr($haystack, -strlen($needle)) == $needle;
 }
 
+function wrap_text($text, $class="alert")
+{
+	return "<div class=\"$class\"><p>$text</p></div>";
+}
 ?>
 
 

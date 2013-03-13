@@ -38,6 +38,28 @@ function get_fields_array()
     return $arr;
 }
 
+function insert_list_into_contacts($contact_info)
+{
+    $fields = array_keys(get_fields_array());
+    $q = "insert into contacts(" . join(",", $fields);
+    $q = $q . ') values ("' . join('","', $contact_info) . '")';
+    return array(mysql_query($q), $q);
+}
+
+function update_contacts($contact_info)
+{
+    $fields = array_keys(get_fields_array());
+    $q = "update contacts set ";
+    $attribs = array();
+    reset($contact_info);  //找到第一个元素
+    for($i = 0; $i < count($fields); $i += 1){
+        $attribs[$i] = "$fields[$i]='".current($contact_info) . "'";
+        next($contact_info);
+    }
+    $q = $q . join(",", $attribs);
+    return array(mysql_query($q), $q);         
+}
+
 function fields_to_thead()
 {
     $fields = query_fields();
@@ -95,4 +117,14 @@ function add_fields($new_fields)
     }
 }
 
+/* 在数据库中查找学号为 id 的记录 */
+
+function get_contact_by_id($id)
+{
+    if ($result = mysql_query("select * from contacts where studentid=\"$id\"")){
+        return mysql_fetch_row($result);
+    } else {
+        return NULL;
+    }
+}
 ?>
