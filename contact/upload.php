@@ -26,7 +26,8 @@ if (!isset($_POST['file_upload'])){
                            "/tmp/test.xsl");
         echo "Stored in: " . $_FILES["file"]["tmp_name"];
         echo "<br />type: " . $_FILES["file"]["type"];
-        $excel_data = get_data_from_excel("/tmp/test.xsl");
+        echo excel_html5_format("/tmp/test.xsl");
+        //print_r(get_excel_body($excel_data));
     }
 }
 

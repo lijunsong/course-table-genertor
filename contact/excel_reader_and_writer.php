@@ -63,7 +63,7 @@ function get_excel_title($excel_data) //return array
 function excel_title_thead_format($excel_data) //return string
 {
     $excel_title = get_excel_title($excel_data);
-    $res = "<thead><tr>"
+    $res = "<thead><tr>";
     foreach($excel_title as $n => $t){
         $res = $res . "<td>$t</td>";
     }
@@ -71,9 +71,38 @@ function excel_title_thead_format($excel_data) //return string
     return $res;
 }
 
+function get_excel_body($excel_data)
+{
+    $sheets = $excel_data->sheets[0];
+    $cells = array_slice($sheets['cells'], 1);
+    return $cells;
+}
+
+
 function excel_body_tbody_format($excel_data) //return string
 {
     //TODO
+    $lines = get_excel_body($excel_data);
+    $res = "<tbody>";
+    foreach($lines as $line_num => $line){
+        $res = $res . "<tr>";
+        foreach($line as $n => $c){
+            $res = $res . "<td>$c</td>";
+        }
+        $res = $res . "</tr>";
+    }
+    $res = $res . "</tbody>";
+    return $res;
+}
+
+function excel_html5_format($file_name)
+{
+    $excel_data = get_data_from_excel($file_name);
+    $res = '<table class="table table-hover">';
+    $res = $res . excel_title_thead_format($excel_data);
+    $res = $res . excel_body_tbody_format($excel_data);
+    $res = $res . '</table>';
+    return $res;
 }
 
 
