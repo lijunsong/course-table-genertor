@@ -12,7 +12,7 @@ if (! $conn){
 }
 
 mysql_select_db($db_name, $conn) or die('select db failed');
-mysql_query('set names gbk');
+mysql_query('set names utf8');
 
 $fields_array = array(); //for caching
 $contact_array = array(); //for caching
@@ -26,7 +26,6 @@ function query_fields()
 {
     return mysql_query("select * from fields");
 }
-
 
 function get_fields_array()
 {
