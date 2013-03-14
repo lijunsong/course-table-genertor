@@ -1,8 +1,8 @@
 <?php
 $title="增添修改通讯录项目";
-include('header.php');
-require('conn.php');
-require('util.php');
+include_once('header.php');
+require_once('conn.php');
+require_once('util.php');
 
 print_r($_POST);
 

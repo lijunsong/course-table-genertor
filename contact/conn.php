@@ -41,8 +41,11 @@ function get_fields_array()
 function insert_list_into_contacts($contact_info)
 {
     $fields = array_keys(get_fields_array());
-    $q = "insert into contacts(" . join(",", $fields);
-    $q = $q . ') values ("' . join('","', $contact_info) . '")';
+    $q = "insert into contacts(" . join(",", $fields) . ") values ('";
+    for ($i = 0; $i < count($fields) - 1; $i += 1){
+        $q = $q . $contact_info[$i+1] . "','";
+    }
+    $q = $q . $contact_info[$i+1] . "')";
     return array(mysql_query($q), $q);
 }
 
@@ -51,12 +54,11 @@ function update_contacts($contact_info)
     $fields = array_keys(get_fields_array());
     $q = "update contacts set ";
     $attribs = array();
-    reset($contact_info);  //找到第一个元素
     for($i = 0; $i < count($fields); $i += 1){
-        $attribs[$i] = "$fields[$i]='".current($contact_info) . "'";
-        next($contact_info);
+        $attribs[$i] = "$fields[$i]='".$contact_info[$i+1] . "'";
     }
     $q = $q . join(",", $attribs);
+    $q = $q . "where $fields[0]='$contact_info[1]'";
     return array(mysql_query($q), $q);         
 }
 
@@ -65,7 +67,7 @@ function fields_to_thead()
     $fields = query_fields();
     echo "<thead><tr>";
     while ($field = mysql_fetch_row($fields)){
-        echo "<td>$field[2]</td>";
+        echo "<th>$field[2]</th>";
     }
     echo "</tr></thead>";
 }
@@ -82,6 +84,16 @@ function contacts_to_tbody()
         echo "</tr>";
     }
     echo "</tbody>";
+}
+
+function get_contacts_array()
+{
+    $arr = array();
+    $contacts = query_contacts();
+    while ($contact = mysql_fetch_row($contacts)){
+        $arr[] = $contact;
+    }
+    return $arr;
 }
 
 //更新 fields。

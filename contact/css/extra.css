@@ -1,7 +1,13 @@
-.nav-fixed{
-    position: fixed;
+td{
+    max-width: 120px;
+    overflow: hidden !important;
 }
 
-td{
-    max-width: 50px;
+body{
+    padding-top: 60px;
+    padding-bottom: 40px;
+    font-family: Consolas,'ubuntu mono','Courier New',Andika,'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+.container-fluid{
+    min-height: 400px;
 }

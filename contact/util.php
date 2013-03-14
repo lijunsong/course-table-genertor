@@ -22,8 +22,39 @@ function endsWith($haystack, $needle)
 
 function wrap_text($text, $class="alert")
 {
-	return "<div class=\"$class\"><p>$text</p></div>";
+	return "<div class=\"$class\">$text</div>";
 }
+
+function get_alert($title, $text, $extra_class="")
+{
+    return wrap_text('<button type="button" class="close" data-dismiss="alert">&times;</button>
+            <h4>' . $title . '</h4>' . "$text", "alert " . $extra_class);
+}
+
+function get_alert_info($text)
+{
+}
+
+function get_alert_error($text)
+{
+    return get_alert("出错啦！", $text, "alert-error");
+}
+
+function get_navs($current_nav, $navs, $extra_nav_tag = "")
+{
+    $res = "<ul class=\"nav $extra_nav_tag\">";
+    foreach ($navs as $name => $link){
+        if (basename($link, ".php") == $current_nav)
+            $res = $res . "<li class=\"active\">";
+        else
+            $res = $res . "<li>";
+        $res = $res . "<a href=\"$link\">$name</a></li>";
+    }
+    $res = $res . "</ul>";
+    return $res;
+}
+
+
 ?>
 
 
