@@ -7,26 +7,36 @@ require_once('sidebar.php');
 
 function export_csv($file_name,$str) { 
     header("Content-type:text/csv; charset=utf-8"); 
-    header('Cache-Control:must-revalidate,post-check=0,pre-check=0'); 
+    header('Cache-Control: no-store, no-cache'); 
     header('Expires:0'); 
     header('Pragma:public'); 
-    header("Content-Disposition:attachment;filename=".$file_name); 
-    echo $str; 
+    header('Content-Disposition:attachment;filename="'.$file_name.'"'); 
+    echo $str;
+}
+
+function convert_str($a)
+{
+    return (string)$a;
 }
 
 if (isset($_POST['download'])){
     $file_name = date('Ymd') . '.csv';
-    
+
     //导出
     $fields = array_values(get_fields_array());
     $contacts = get_contacts_array();
-    $str = join(",", $fields) . "\n";
-    for ($i = 0; $i < count($contacts); $i += 1){
-        $str = $str . join(",", $contacts[$i]) . "\n";
+    //$fields = array_map("convert_str", $fields);
+    $outstream = fopen("php://output", 'w');
+    fputcsv($outstream, $fields, ',', '"');
+    foreach( $contacts as $row){
+        fputcsv($outstream, $row, ',', '"');
     }
-    echo $str;
+
     
-    export_csv($file_name, $str);
+    /* ob_end_clean(); */
+
+    /* exit(); */
+    
 }
 
 ?>
@@ -39,7 +49,7 @@ if (isset($_POST['download'])){
         <legend><?echo $title?></legend>
         <div class="alert alert-info">
           <button type="button" class="close" data-dismiss="alert">&times;</button>
-          您可以将通讯录导出成为 xls 格式并下载。
+          您可以将通讯录导出成为 csv 格式并下载。
         </div>  
         <button type="submit" class="btn btn-primary" name="download">下载</button>
       </fieldset>
