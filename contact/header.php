@@ -11,12 +11,11 @@ if (! isset($title)){
 
 $current_file = basename($_SERVER['PHP_SELF'], ".php");
 
-
 ?>
 <!DOCTYPE html>
 <html lang="zh">
   <head>
-    <title><?echo $title?></title>
+    <title><?php echo $title;?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -26,7 +25,8 @@ $current_file = basename($_SERVER['PHP_SELF'], ".php");
     <div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-inner">
     <a class="brand" href="/contact">北外国商通讯录</a>
-<?
+<?php
+
     if (in_array($current_file, $index_subentries) || $current_file == "index"){
         echo get_navs('index', $navs, "nav");
     } else {

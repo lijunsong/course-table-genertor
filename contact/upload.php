@@ -4,6 +4,8 @@ include_once('header.php');
 require_once('conn.php');
 require_once('excel_reader_and_writer.php');
 require_once('util.php');
+
+$new_file = "/tmp/test.csv";
 ?>
 
 <div class="span2">
@@ -23,7 +25,7 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
     <div class="alert alert-block">
       <h4>注意！</h4>
       <ul>
-        <li>系统仅支持 <strong>xls</strong> 格式的文件导入，您可以在<a href="./template.xls">这里</a>下载模板文件。</li>
+        <li>系统仅支持 <strong>csv</strong> 格式的文件导入，您可以在<a href="./download.php?download=template">这里</a>下载模板文件。</li>
         <li>导入的数据将会覆盖掉现有的数据。</li>
         
       </ul>
@@ -43,13 +45,27 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
     } else {
 ?>
 <?php        
-        move_uploaded_file($_FILES["file"]["tmp_name"],
-                           "/tmp/test.xsl");
-        //echo "<br />type: " . $_FILES["file"]["type"];
-        $check_result = check_excel("/tmp/test.xsl");
+        move_uploaded_file($_FILES["file"]["tmp_name"], $new_file);
+        echo "<br />type: " . $_FILES["file"]["type"];
+
+$row = 1;
+if (($handle = fopen("$new_file", "r")) !== FALSE) {
+    while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+        $num = count($data);
+        echo "<p> $num fields in line $row: <br /></p>\n";
+        $row++;
+        for ($c=0; $c < $num; $c++) {
+            echo $data[$c] . "<br />\n";
+        }
+    }
+    fclose($handle);
+}        
+
+        exit();
+        $check_result = check_csv($new_file);
         if ($check_result[0] == true){
             //excel 符合条件
-            $result = excel_html5_format("/tmp/test.xsl", $check_db = true);
+            $result = excel_html5_format($new_file, $check_db = true);
             if ($result[1] == true){
                 $button_style = "btn-danger";
                 $alert_tag = "alert-block";
@@ -82,7 +98,7 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
     }
     
 } else if (isset($_POST['update_contact'])){
-    if (insertupdate_with_excel("/tmp/test.xsl")){
+    if (insertupdate_with_excel($new_file)){
         //插入成功
         echo wrap_text('insert successfully!', 'alert alert-info');
     } else {

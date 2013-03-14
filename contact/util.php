@@ -54,8 +54,49 @@ function get_navs($current_nav, $navs, $extra_nav_tag = "")
     return $res;
 }
 
+function array_to_tr($inarray, $td="td")
+{
+    $res = '<tr>';
+    for($i = 0; $i < count($inarray); $i += 1){
+        $res .= "<$td>".$inarray[$i]."</$td>";
+    }
+    $res .= '</tr>';
+    return $res;   
+}
+
+function array_to_thead($inarray, $add_id=false, $add_op=false)
+{
+    $id = array();
+    $op = array();
+    if ($add_id == true){
+        $id = array('specialkey_23x' => '序号');
+    }
+    if ($add_op == true){
+        $op = array('specialkey_24z' => '操作');
+    }
+    $ths = array_values($id+ $inarray + $op);
+
+    return '<thead>'.array_to_tr($ths, $td="th").'</thead>';
+}
+
+function array_to_tbody($inarrays, $add_id=false, $add_op=false)
+{
+    $id = array();
+    $op = array();
+
+    $res = '<tbody>';
+    for($i = 0; $i < count($inarrays); $i += 1){
+        if ($add_id == true){
+            $id = array('specialkey_23x' => $i+1);
+        }
+        if ($add_op == true){
+            $op = array('specialkey_24z' => 'button');
+        }
+        $new_line = array_values($id+$inarrays[$i]+$op);
+        $res .= array_to_tr($new_line);
+    }
+    $res .= '</tbody>';
+    return $res;
+}
 
 ?>
-
-
-    

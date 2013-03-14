@@ -54,13 +54,14 @@ function get_data_from_excel($file_name)
     // no need the font and color, etc.
     $excel_data = new Spreadsheet_Excel_Reader($file_name, false);
     
-    //$data->dump($row_numbers=false,$col_letters=false,$sheet=0,$table_class='table-hover');
+    //$excel_data->dump($row_numbers=false,$col_letters=false,$sheet=0,$table_class='table-hover');
     return $excel_data;
 }
 // 读取 excel 的 title
 function get_excel_title($excel_data) //return array
 {
     $sheets = $excel_data->sheets[0]; //取第一个工作表
+    print_r($excel_data->sheets);
     return $sheets['cells'][1];
 }
 
@@ -157,11 +158,12 @@ function excel_body_tbody_format($excel_data, $check_db=false)
 function check_title_against_dbfields($excel_data)
 {
     $excel_title = get_excel_title($excel_data);
+    print_r($excel_title);
     $fields = array_values(get_fields_array());
     if (count($excel_title) != count($fields)){
         return array(false, get_alert_error("<p>Excel 中标题栏个数不正确</p>
-                             <p>项目应该为：" . join('，', $fields) . '。共 ' . count($fields) . " 个</p><p>
-                             Excel中则是：" . join('，', $excel_title) . '。共 ' . count($excel_title) . '个</p>'));
+                             <p>项目应该为：" . join(',', $fields) . '。共 ' . count($fields) . " 个</p><p>
+                             Excel中则是：" . join(',', $excel_title) . '。共 ' . count($excel_title) . '个</p>'));
     }
     reset($excel_title);
     for ($i = 0; $i < count($excel_title); $i += 1){

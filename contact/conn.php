@@ -1,5 +1,6 @@
 <?php
 
+require_once('util.php');
 $db_host = 'localhost';
 $db_user = 'root';
 $db_password = '';
@@ -62,28 +63,17 @@ function update_contacts($contact_info)
     return array(mysql_query($q), $q);         
 }
 
-function fields_to_thead()
-{
-    $fields = query_fields();
-    echo "<thead><tr>";
-    while ($field = mysql_fetch_row($fields)){
-        echo "<th>$field[2]</th>";
-    }
-    echo "</tr></thead>";
-}
 
-function contacts_to_tbody()
+
+function contacts_to_tbody($add_id)
 {
-    $contacts = query_contacts();
-    echo "<tbody>";
-    while ($contact = mysql_fetch_row($contacts)){
-        echo "<tr>";
-        foreach ($contact as $info){
-            echo "<td>$info</td>";
-        }
-        echo "</tr>";
+    $res = '<tbody>';
+    $contacts = get_contacts_array();
+    for ($i = 0; $i < count($contacts); $i += 1){
+        $res .= array_to_tr($contacts[$i]);
     }
-    echo "</tbody>";
+    $res .= '</tbody>';
+    return $res;
 }
 
 function get_contacts_array()

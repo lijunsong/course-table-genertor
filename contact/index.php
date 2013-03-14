@@ -12,8 +12,10 @@ require_once('sidebar.php');
 <div class="span10">    
 <table class="table table-bordered">
 <?php 
-fields_to_thead();
-contacts_to_tbody();
+$fields = get_fields_array();
+$contacts = get_contacts_array();
+echo array_to_thead($fields, $add_id=true, $add_op=true);
+echo array_to_tbody($contacts, $add_id=true, $add_op=true);
 ?>    
 </table>
 </div>
