@@ -26,7 +26,7 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
       <h4>注意！</h4>
       <ul>
         <li>系统仅支持 <strong>csv</strong> 格式的文件导入，您可以在<a href="./download.php?download=template">这里</a>下载模板文件。</li>
-        <li>导入的数据将会覆盖掉现有的数据。</li>
+        <li>如果导入数据与现有数据冲突，导入的数据将会覆盖掉现有的数据。</li>
         
       </ul>
     </div>
