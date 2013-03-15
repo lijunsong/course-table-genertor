@@ -26,11 +26,11 @@ foreach ($fields as $f=>$field_name){
 }
 //echo control_group("field_new", "New Item", "type in here");
 ?>
-<div class="control-grpu">
+<div class="control-group">
     <div class="controls">
-    <button type="submit" class="btn" name="update">Update</button>
+    <button type="submit" class="btn btn-primary" name="update">更新</button>
     </div>
-<div>    
+</div>    
 </form>
 
 <form class="form-horizontal" method="post" name="AddField" action="field_manage.php">

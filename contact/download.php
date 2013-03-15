@@ -1,5 +1,6 @@
 <?php
 require_once('conn.php');
+require_once('util.php');
 //这个文件用于生成模板文件，或者导出数据库时候下载 csv 文件
 
 /* array 的格式为：
@@ -9,18 +10,21 @@ array[1][0] = 'field1';
 array[1][1] = 'field2';
 */
 
-function export_to_csv($inarray, $delimiter=";"){
-      while (list ($key1, $val1) = each ($inarray)) {
+
+function export_to_csv($inarray, $delimiter=","){
+    $sendback = "";
+    
+    while (list ($key1, $val1) = each ($inarray)) {
         while (list ($key, $val) = each ($val1)) {
-          if (is_numeric($val)){
-        $sendback .= $val."$delimiter";
-           }else{
-            $sendback .= "\"". $val ."\"$delimiter";
-          }//fi
+            if (is_numeric($val)){
+                $sendback .= $val."$delimiter";
+            }else{
+                $sendback .= "\"". $val ."\"$delimiter";
+            }//fi
         }//wend
         $sendback = substr($sendback, 0, -1); //chop last ,
         $sendback .= "\n";
-      }//wend
+    }//wend
     return ($sendback);
 }// end function
 
@@ -34,9 +38,12 @@ function export_to_csv($inarray, $delimiter=";"){
 // }
 
 function send_file_to_client($filename, $data){
-    header("Content-type: text/csv");
-    header("Content-Disposition: attachment; filename=$filename");
-    echo $data;   
+    //ob_end_clean(); //在设置 header 之前都不能有输出操作，于是直接
+                    //clean掉
+    
+    //header("Content-type: text/csv");
+    //header("Content-Disposition: attachment; filename=$filename");
+    echo correct_encoding_when_writing($data);
 }; 
 
 
@@ -50,13 +57,12 @@ if (!isset($_GET['download'])){
     $fields[0] = array_values(get_fields_array());
     $contacts = get_contacts_array();
     $str = export_to_csv($fields);
-
     $str .= export_to_csv($contacts);
-    //echo $str;
+    echo $str;
+    //echo iconv('utf-8', 'gb2312', $str);
+    
+    send_file_to_client($file_name, $str);
 
-    ob_end_clean(); //在设置 header 之前都不能有输出操作，于是直接clean掉。
-    send_file_to_client($file_name, iconv('utf-8', 'gb2312', $str));
-//    exit();
 } else if ($_GET['download'] == 'template'){
 	$file_name = 'template.csv';
 
@@ -80,7 +86,7 @@ if (!isset($_GET['download'])){
 		$fields[1][$i] = $val;
 	}
 	$str = export_to_csv($fields);
-	send_file_to_client($file_name, iconv('utf-8', 'gb2312', $str));
+	//send_file_to_client($file_name, $str);
 }
 
 ?>

@@ -9,10 +9,10 @@ $db_name = 'ljstest';
 $conn = mysql_connect($db_host, $db_user, $db_password);
 
 if (! $conn){
-    die("Couldn't connect: " . mysql_error());
+    die("数据库无法链接，联系管理员。错误代号： " . mysql_error());
 }
 
-mysql_select_db($db_name, $conn) or die('select db failed');
+mysql_select_db($db_name, $conn) or die('数据表无法链接');
 mysql_query('set names utf8');
 
 $fields_array = array(); //for caching
@@ -20,12 +20,21 @@ $contact_array = array(); //for caching
 
 function query_contacts()
 {
-    return mysql_query("select * from contacts");
+    $result = mysql_query("select * from contacts");
+    if ($result)
+        return $result;
+    else
+        die('在数据库中无法得到联系人信息，请联系管理员');
+    
 }
 
 function query_fields()
 {
-    return mysql_query("select * from fields");
+    $result = mysql_query("select * from fields");
+    if ($result)
+        return $result;
+    else
+        die('在数据库中无法得到标题栏信息，请联系管理员');
 }
 
 function get_fields_array()
@@ -41,26 +50,43 @@ function get_fields_array()
 
 function insert_list_into_contacts($contact_info)
 {
-    $fields = array_keys(get_fields_array());
-    $q = "insert into contacts(" . join(",", $fields) . ") values ('";
-    for ($i = 0; $i < count($fields) - 1; $i += 1){
-        $q = $q . $contact_info[$i+1] . "','";
+    $checking = check_line($contact_info);
+    if ($checking[0] == false){
+        return $checking;
     }
-    $q = $q . $contact_info[$i+1] . "')";
-    return array(mysql_query($q), $q);
+    $fields = array_keys(get_fields_array());
+    $q = "insert into contacts(`" . join("`,`", $fields) . "`) values ('";
+    for ($i = 0; $i < count($fields) - 1; $i += 1){
+        $q = $q . $contact_info[$i] . "','";
+    }
+    $q = $q . $contact_info[$i] . "')";
+    $result = mysql_query($q);
+    if ($result)
+        return array(true, "");
+    else
+        return array(false, get_alert_error('插入数据库错误：' . mysql_errno() . ' ' . mysql_error()));
 }
 
 function update_contacts($contact_info)
 {
+    $checking = check_line($contact_info);
+    if ($checking[0] == false){
+        return $checking;
+    }
+
     $fields = array_keys(get_fields_array());
     $q = "update contacts set ";
     $attribs = array();
     for($i = 0; $i < count($fields); $i += 1){
-        $attribs[$i] = "$fields[$i]='".$contact_info[$i+1] . "'";
+        $attribs[$i] = "$fields[$i]='".$contact_info[$i] . "'";
     }
     $q = $q . join(",", $attribs);
-    $q = $q . "where $fields[0]='$contact_info[1]'";
-    return array(mysql_query($q), $q);         
+    $q = $q . "where $fields[0]='$contact_info[0]'";
+    $result = mysql_query($q);
+    if ($result)
+        return array(true, "");
+    else
+        return array(false, get_alert_error('插入数据库错误：' . mysql_errno() . ' ' . mysql_error()));
 }
 
 
@@ -119,14 +145,4 @@ function add_fields($new_fields)
     }
 }
 
-/* 在数据库中查找学号为 id 的记录 */
-
-function get_contact_by_id($id)
-{
-    if ($result = mysql_query("select * from contacts where studentid=\"$id\"")){
-        return mysql_fetch_row($result);
-    } else {
-        return NULL;
-    }
-}
 ?>

@@ -1,9 +1,11 @@
 <?php
 //nav content
+error_reporting(E_ALL ^ E_NOTICE);
+
 $navs = array("通讯录" => "/contact/index.php",
               "项目管理" => "/contact/field_manage.php");
 require_once('sidebar.php');
-
+require_once('util.php');
 
 if (! isset($title)){
     $title = "北外国商通讯录";

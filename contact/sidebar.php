@@ -5,6 +5,7 @@ require_once('util.php');
 
 $sidebar = array('批量上传' => '/contact/upload.php',
                  '导出下载' => '/contact/export.php',
+                 '全部更替' => '/contact/overwrite.php',
                  '添加' => '/contact/add_contact.php',
                  '搜索' => '/contact/search.php');
 function get_basename($file)
