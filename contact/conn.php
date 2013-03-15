@@ -37,15 +37,33 @@ function query_fields()
         die('在数据库中无法得到标题栏信息，请联系管理员');
 }
 
+function sql_to_array($result)
+{
+    if ($result){
+        $arr = array();
+        while($field = mysql_fetch_row($result)){
+            $arr[] = $field;
+        }
+        return $arr;       
+    } else {
+        return array();
+    }
+}
 function get_fields_array()
 {
     //TODO: cache
     $fields = query_fields();
     $arr = array();
-    while($field = mysql_fetch_row($fields)){
+    while ($field = mysql_fetch_row($fields)){
         $arr[$field[1]] = $field[2];
     }
     return $arr;
+}
+
+function get_contacts_array()
+{
+    $contacts = query_contacts();
+    return sql_to_array($contacts);
 }
 
 function insert_list_into_contacts($contact_info)
@@ -102,15 +120,6 @@ function contacts_to_tbody($add_id)
     return $res;
 }
 
-function get_contacts_array()
-{
-    $arr = array();
-    $contacts = query_contacts();
-    while ($contact = mysql_fetch_row($contacts)){
-        $arr[] = $contact;
-    }
-    return $arr;
-}
 
 //更新 fields。
 //NOTE: 数组中为空的项不需要更新

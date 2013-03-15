@@ -38,11 +38,11 @@ function export_to_csv($inarray, $delimiter=","){
 // }
 
 function send_file_to_client($filename, $data){
-    //ob_end_clean(); //在设置 header 之前都不能有输出操作，于是直接
+    ob_end_clean(); //在设置 header 之前都不能有输出操作，于是直接
                     //clean掉
     
-    //header("Content-type: text/csv");
-    //header("Content-Disposition: attachment; filename=$filename");
+    header("Content-type: text/csv");
+    header("Content-Disposition: attachment; filename=$filename");
     echo correct_encoding_when_writing($data);
 }; 
 
@@ -58,7 +58,7 @@ if (!isset($_GET['download'])){
     $contacts = get_contacts_array();
     $str = export_to_csv($fields);
     $str .= export_to_csv($contacts);
-    echo $str;
+    //echo $str;
     //echo iconv('utf-8', 'gb2312', $str);
     
     send_file_to_client($file_name, $str);
@@ -86,7 +86,7 @@ if (!isset($_GET['download'])){
 		$fields[1][$i] = $val;
 	}
 	$str = export_to_csv($fields);
-	//send_file_to_client($file_name, $str);
+	send_file_to_client($file_name, $str);
 }
 
 ?>

@@ -30,7 +30,7 @@ function correct_encoding_when_writing($str)
 }
 
 function array_walk_deep(&$items,$func){
-    print_r($items);
+    //print_r($items);
     foreach ($items as &$item) {
         if(is_array($item))
           array_walk_deep($item,$func);
@@ -137,6 +137,8 @@ function array_to_tr($inarray, $td_tag="td", $tr_style="")
 
 function array_to_thead($inarray, $add_id=false, $add_op=false)
 {
+    if (count($inarray) == 0)
+        return "";
     $id = array();
     $op = array();
     if ($add_id == true){
@@ -152,6 +154,9 @@ function array_to_thead($inarray, $add_id=false, $add_op=false)
 
 function array_to_tbody($inarrays, $add_id=false, $add_op=false)
 {
+    if (count($inarrays) == 0)
+        return "";
+
     $id = array();
     $op = array();
 
