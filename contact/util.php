@@ -167,7 +167,8 @@ function array_to_tbody($inarrays, $add_id=false, $add_op=false)
         }
         if ($add_op == true){
             $op = array('specialkey_24z' => '<a
-            href="' . "?delete=" . $inarrays[$i][0] . '&name=' . $inarrays[$i][1] . '">' . get_danger_button('<i class="icon-remove icon-white"> </i>') . '</a>');
+            href="?delete=' . $inarrays[$i][0] . '&name=' . $inarrays[$i][1] . '">' . '<i class="icon-remove"> </i>' . '</a>
+            <a href="/contact/edit_contact.php?edit=' . $inarrays[$i][0] . '">' . '<i class="icon-pencil"> </i></a>');
         }
         $new_line = array_values($id+$inarrays[$i]+$op);
         $res .= array_to_tr($new_line);
