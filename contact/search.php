@@ -52,7 +52,7 @@ if (isset($_GET['delete']) && isset($_GET['name'])){
 
 ?>
 <div class="span2">
-<?echo get_sidebar($current_file, $sidebar)?>
+<?php echo get_sidebar($current_file, $sidebar)?>
 </div>
 <div class="span10">
 <?
@@ -85,4 +85,4 @@ if ($extra_info != NULL){
         </fieldset>
 </form>
 </div>
-<? include('footer.php'); /*end*/?>
+<?php include('footer.php'); /*end*/?>

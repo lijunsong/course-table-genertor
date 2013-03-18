@@ -9,7 +9,7 @@ $new_file = "/tmp/test.csv";
 ?>
 
 <div class="span2">
-<?echo get_sidebar($current_file, $sidebar)?>
+<?php echo get_sidebar($current_file, $sidebar)?>
 </div>
 
 <div class="span10">
@@ -43,10 +43,11 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
     if ($_FILES["file"]["error"] > 0){
         echo "上传发生错误: " . $_FILES["file"]["error"] . "br />";
     } else {
-        echo $_FILES["file"]["type"];
-        /*if ($_FILES["file"]["type"] != "text/csv"){
+        $path_info = pathinfo($_FILES["file"]["name"]);
+        $filetype = $path_info['extension'];
+        if ($filetype != "csv"){
             die(get_alert_error('请上传 csv 文件'));
-            }*/
+        }
         move_uploaded_file($_FILES["file"]["tmp_name"], $new_file);
 
         $check_result = check_csv($new_file);
@@ -101,4 +102,4 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
 }
 ?>
 </div>
-<? include('footer.php'); /*end*/?>
+<?php include('footer.php'); /*end*/?>

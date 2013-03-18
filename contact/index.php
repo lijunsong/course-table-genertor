@@ -1,9 +1,11 @@
 <?php
+
 $title="北外国商通讯录首页";
 require_once('conn.php');
 require_once('util.php');
 include_once('header.php');
 require_once('sidebar.php');
+
 
 $extra_info = NULL;
 
@@ -24,7 +26,7 @@ if (isset($_GET['delete']) && isset($_GET['name'])){
 
 ?>
 <div class="span2">
-<?echo get_sidebar($current_file, $sidebar)?>
+<?php echo get_sidebar($current_file, $sidebar)?>
 </div>
 <div class="span10">    
 <table class="table table-bordered">
@@ -39,4 +41,4 @@ echo array_to_tbody($contacts, $add_id=true, $add_op=true);
 ?>    
 </table>
 </div>
-<? include('footer.php'); /*end*/?>
+<?php include('footer.php'); /*end*/?>

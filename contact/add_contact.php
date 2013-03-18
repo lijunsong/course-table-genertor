@@ -36,10 +36,10 @@ if (isset($_POST['add_contact'])){
 
 ?>
 <div class="span2">
-<?echo get_sidebar($current_file, $sidebar)?>
+<?php echo get_sidebar($current_file, $sidebar);?>
 </div>
 <div class="span10">
-<?
+<?php
 if ($extra_info != NULL){
     echo $extra_info;
 }
@@ -74,4 +74,4 @@ if ($extra_info != NULL){
         </fieldset>
 </form>
 </div>
-<? include('footer.php'); /*end*/?>
+<?php include('footer.php'); /*end*/?>

@@ -5,4 +5,4 @@ require('conn.php');
 
 ?>
 
-<? include('footer.php'); /*end*/?>
+<?php include('footer.php'); /*end*/?>

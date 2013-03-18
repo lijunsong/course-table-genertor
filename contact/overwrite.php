@@ -9,7 +9,7 @@ $new_file = "/tmp/test.csv";
 ?>
 
 <div class="span2">
-<?echo get_sidebar($current_file, $sidebar)?>
+<?php echo get_sidebar($current_file, $sidebar)?>
 </div>
 
 <div class="span10">
@@ -57,16 +57,16 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
                 $alert_title = "即将更替所有的联系人信息";
                 $info = "您的“导入”操作即将覆盖数据库中的<strong>全部</strong>内容，请在下面确认信息无误，然后点击“导入”";
 ?>
-            <? echo "<div class=\"alert $alert_tag\">"; ?> 
+            <?php echo "<div class=\"alert $alert_tag\">"; ?> 
             <h4><? echo $alert_title; ?></h4>
-            <? echo $info; ?>
+            <?php echo $info; ?>
             </div>
         
             
             <form class="form-inline" method="post" name="update_contact" action="overwrite.php">
-            <button type="submit" class="btn <?echo $button_style;?>"  name="update_contact">更替</button>
+            <button type="submit" class="btn <?php echo $button_style;?>"  name="update_contact">更替</button>
             </form>
-            <? echo $result[0]; ?>
+            <?php echo $result[0]; ?>
 
 <?php
         } else {
@@ -93,4 +93,4 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
 }
 ?>
 </div>
-<? include('footer.php'); /*end*/?>
+<?php include('footer.php'); /*end*/?>

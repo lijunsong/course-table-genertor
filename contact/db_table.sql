@@ -7,14 +7,22 @@ mobile varchar(32),
 email varchar(32),
 living_area varchar(32),
 employer varchar(32),
-interests varchar(32),
-field_1 varchar(32)
+field_1 varchar(32),
+field_2 varchar(32)
 ) default character set utf8;
 
 create table if not exists fields(
 id int(32) not null auto_increment primary key,
 field varchar(32) not null,
 field_name varchar(32) not null
+) default character set utf8;
+
+create table if not exists users(
+id int(32) not null auto_increment primary key,
+username varchar(32) not null,
+password   varchar(32) not null,
+salt varchar(32) not null,
+available boolean not null
 ) default character set utf8;
 
 insert into fields(field, field_name) values
@@ -26,5 +34,9 @@ insert into fields(field, field_name) values
 ('email', '邮箱'),
 ('living_area', '所在地区'),
 ('employer', '工作单位'),
-('interests', '兴趣'),
-('field_1' , '备注1');
+('field_1', '备注1'),
+('field_2' , '备注2');
+
+-- for test only:
+insert into users(username, password, salt, available) values
+	('alumniadmin', 'f38a02ea409ec7ca45fabe75163fe3f5', '77B6-C278-4F32-958D-4B16', true)

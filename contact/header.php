@@ -1,4 +1,6 @@
 <?php
+require_once('check_signin.php');
+
 //nav content
 error_reporting(E_ALL ^ E_NOTICE);
 
@@ -20,13 +22,19 @@ $current_file = basename($_SERVER['PHP_SELF'], ".php");
     <title><?php echo $title;?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <!--<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">-->
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="css/extra.css" rel="stylesheet" media="screen">
   </head>
   <body>
     <div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-inner">
-    <a class="brand" href="/contact">北外国商通讯录</a>
+        <div class="container">
+        <a class="brand" href="/contact">北外国商通讯录</a>
+        <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right"><a href="signout.php">登出</a></p>
+
+
 <?php
 
     if (in_array($current_file, $index_subentries) || $current_file == "index"){
@@ -35,6 +43,8 @@ $current_file = basename($_SERVER['PHP_SELF'], ".php");
         echo get_navs('field_manage', $navs, "nav");
     }
 ?>
+        </div>
+        </div>
     </div>
     </div>
     

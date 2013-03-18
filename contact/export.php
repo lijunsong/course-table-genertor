@@ -1,5 +1,4 @@
 <?php 
-
 ob_start(); // to avoid 'Warning: Cannot modify header information - headers already sent by ...'
 
 $title="下载联系人信息";
@@ -13,7 +12,7 @@ require_once('sidebar.php');
 
 ?>
 <div class="span2">
-<?echo get_sidebar($current_file, $sidebar)?>
+<?php echo get_sidebar($current_file, $sidebar)?>
 </div>
 <div class="span10">
     <form class="form" method="get" action="download.php">
@@ -27,4 +26,4 @@ require_once('sidebar.php');
       </fieldset>
     </form>
 </div>
-<? include('footer.php'); /*end*/?>
+<?php include('footer.php'); /*end*/?>
