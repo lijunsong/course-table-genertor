@@ -1,7 +1,7 @@
-create table if not exists contacts(
+﻿create table if not exists contacts(
 studentid varchar(32) not null primary key,
 name varchar(32) not null,
-gender varchar(32),
+gender varchar(32) not null,
 grade varchar(32),
 mobile varchar(32),
 email varchar(32),
@@ -41,4 +41,4 @@ insert into fields(field, field_name) values
 
 -- for test only:
 insert into users(username, password, salt, available) values
-	('admin', 'f38a02ea409ec7ca45fabe75163fe3f5', '77B6-C278-4F32-958D-4B16', true)
+	('admin', 'f38a02ea409ec7ca45fabe75163fe3f5', '77B6-C278-4F32-958D-4B16', true);
