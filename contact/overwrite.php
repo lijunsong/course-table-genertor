@@ -43,7 +43,9 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
     if ($_FILES["file"]["error"] > 0){
         echo "上传发生错误: " . $_FILES["file"]["error"] . "br />";
     } else {
-        if ($_FILES["file"]["type"] != "text/csv"){
+        $path_info = pathinfo($_FILES["file"]["name"]);
+        $filetype = $path_info['extension'];
+        if ($filetype != "csv"){
             die(get_alert_error('请上传 csv 文件'));
         }
         move_uploaded_file($_FILES["file"]["tmp_name"], $new_file);
@@ -58,7 +60,7 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
                 $info = "您的“导入”操作即将覆盖数据库中的<strong>全部</strong>内容，请在下面确认信息无误，然后点击“导入”";
 ?>
             <?php echo "<div class=\"alert $alert_tag\">"; ?> 
-            <h4><? echo $alert_title; ?></h4>
+            <h4><?php echo $alert_title; ?></h4>
             <?php echo $info; ?>
             </div>
         
@@ -77,12 +79,14 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
     }
     
 } else if (isset($_POST['update_contact'])){
-    if (overwrite_with_csv($new_file)){
+    $result = overwrite_with_csv($new_file);
+    if ($result[0]){
         //插入成功
         echo get_alert_info('更换数据完成');
     } else {
         //插入失败
         $errno = "" . mysql_errno();
+        echo $result[1];
         if ($errno == "1062"){
             echo get_alert_error('数据表中有重复的学生 ID：' . mysql_error());
         } else {

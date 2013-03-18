@@ -82,7 +82,7 @@ function insert_list_into_contacts($contact_info)
     if ($result)
         return array(true, "");
     else
-        return array(false, get_alert_error('插入数据库错误：' . mysql_errno() . ' ' . mysql_error()));
+        return array(false, get_alert_error('行：' . join(",", $contact_info) . '插入数据库错误：' . mysql_errno() . ' ' . mysql_error()));
 }
 
 function update_contacts($contact_info)
@@ -104,7 +104,7 @@ function update_contacts($contact_info)
     if ($result)
         return array(true, "");
     else
-        return array(false, get_alert_error('插入数据库错误：' . mysql_errno() . ' ' . mysql_error()));
+        return array(false, get_alert_error('行：' . join(",", $contact_info) . '插入数据库错误：' . mysql_errno() . ' ' . mysql_error()));
 }
 
 

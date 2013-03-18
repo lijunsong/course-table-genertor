@@ -14,7 +14,7 @@ function correct_encoding_when_reading($str)
     global $OS;
     
     if ($OS == 'windows')
-        return iconv('gb2312', 'utf-8', $str);
+        return iconv('gbk', 'utf-8', $str);
     else
         return $str;
 }
@@ -24,7 +24,7 @@ function correct_encoding_when_writing($str)
     global $OS;
     
     if ($OS == 'windows')
-        return iconv('utf-8', 'gb2312', $str);
+        return iconv('utf-8', 'gbk', $str);
     else
         return $str;
 }
@@ -190,17 +190,21 @@ function get_contact_by_id($id, $contact_array)
 
 function check_line($line)
 {
-    if (trim($line[0]) == "" || trim($line[1] == "") || trim($line[2] == "")){
-        return array(false, "必填项为空");
+    if (trim($line[0]) == ""){
+        return array(false, get_alert_error("必填项学号为空：".join(",", $line)));
+    } else if (trim($line[1] == "")){
+        return array(false, get_alert_error("必填项姓名为空：".join(",", $line)));
+    } else if (trim($line[2] == "")){
+        return array(false, get_alert_error("必填项性别为空：".join(",", $line)));
     }
     if (!preg_match("/^\d+$/", $line[0])){
-        return array(false, get_alert_error("第 1 列必须全为数字：当前为 “$line[0]”"));
+        return array(false, get_alert_error("第 1 列必须全为数字：当前为 “$line[0]”" . join(",", $line)));
     }
     if (!preg_match("/^(男|女)$/", $line[2])){
-        return array(false, get_alert_error("第 3 列必须为'男'或者'女'：当前为 “$line[2]”"));
+        return array(false, get_alert_error("第 3 列必须为'男'或者'女'：当前为 “$line[2]”" . join(",", $line)));
     }
     if ($line[5] != "" && !preg_match("/(\d|-)*/", $line[4])){
-        return array(false, get_alert_error("第 5 列必须为横线与数字的组合：当前为 “$line[4]”"));
+        return array(false, get_alert_error("第 5 列必须为横线与数字的组合：当前为 “$line[4]”" . join(",", $line)));
     }
         /*if ($line[6] != "" && !filter_var($line[6], FILTER_VALIDATE_EMAIL)){
             return array(false, get_alert_error("Csv 第 $line_num 行第 6 列必须为合法的邮箱地址：当前为 “$line[6]”"));

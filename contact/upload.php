@@ -66,16 +66,16 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
                 $info = "点击“导入”完成本次批量上传";
             }
 ?>
-            <? echo "<div class=\"alert $alert_tag\">"; ?> 
-            <h4><? echo $alert_title; ?></h4>
-            <? echo $info; ?>
+            <?php echo "<div class=\"alert $alert_tag\">"; ?> 
+            <h4><?php echo $alert_title; ?></h4>
+            <?php echo $info; ?>
             </div>
         
             
             <form class="form-inline" method="post" name="update_contact" action="upload.php">
-            <button type="submit" class="btn <?echo $button_style;?>"  name="update_contact">导入</button>
+            <button type="submit" class="btn <?php echo $button_style;?>"  name="update_contact">导入</button>
             </form>
-            <? echo $result[0]; ?>
+            <?php echo $result[0]; ?>
 
 <?php
         } else {
@@ -86,13 +86,15 @@ if (!isset($_POST['file_upload']) && !isset($_POST['update_contact'])){
     }
     
 } else if (isset($_POST['update_contact'])){
-    if (insertupdate_with_csv($new_file)){
+    $result = insertupdate_with_csv($new_file);
+    if ($result[0] == true){
         //插入成功
         echo get_alert_info('更新数据完成');
     } else {
         //插入失败
         //插入失败
         $errno = "" . mysql_errno();
+        echo $result[1];
         if ($errno == "1062"){
             echo get_alert_error('数据表中有重复的学生 ID：' . mysql_error());
         } else {

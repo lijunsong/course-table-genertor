@@ -89,8 +89,7 @@ function insertupdate_csv_into_db($table)
                 //如果内容不一致，更新
                 $result_array = update_contacts($line);
                 if (!$result_array[0]){
-                    $success_p = false;
-                    break;
+                    return $result_array;
                 } else {
                     //echo "<p>更新联系人 $maybe_contact[0], $maybe_contact[1] 为 $line[0], $line[1]</p>";
                 }
@@ -101,14 +100,13 @@ function insertupdate_csv_into_db($table)
             //直接添加
             $result_array = insert_list_into_contacts($line);
             if (!$result_array[0]){
-                $success_p = false;
-                break;
+                return $result_array;
             } else {
                 //echo "<p>插入联系人信息：$line[0], $line[1]</p>";
             }
         }
     }
-    return $success_p;
+    return array(true, "");
 }
 
 function insertupdate_with_csv($file_name)
@@ -122,20 +120,18 @@ function overwrite_with_csv($file_name)
 {
     $data = get_data_from_csv($file_name);
     $data = get_csv_body($data);
-    $success_p = true;
     $result = mysql_query('truncate table contacts');
     if ($result){
         foreach($data as $line_num => $line){
             $result_array = insert_list_into_contacts($line);
             if ($result_array[0] == false){
-                $success_p = false;
-                break;
+                return $result_array;
             }
         }
     } else {
-        $success_p = false;
+        return array(false, get_alert_error('数据库错误 ' . mysql_errno() . ' ' . mysql_error()));
     }
-    return $success_p;
+    return array(true, "");
 }
 
         
