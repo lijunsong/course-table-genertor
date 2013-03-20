@@ -3,12 +3,28 @@
 require_once('conn.php');
 require_once('util.php');
 
+function parse_csv($file_name, $delimiter=",")
+{
+    $table = array();
+    if (($handle = fopen("$file_name","r")) != FALSE) {
+        while ($row = fgets($f) != NULL){
+        }
+    }
+}
 
 //返回二维数组
 function get_data_from_csv($file_name, $delimiter=",")
 {
+    global $OS;
+
+    if ($OS != 'windows'){
+        setlocale(LC_ALL, 'zh_CN.UTF-8');
+    } else {
+        setlocale(LC_ALL, 'zh_CN.gbk');
+    }
     $row = 0;
     $table = array();
+
     if (($handle = fopen("$file_name", "r")) !== FALSE) {
         $filesize = filesize($file_name);
         while (($data = fgetcsv($handle, $filesize+1, "$delimiter")) !== FALSE) {
