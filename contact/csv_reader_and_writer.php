@@ -3,27 +3,81 @@
 require_once('conn.php');
 require_once('util.php');
 
+// php 5.3 needs quote to identify the fields! Fuck! waste time!
+function add_quote($line)
+{
+    if ($line[0] != '"')
+        $new_line = '"';
+    else 
+        $new_line = '';
+    $inquote = false;
+    for ($i = 0; $i < strlen($line); $i++){
+        if ($line[$i] == '"'){//碰到引号
+            if ($inquote == false){ //如果不在引号内
+                $inquote = true;
+                $new_line .= '"';
+                continue;
+            } else { //在引号内
+                if ($i + 1 < strlen($line) && $line[$i+1] == '"'){ //处理双引号
+                    $new_line .= '""';
+                    $i++;
+                    continue;
+                } else { //引号关闭
+                    $inquote = false;
+                    $new_line .= '"';
+                }
+            }
+        } else if ($line[$i] == ','){ //碰到逗号
+            if ($inquote == true){ //如果在引号内 
+                $new_line .= ',';
+            } else { //不在引号内的逗号
+                if ($line[$i-1] != '"'){
+                    $new_line .= '"';
+                }
+                $new_line .= ',';
+                if ($i + 1 < strlen($line) && $line[$i+1] != '"'){
+                    $new_line .= '"';
+                }
+            }
+        } else {
+            $new_line .= $line[$i];
+        }
+    }
+    return $new_line;
+}
 function parse_csv($file_name, $delimiter=",")
 {
     $table = array();
+    $row = 0;
     if (($handle = fopen("$file_name","r")) != FALSE) {
-        while ($row = fgets($f) != NULL){
+        while ($line = fgets($f) != NULL){
+            $linesize = strlen($row) + 1;
+            $new_line add_quote($line);
+            echo $new_line;
+            $data = str_getcsv($new_line, $linesize, "$delimiter");
+            if (trim($data[0]) == "" || trim($data[1]) == "" || trim($data[2] == "")){
+                if ($row == 0){
+                    die(get_alert_error('csv 标题栏未填完整，返回重填'));
+                } else {
+                    $row++;
+                    continue;
+                }
+            }
+            $table[$row] = correct_array_reading($data);
+            $row++;
         }
+        fclose($handle);
     }
+    print_r($table);
+    //return $table
 }
 
 //返回二维数组
 function get_data_from_csv($file_name, $delimiter=",")
 {
-    global $OS;
-
-    if ($OS != 'windows'){
-        setlocale(LC_ALL, 'zh_CN.UTF-8');
-    } else {
-        setlocale(LC_ALL, 'zh_CN.gbk');
-    }
     $row = 0;
     $table = array();
+    echo parse_csv($file_name, $delimiter);
 
     if (($handle = fopen("$file_name", "r")) !== FALSE) {
         $filesize = filesize($file_name);
