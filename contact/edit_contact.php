@@ -59,7 +59,8 @@ if ($extra_info != NULL){
     $fields = get_fields_array();
     $col = 0;
     foreach ($fields as $f=>$field_name){
-        $field_info = $contact[$col];
+        $field_info = htmlspecialchars($contact[$col]);
+        $field_name = htmlspecialchars($field_name);
         echo control_group("$f",  $field_name, "$field_info", "$field_info");
         $col++;
     }

@@ -26,6 +26,7 @@ $fields = get_fields_array();
             
         <?php
         foreach ($fields as $f=>$field_name){
+            $field_name = htmlspecialchars($field_name);
             echo control_group($f, $field_name, $field_name);
         }
         //echo control_group("field_new", "New Item", "type in here");
