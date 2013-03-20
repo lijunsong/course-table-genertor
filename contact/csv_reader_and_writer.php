@@ -21,7 +21,7 @@ function add_quote($line)
                 continue;
             } else { //在引号内
                 if ($i + 1 < strlen($line) && $line[$i+1] == '"'){ //处理双引号
-                    $new_line .= '\"';
+                    $new_line .= '""';
                     $i++;
                     continue;
                 } else { //引号关闭
@@ -43,6 +43,8 @@ function add_quote($line)
                     $new_line .= '""';
                 }
             }
+        } else if ($line[$i] == "'"){
+            $new_line .= "'";
         } else {
             $new_line .= $line[$i];
         }

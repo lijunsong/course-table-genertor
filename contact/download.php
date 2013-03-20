@@ -16,11 +16,7 @@ function export_to_csv($inarray, $delimiter=","){
     
     while (list ($key1, $val1) = each ($inarray)) {
         while (list ($key, $val) = each ($val1)) {
-            if (is_numeric($val)){
-                $sendback .= $val."$delimiter";
-            }else{
-                $sendback .= "\"". $val ."\"$delimiter";
-            }//fi
+            $sendback .= "\"". escapequote4excel($val) ."\"$delimiter";
         }//wend
         $sendback = substr($sendback, 0, -1); //chop last ,
         $sendback .= "\n";

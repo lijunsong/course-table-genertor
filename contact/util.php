@@ -64,6 +64,20 @@ function correct_array_writing($arr)
     
 }
 
+function escapequote4excel($line)//"=>""
+{
+    return str_replace('"', '""', $line);//preg_replace('/[^"]+"[^"]+/','""',$line);
+}
+
+function escapequote4sql($line) // '=>\'
+{
+    return str_replace("'", "\'", $line);
+}
+
+function escapedelimiter($line, $d)
+{
+    return str_replace("$d", "\\$d", $line);
+}
 
 function control_group($input_id, $label_text, $placeholder, $value=NULL)
 {
