@@ -52,7 +52,7 @@ function parse_csv($file_name, $delimiter=",")
     if (($handle = fopen("$file_name","r")) != FALSE) {
         while ($line = fgets($f) != NULL){
             $linesize = strlen($row) + 1;
-            $new_line add_quote($line);
+            $new_line = add_quote($line);
             echo $new_line;
             $data = str_getcsv($new_line, $linesize, "$delimiter");
             if (trim($data[0]) == "" || trim($data[1]) == "" || trim($data[2] == "")){

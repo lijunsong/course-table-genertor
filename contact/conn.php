@@ -2,9 +2,9 @@
 
 require_once('util.php');
 $db_host = 'localhost';
-$db_user = 'contacts';
-$db_password = 'contacts@bfsu';
-$db_name = 'contact';
+$db_user = 'root';
+$db_password = '';
+$db_name = 'ljstest';
 
 $conn = mysql_connect($db_host, $db_user, $db_password);
 
