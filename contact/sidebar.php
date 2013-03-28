@@ -3,11 +3,11 @@
 require_once('util.php');
 
 
-$sidebar = array('批量上传' => '/contact/upload.php',
-                 '导出下载' => '/contact/export.php',
-                 '全部更替' => '/contact/overwrite.php',
-                 '添加' => '/contact/add_contact.php',
-                 '搜索' => '/contact/search.php');
+$sidebar = array('批量上传' => $current_dir.'/upload.php',
+                 '导出下载' => $current_dir.'/export.php',
+                 '全部更替' => $current_dir.'/overwrite.php',
+                 '添加' => $current_dir.'/add_contact.php',
+                 '搜索' => $current_dir.'/search.php');
 function get_basename($file)
 {
     return basename($file, '.php');

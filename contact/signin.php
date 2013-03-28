@@ -17,9 +17,6 @@ if (isset($_POST['username']) && isset($_POST['password'])){
         $salt = $row[0];
         $hashed_password = $row[1];
         $available = $row[2];
-        echo $hashed_password;
-        echo md5($password . $salt);
-        echo $available;
         if ($hashed_password == md5($password . $salt) && $available == true) {
           session_start();
           $_SESSION["ibscontactadmin"] = true;

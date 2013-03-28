@@ -1,19 +1,23 @@
 <?php
 require_once('check_signin.php');
+require_once('util.php');
 
 //nav content
 error_reporting(E_ALL ^ E_NOTICE);
 
-$navs = array("通讯录" => "/contact/index.php",
-              "项目管理" => "/contact/field_manage.php");
+$navs = array("通讯录" => $current_dir."/index.php",
+              "项目管理" => $current_dir."/field_manage.php",
+              "用户管理" => $current_dir."/user_manage.php");
+
 require_once('sidebar.php');
-require_once('util.php');
 
 if (! isset($title)){
     $title = "北外国商通讯录";
 }
 
 $current_file = basename($_SERVER['PHP_SELF'], ".php");
+$current_dir = dirname($_SERVER['PHP_SELF']); // may be duplicated,
+                                              // but let it go
 
 ?>
 <!DOCTYPE html>
@@ -30,7 +34,7 @@ $current_file = basename($_SERVER['PHP_SELF'], ".php");
     <div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-inner">
         <div class="container">
-        <a class="brand" href="/contact">北外国商通讯录</a>
+        <a class="brand" href=<?php echo "\"$current_dir\"" ?>>北外国商通讯录</a>
         <div class="nav-collapse collapse">
             <p class="navbar-text pull-right"><a href="signout.php">登出</a></p>
 

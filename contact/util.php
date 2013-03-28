@@ -1,5 +1,7 @@
 <?php
 
+$current_dir = dirname($_SERVER['PHP_SELF']);
+
 //为区分编码
 if (stripos($_SERVER['HTTP_USER_AGENT'],"Mac")){
     $OS = 'mac';
@@ -168,6 +170,8 @@ function array_to_thead($inarray, $add_id=false, $add_op=false)
 
 function array_to_tbody($inarrays, $add_id=false, $add_op=false)
 {
+    global $current_dir;
+    
     if (count($inarrays) == 0)
         return "";
 
@@ -182,7 +186,7 @@ function array_to_tbody($inarrays, $add_id=false, $add_op=false)
         if ($add_op == true){
             $op = array('specialkey_24z' => '<a
             href="?delete=' . $inarrays[$i][0] . '&name=' . $inarrays[$i][1] . '">' . '<i class="icon-remove"> </i>' . '</a>
-            <a href="/contact/edit_contact.php?edit=' . $inarrays[$i][0] . '">' . '<i class="icon-pencil"> </i></a>');
+            <a href="' . $current_dir . "/edit_contact.php?edit=" . $inarrays[$i][0] . '">' . '<i class="icon-pencil"> </i></a>');
         }
         $new_line = array_values($id+$inarrays[$i]+$op);
         $res .= array_to_tr($new_line);
