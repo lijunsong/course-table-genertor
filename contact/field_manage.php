@@ -12,8 +12,6 @@ if (isset($_POST['update'])){
     add_fields($_POST);
 }
 
-
-
 $fields = get_fields_array();
 ?>
 <div class="span2">

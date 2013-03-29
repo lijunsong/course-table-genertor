@@ -23,7 +23,8 @@ id int(32) not null auto_increment primary key,
 username varchar(32) not null,
 password   varchar(32) not null,
 salt varchar(32) not null,
-available boolean not null
+available boolean not null,
+changablename boolean not null
 ) default character set utf8;
 
 insert into fields(field, field_name) values
@@ -40,5 +41,6 @@ insert into fields(field, field_name) values
 ('field_2' , '备注2');
 
 -- for test only:
-insert into users(username, password, salt, available) values
-	('admin', 'f38a02ea409ec7ca45fabe75163fe3f5', '77B6-C278-4F32-958D-4B16', true);
+insert into users(username, password, salt, available, changablename) values
+	('contactadmin', 'f38a02ea409ec7ca45fabe75163fe3f5', '77B6-C278-4F32-958D-4B16', true, false),
+	('student', 'cd6d44815e8c83f4fe04afbbf55073ae', 'Z99K-KJH6-5G3Q-Z8YN-TVDG', true, true);

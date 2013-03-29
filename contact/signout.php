@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-unset($_SESSION['ibscontactadmin']);
+unset($_SESSION['ibscontact']);
 header( 'Location: ./signin.php' ) ;
 
 

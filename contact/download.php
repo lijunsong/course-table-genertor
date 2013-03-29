@@ -1,6 +1,7 @@
 <?php
 require_once('conn.php');
 require_once('util.php');
+require_once('check_signin.php');
 //这个文件用于生成模板文件，或者导出数据库时候下载 csv 文件
 
 /* array 的格式为：

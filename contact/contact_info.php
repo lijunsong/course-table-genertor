@@ -9,7 +9,7 @@ $extra_info = NULL;
 
 ?>
 <div class="span2">
-<?echo get_sidebar($current_file, $sidebar)?>
+<?php echo get_sidebar($current_file, $sidebar)?>
 </div>
 <div class="span10">    
 <form class="form-horizontal" name="contact_info">

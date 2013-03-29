@@ -230,4 +230,9 @@ function check_line($line)
     return array(true, "");
 }
 
+function get_pass($pass, $salt)
+{
+    return md5($pass . $salt);
+}
+
 ?>

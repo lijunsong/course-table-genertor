@@ -44,7 +44,7 @@ $current_dir = dirname($_SERVER['PHP_SELF']); // may be duplicated,
     if (in_array($current_file, $index_subentries) || $current_file == "index"){
         echo get_navs('index', $navs, "nav");
     } else {
-        echo get_navs('field_manage', $navs, "nav");
+        echo get_navs($current_file, $navs, "nav");
     }
 ?>
         </div>

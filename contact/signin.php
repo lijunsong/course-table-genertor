@@ -7,7 +7,7 @@ if (isset($_POST['username']) && isset($_POST['password'])){
   $username = trim($_POST['username']);
   $password = trim($_POST['password']);
 
-  if ( $username != '' or $password != ''){
+  if ( $username != '' and $password != ''){
     $query = "select salt, password, available from users where username=\"$username\"";
     $result = mysql_query($query);
 
@@ -17,9 +17,9 @@ if (isset($_POST['username']) && isset($_POST['password'])){
         $salt = $row[0];
         $hashed_password = $row[1];
         $available = $row[2];
-        if ($hashed_password == md5($password . $salt) && $available == true) {
+        if ($hashed_password == get_pass($password , $salt) && $available == true) {
           session_start();
-          $_SESSION["ibscontactadmin"] = true;
+          $_SESSION["ibscontact"] = true;
           header( 'Location: ./index.php' );
         }
       }      
